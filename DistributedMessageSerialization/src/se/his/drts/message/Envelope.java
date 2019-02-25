@@ -18,7 +18,9 @@ public class Envelope {
 	//johan ighen
 	//johans branchhjk
 	//tobiash branch
+	//master ska ockspåa ta skit
 	/**
+	 * 
 	 * @return the message
 	 */
 	public final Optional<MessagePayload> getMessage() {
