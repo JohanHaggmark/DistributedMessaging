@@ -11,18 +11,6 @@ import se.his.drts.message.MessagePayload.IncorrectMessageException;
 public class Envelope {
 	private byte[] serializedMessage;
 	private byte[] digest;
-//hejsan
-	//hallåjsan
-	// hallojhalllojsssaasn
-	//bäverhydda
-	//johan ighen
-	//johans branchhjk
-	//tobiash branch
-	//master ska ockspåa ta skithsdsfsd
-	
-	// NY COMMIT I MASTER 12:28
-	// Commit in Tobias_v2.0
-	
 	
 	/**
 	 * 
