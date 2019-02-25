@@ -18,7 +18,8 @@ public class Envelope {
 	//johan ighen
 	//johans branchhjk
 	//tobiash branch
-	//master ska ockspåa ta skit
+	//master ska ockspåa ta skith
+	
 	/**
 	 * 
 	 * @return the message
