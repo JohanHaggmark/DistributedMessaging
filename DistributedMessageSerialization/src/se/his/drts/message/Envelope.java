@@ -19,6 +19,9 @@ public class Envelope {
 	//johans branchhjk
 	//tobiash branch - was to master
 	//from tobias branch
+	
+	// commitish from old Tobias
+	
 	/**
 	 * @return the message
 	 */
