@@ -20,6 +20,9 @@ public class Envelope {
 	//tobiash branch
 	//master ska ockspåa ta skithsdsfsd
 	
+	// NY COMMIT I MASTER 12:28
+	
+	
 	/**
 	 * 
 	 * @return the message
