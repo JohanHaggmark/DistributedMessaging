@@ -12,6 +12,7 @@ public class Envelope {
 	private byte[] serializedMessage;
 	private byte[] digest;
 //hejsan
+	//hallåjsan
 	
 	/**
 	 * @return the message
