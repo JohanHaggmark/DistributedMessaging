@@ -9,11 +9,13 @@ import DCAD.GObject;
 import se.his.drts.message.Envelope;
 import se.his.drts.message.MessagePayload.IncorrectMessageException;
 
+
+
 public class Messages {
 	private LinkedBlockingQueue m_messageQueue;
 	
 	public Messages() {
-		m_messageQueue = new LinkedBlockingQueue<Envelope>();
+		m_messageQueue = new LinkedBlockingQueue<Message>();
 	}
 	
 	public void addToMessageQueue(GObject obj) {
@@ -25,6 +27,7 @@ public class Messages {
 		byte[] b;
 		try {
 			b = om.writeValueAsBytes(obj);
+			
 			return Envelope.createEnvelope(b);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
