@@ -11,7 +11,7 @@ import se.his.drts.message.MessagePayload.IncorrectMessageException;
 public class Envelope {
 	private byte[] serializedMessage;
 	private byte[] digest;
-	
+
 	/**
 	 * 
 	 * @return the message
