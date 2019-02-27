@@ -25,7 +25,7 @@ public class Cad {
 	}
 
 	public void sendNewObject(GObject obj) {
-		messages.addToMessageQueue(obj);
+		messages.addNewMessage(obj);
 	}
 
 
