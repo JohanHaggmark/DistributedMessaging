@@ -25,7 +25,8 @@ public class Cad {
 	}
 
 	public void sendNewObject(GObject obj) {
-		messages.addNewMessage(obj);
+		//messages.addNewMessage(obj);
+		rmConnection.sendMessage("TJenare cad 25");
 	}
 
 

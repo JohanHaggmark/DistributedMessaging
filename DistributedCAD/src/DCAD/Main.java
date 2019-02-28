@@ -11,7 +11,7 @@ public class Main {
     
 
     public static void main(String[] args) throws UnknownHostException, SocketException {
-    	rmConnection = new RMConnection("127.0.0.1", 25000);
+    	rmConnection = new RMConnection("127.0.0.1", 25001);
         Cad c = new Cad(rmConnection, gui);
         //Receiver r = new Receiver(rmConnection, gui);
     }

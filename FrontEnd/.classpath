@@ -4,5 +4,8 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="C:/Java/jgroups-4.0.18.Final.jar"/>
 	<classpathentry kind="lib" path="C:/Java/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Java/jackson-annotations-2.9.8.jar"/>
+	<classpathentry kind="lib" path="C:/Java/jackson-core-2.9.8.jar"/>
+	<classpathentry kind="lib" path="C:/Java/jackson-databind-2.9.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
