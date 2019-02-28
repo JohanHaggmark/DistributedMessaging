@@ -2,12 +2,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.Optional;
 
 import org.json.simple.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import DCAD.GObject;
+import StrategyPatternMessages.StringMsg;
+import se.his.drts.message.MessagePayload;
 
 public class ClientConnection extends Thread {
 
@@ -27,10 +30,12 @@ public class ClientConnection extends Thread {
 				InputStream in = m_socket.getInputStream();
 				ObjectInputStream ois = new ObjectInputStream(in);
 				ObjectMapper om = new ObjectMapper();
-				GObject obj =(GObject) ois.readObject();
+				Object obj = ois.readObject();
+				MessagePayload m =(MessagePayload) obj;
+				
 				//GObject msg = om.readValue(obj.toString(), GObject.class);
 				
-				System.out.println(obj.getX() + " X i FrontEnd CLientCOnnection 31");
+				System.out.println(" X i FrontEnd CLientCOnnection 31");
 				////
 				
 				
