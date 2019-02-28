@@ -7,6 +7,8 @@ import org.json.simple.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import DCAD.GObject;
+
 public class ClientConnection extends Thread {
 
 	Socket m_socket;
@@ -25,10 +27,10 @@ public class ClientConnection extends Thread {
 				InputStream in = m_socket.getInputStream();
 				ObjectInputStream ois = new ObjectInputStream(in);
 				ObjectMapper om = new ObjectMapper();
-				Object obj = ois.readObject();
-				String msg = om.readValue(obj.toString(), String.class);
+				GObject obj =(GObject) ois.readObject();
+				//GObject msg = om.readValue(obj.toString(), GObject.class);
 				
-				System.out.println(msg + " i FrontEnd CLientCOnnection 31");
+				System.out.println(obj.getX() + " X i FrontEnd CLientCOnnection 31");
 				////
 				
 				

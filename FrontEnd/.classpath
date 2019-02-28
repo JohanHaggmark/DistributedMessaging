@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="C:/Java/jackson-annotations-2.9.8.jar"/>
 	<classpathentry kind="lib" path="C:/Java/jackson-core-2.9.8.jar"/>
 	<classpathentry kind="lib" path="C:/Java/jackson-databind-2.9.8.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/DistributedCAD"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
