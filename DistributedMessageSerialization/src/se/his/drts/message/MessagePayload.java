@@ -54,6 +54,7 @@ public class MessagePayload implements Comparable<MessagePayload>, Serializable 
 		private static final long serialVersionUID = 2622081140350800568L;
 
 	}
+	
 
 	private UUID uuid = UUID.fromString("a9343c32-e126-4630-82ba-af983a5a7684"); // do not make static!
 	private static Pattern uuidPattern = Pattern.compile("^.*\"[uU]{2}[iI][dD]\"\\s*:\\s*\"([^\"]+)\".*$");
@@ -407,4 +408,6 @@ public class MessagePayload implements Comparable<MessagePayload>, Serializable 
 	public static UUID getUUIDFromJSONObject(byte[] jsonObject) {
 		return getUUIDFromJSONObject(new String(jsonObject));
 	}
+
+
 }

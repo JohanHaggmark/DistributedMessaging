@@ -47,7 +47,7 @@ public class RMConnection {
 				
 				oos.writeObject(envelope);
 			
-	
+				
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

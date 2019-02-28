@@ -32,7 +32,6 @@ public class Cad {
 		// StringMsg hej = new StringMsg("hejsan cad 31");
 
 		rmConnection.sendMessage("hej Cad 34");
-		
 	}
 
 }

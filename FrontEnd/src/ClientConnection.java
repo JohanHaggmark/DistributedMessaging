@@ -33,6 +33,7 @@ public class ClientConnection extends Thread {
 				ObjectInputStream ois = new ObjectInputStream(in);
 				ObjectMapper om = new ObjectMapper();
 				Envelope obj = (Envelope) ois.readObject();
+				Optional<MessagePayload> optional = obj.getMessage();
 				
 				//Envelope envelope;
 				//envelope = (Envelope) om.readValue(obj, Envelope.class);
