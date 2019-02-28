@@ -1,5 +1,6 @@
 package Communication;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
@@ -9,12 +10,16 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import DCAD.GObject;
 import StrategyPatternMessages.StringMsg;
+import se.his.drts.message.Envelope;
 import se.his.drts.message.MessagePayload;
+import se.his.drts.message.MessagePayload.IncorrectMessageException;
 
 public class RMConnection {
 	private InetAddress m_serverAddress;
@@ -35,15 +40,14 @@ public class RMConnection {
 
 	public void sendMessage(String msg) {
 		try {
-			
 			StringMsg m = new StringMsg(msg);
-			//ObjectMapper om = new ObjectMapper();
-			byte[] serializedMessage = m.serialize();
-			//serializedMessage = om.writeValueAsBytes(m);
-			MessagePayload.createMessage(serializedMessage);
-			OutputStream os = m_socket.getOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(os);
-			oos.writeObject(serializedMessage);
+				Envelope envelope = new Envelope(m);
+				OutputStream os = m_socket.getOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream(os);
+				
+				oos.writeObject(envelope);
+			
+	
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

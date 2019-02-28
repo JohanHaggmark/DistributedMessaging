@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import se.his.drts.message.MessagePayload;
 
-public class StringMsg extends MessagePayload {
+public class StringMsg extends MessagePayload implements Serializable{
 	/*public String msg;
 
 	

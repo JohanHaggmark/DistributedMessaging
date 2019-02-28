@@ -10,7 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import DCAD.GObject;
 import StrategyPatternMessages.StringMsg;
+import se.his.drts.message.Envelope;
 import se.his.drts.message.MessagePayload;
+import se.his.drts.message.MessagePayload.IncorrectMessageException;
 
 public class ClientConnection extends Thread {
 
@@ -26,19 +28,19 @@ public class ClientConnection extends Thread {
 		boolean runThread = true;
 		while (runThread) {
 			try {
-				//jackson
+				// jackson
 				InputStream in = m_socket.getInputStream();
 				ObjectInputStream ois = new ObjectInputStream(in);
 				ObjectMapper om = new ObjectMapper();
-				Object obj = ois.readObject();
-				MessagePayload m =(MessagePayload) obj;
+				Envelope obj = (Envelope) ois.readObject();
 				
-				//GObject msg = om.readValue(obj.toString(), GObject.class);
+				//Envelope envelope;
+				//envelope = (Envelope) om.readValue(obj, Envelope.class);
+				//Optional<MessagePayload> message = envelope.getMessage();
+				//StringMsg msg = (StringMsg) message.get();
 				
-				System.out.println(" X i FrontEnd CLientCOnnection 31");
-				////
-				
-				
+				System.out.println( " X i FrontEnd CLientCOnnection 31");
+
 			} catch (IOException e) {
 				e.printStackTrace();
 				runThread = false;
