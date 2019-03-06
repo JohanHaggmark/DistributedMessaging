@@ -1,6 +1,7 @@
 package se.his.drts.message;
 
 import java.io.IOException;
+
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -10,6 +11,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import se.his.drts.message.MessagePayload.IncorrectMessageException;
 
 public class Envelope implements Serializable {
+
+public class Envelope {
+
 	private byte[] serializedMessage;
 	private byte[] digest;
 
@@ -25,7 +29,10 @@ public class Envelope implements Serializable {
 	 * @return
 	 */
 	public final byte[] getSerializedMessage() {
+
 		return this.serializedMessage;
+		return this.getSerializedMessage();
+
 	}
 	
 	public final byte[] getDigest() {
