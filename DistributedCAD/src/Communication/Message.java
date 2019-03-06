@@ -13,6 +13,9 @@ public class Message {
 		this.envelope = envelope;
 		this.id = id;
 	}
+	
+	public Message() {
+	}
 
 	public Envelope getEnvelope() {
 		return envelope;

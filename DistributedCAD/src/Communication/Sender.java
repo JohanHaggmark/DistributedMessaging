@@ -20,7 +20,7 @@ public class Sender extends Thread {
 			try {
 				Message msg = (Message) m_messages.getMessageQueue().take();
 				if (!msg.isAcknowledge && msg.getAttempt() < ATTEMPTS) {
-					m_RMConnection.sendMessage(msg.getEnvelope());
+					m_RMConnection.sendMessage("hej ,Sender 23");
 					msg.incrementAttempt();
 					m_messages.addToRTTMessageQueue(msg);
 				}

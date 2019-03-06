@@ -10,6 +10,8 @@ import java.net.UnknownHostException;
 
 import Communication.Messages;
 import Communication.RMConnection;
+import StrategyPatternMessages.StringMsg;
+import se.his.drts.message.MessagePayload;
 
 public class Cad {
 	private GUI gui;
@@ -25,8 +27,11 @@ public class Cad {
 	}
 
 	public void sendNewObject(GObject obj) {
-		messages.addNewMessage(obj);
-	}
 
+		// messages.addNewMessage(obj);
+		// StringMsg hej = new StringMsg("hejsan cad 31");
+
+		rmConnection.sendMessage("hej Cad 34");
+	}
 
 }

@@ -1,14 +1,16 @@
 package StrategyPatternMessages;
 
+import java.util.UUID;
+
 import se.his.drts.message.MessagePayload;
 
-public abstract class ApplicationSpecificTopClass extends MessagePayload {
+public abstract class AbstractMessageTopClass extends MessagePayload {
 
-	//skapa metod för att göra ett unikt UUID
-	
+	// skapa metod för att göra ett unikt UUID
+
 	private int attempt = 0;
-	
-	protected ApplicationSpecificTopClass(MessagePayload message) {
+
+	protected AbstractMessageTopClass(MessagePayload message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}
