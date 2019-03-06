@@ -4,8 +4,6 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.Optional;
 
-import org.json.simple.JSONObject;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import DCAD.GObject;
@@ -34,13 +32,6 @@ public class ClientConnection extends Thread {
 				ObjectMapper om = new ObjectMapper();
 				Envelope obj = (Envelope) ois.readObject();
 				Optional<MessagePayload> optional = obj.getMessage();
-				
-				//Envelope envelope;
-				//envelope = (Envelope) om.readValue(obj, Envelope.class);
-				//Optional<MessagePayload> message = envelope.getMessage();
-				//StringMsg msg = (StringMsg) message.get();
-				
-				System.out.println( " X i FrontEnd CLientCOnnection 31");
 
 			} catch (IOException e) {
 				e.printStackTrace();
