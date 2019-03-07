@@ -6,7 +6,7 @@ import java.util.UUID;
 import se.his.drts.message.MessagePayload;
 
 
-public class AbstractMessageTopClass extends MessagePayload {
+public abstract class AbstractMessageTopClass extends MessagePayload {
 	private static final long serialVersionUID = 1L;
 
 	
@@ -32,20 +32,12 @@ public class AbstractMessageTopClass extends MessagePayload {
 		}
 	}
 
-	public void executeInClient() {
+	public abstract void executeInClient();
 
-	}
+	public abstract void executeInFrontEndFromRM();
 
-	public void executeInFrontEndFromRM() {
+	public abstract void executeInFrontEndFromClient();
 
-	}
-
-	public void executeInFrontEndFromClient() {
-
-	}
-
-	public void executeInReplicaManager() {
-
-	}
+	public abstract void executeInReplicaManager() ;
 
 }
