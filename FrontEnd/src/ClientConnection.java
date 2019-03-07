@@ -5,8 +5,7 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.Optional;
 import java.util.UUID;
-
-import StrategyPatternMessages.AbstractMessageTopClass;
+import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.MessagePayload;
 
 
@@ -29,11 +28,10 @@ public class ClientConnection extends Thread {
 				DataInputStream din = new DataInputStream(in);
 				ObjectInputStream oin = new ObjectInputStream(din);
 				byte[] bytes = (byte[]) oin.readObject();
-				Optional<MessagePayload> mpl = MessagePayload.createMessage(bytes);
-				UUID uuid = MessagePayload.getUUIDFromJSONObject(bytes);
+				Optional<MessagePayload> opt = MessagePayload.createMessage(bytes);
+				MessagePayload mpl = opt.get();
 				
-				AbstractMessageTopClass obj = (AbstractMessageTopClass) MessagePayload.getPrototypeMessage(uuid);
-				obj.executeInClient();
+				mpl.executeInReplicaManager();
 
 			} catch (IOException e) {
 				e.printStackTrace();

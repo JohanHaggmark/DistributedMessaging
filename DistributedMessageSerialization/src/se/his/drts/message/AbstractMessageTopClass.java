@@ -1,4 +1,4 @@
-package StrategyPatternMessages;
+package se.his.drts.message;
 
 import java.math.BigInteger;
 import java.util.UUID;
@@ -9,6 +9,7 @@ import se.his.drts.message.MessagePayload;
 public class AbstractMessageTopClass extends MessagePayload {
 	private static final long serialVersionUID = 1L;
 
+	
 	public static class MessageIdentity implements Comparable<MessageIdentity> {
 		private UUID uuid;
 		private BigInteger subIdentity;
@@ -76,10 +77,10 @@ public class AbstractMessageTopClass extends MessagePayload {
 	private int attempt = 0;
 
 	private static BigInteger nextSubIdentity = BigInteger.ONE;
-	private static UUID uuid = UUID.fromString("32eb76f7-e72b-4fa5-ad02-95d92115c452");
+	private static UUID uuid = UUID.fromString("d96d5262-4dfb-4639-82c3-15eb3c0fa789");
 	private BigInteger subIdentity;
 
-	protected AbstractMessageTopClass() {
+	public AbstractMessageTopClass() {
 		super(AbstractMessageTopClass.uuid);
 		synchronized (AbstractMessageTopClass.nextSubIdentity) {
 			this.subIdentity = AbstractMessageTopClass.nextSubIdentity;
@@ -95,21 +96,21 @@ public class AbstractMessageTopClass extends MessagePayload {
 		}
 	}
 
-//	@Override
-//	public void executeInClient() {
-//
-//	}
-//
-//	public void executeInFrontEndFromRM() {
-//
-//	}
-//
-//	public void executeInFrontEndFromClient() {
-//
-//	}
-//
-//	public void executeInReplicaManager() {
-//
-//	}
+	@Override
+	public void executeInClient() {
+
+	}
+
+	public void executeInFrontEndFromRM() {
+
+	}
+
+	public void executeInFrontEndFromClient() {
+
+	}
+
+	public void executeInReplicaManager() {
+
+	}
 
 }

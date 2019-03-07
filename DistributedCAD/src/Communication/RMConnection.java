@@ -6,9 +6,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Optional;
-import StrategyPatternMessages.StringMsg;
-import se.his.drts.message.MessagePayload;
+
+import se.his.drts.message.StringMsg;
 
 public class RMConnection {
 	private InetAddress m_serverAddress;
@@ -37,19 +36,6 @@ public class RMConnection {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void sendMessage(Optional<MessagePayload> msg) {
-//		try {
-//			ObjectMapper om = new ObjectMapper();
-//			String serializedMessage;
-//			serializedMessage = om.writeValueAsString(msg);
-//			OutputStream os = m_socket.getOutputStream();
-//			ObjectOutputStream oos = new ObjectOutputStream(os);
-//			oos.writeObject(serializedMessage);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
 	}
 
 	public String receive() {
