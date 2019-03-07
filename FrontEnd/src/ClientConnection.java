@@ -4,15 +4,11 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.Optional;
+import java.util.UUID;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import DCAD.GObject;
 import StrategyPatternMessages.AbstractMessageTopClass;
-import StrategyPatternMessages.StringMsg;
-import se.his.drts.message.Envelope;
 import se.his.drts.message.MessagePayload;
-import se.his.drts.message.MessagePayload.IncorrectMessageException;
+
 
 public class ClientConnection extends Thread {
 
@@ -34,9 +30,9 @@ public class ClientConnection extends Thread {
 				ObjectInputStream oin = new ObjectInputStream(din);
 				byte[] bytes = (byte[]) oin.readObject();
 				Optional<MessagePayload> mpl = MessagePayload.createMessage(bytes);
-			
+				UUID uuid = MessagePayload.getUUIDFromJSONObject(bytes);
 				
-				MessagePayload obj = (MessagePayload) mpl.get();
+				AbstractMessageTopClass obj = (AbstractMessageTopClass) MessagePayload.getPrototypeMessage(uuid);
 				obj.executeInClient();
 
 			} catch (IOException e) {

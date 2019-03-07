@@ -1,24 +1,16 @@
 package Communication;
 
-import se.his.drts.message.Envelope;
-
 public class Message {
 
-	private Envelope envelope;
 	private int id;
 	private int attempt = 0;
 	public boolean isAcknowledge = false;
 
-	public Message(int id, Envelope envelope) {
-		this.envelope = envelope;
+	public Message(int id) {
 		this.id = id;
 	}
 	
 	public Message() {
-	}
-
-	public Envelope getEnvelope() {
-		return envelope;
 	}
 	
 	public int getId() {

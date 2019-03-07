@@ -2,7 +2,6 @@ package Communication;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import se.his.drts.message.Envelope;
 
 public class RTTMessageRepeater implements Runnable {
 
