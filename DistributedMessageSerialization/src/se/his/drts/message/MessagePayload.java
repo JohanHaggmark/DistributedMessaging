@@ -3,11 +3,9 @@ package se.his.drts.message;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -179,7 +177,7 @@ public class MessagePayload implements Comparable<MessagePayload>, Serializable 
 								} catch (ClassNotFoundException cnfex) {
 									throw new IllegalStateException(cnfex);
 								} catch (InstantiationException iex) {
-									// throw new IllegalStateException("Could not instantiate class
+									// throw new IllegoalStateException("Could not instantiate class
 									// \""+classname+"\", since there is no default constructor",iex);
 								} catch (IllegalAccessException iaex) {
 									// throw new IllegalStateException("Could not instantiate class
