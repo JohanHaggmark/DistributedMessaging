@@ -5,14 +5,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class RTTMessageRepeater implements Runnable {
 
-	LinkedBlockingQueue<Message> messagesToSender;
+	LinkedBlockingQueue<Message> m_RTTMessageQueue;
 	LinkedBlockingQueue<Message> m_messageQueue;
 	// https://wondernetwork.com/pings, average ping from sweden to common places in
 	// the world
+	//måste göras om för nytt vettigt värde
 	private final int averageRTT = 117;
 	
-	public RTTMessageRepeater(LinkedBlockingQueue messagesToSender, LinkedBlockingQueue m_messageQueue) {
-		this.messagesToSender = messagesToSender;
+	public RTTMessageRepeater(LinkedBlockingQueue m_RTTMessageQueue, LinkedBlockingQueue m_messageQueue) {
+		this.m_RTTMessageQueue = m_RTTMessageQueue;
 		this.m_messageQueue = m_messageQueue;
 	}
 
@@ -22,7 +23,7 @@ public class RTTMessageRepeater implements Runnable {
 			// receive message from Sender:
 			Message msg = null;
 			try {
-				msg = m_messageQueue.take();
+				msg = m_RTTMessageQueue.take();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -32,7 +33,7 @@ public class RTTMessageRepeater implements Runnable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			messagesToSender.add(msg);			
+			m_messageQueue.add(msg);			
 		}
 	}
 }
