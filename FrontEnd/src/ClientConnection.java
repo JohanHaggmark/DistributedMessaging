@@ -30,7 +30,6 @@ public class ClientConnection extends Thread {
 				byte[] bytes = (byte[]) oin.readObject();
 				Optional<MessagePayload> opt = MessagePayload.createMessage(bytes);
 				AbstractMessageTopClass msg = (AbstractMessageTopClass) opt.get();
-				
 				msg.executeInReplicaManager();
 
 			} catch (IOException e) {

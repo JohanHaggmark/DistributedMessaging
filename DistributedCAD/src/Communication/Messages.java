@@ -2,6 +2,7 @@ package Communication;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import DCAD.GObject;
+import se.his.drts.message.AbstractMessageTopClass;
 
 
 
@@ -18,7 +19,7 @@ public class Messages {
 	
 	
 	public void addNewMessage(GObject obj) {
-		addToMessageQueue(new Message(id));
+		addToMessageQueue(new Message(id, createMessageTopClass(obj)));
 		id++;
 	}
 	
@@ -37,5 +38,12 @@ public class Messages {
 	
 	public LinkedBlockingQueue getRTTMessageQueue() {
 		return m_RTTMessageQueue;
+	}
+	
+	private AbstractMessageTopClass createMessageTopClass(GObject obj) {
+		AbstractMessageTopClass msgTopClass;
+		
+		
+		return msgTopClass;
 	}
 }
