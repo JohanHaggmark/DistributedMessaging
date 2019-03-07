@@ -408,6 +408,23 @@ public class MessagePayload implements Comparable<MessagePayload>, Serializable 
 	public static UUID getUUIDFromJSONObject(byte[] jsonObject) {
 		return getUUIDFromJSONObject(new String(jsonObject));
 	}
+	
+	public void executeInClient() {
+		System.out.println("i MessagePayload");
+	}
+
+	public void executeInFrontEndFromRM() {
+
+	}
+
+	public void executeInFrontEndFromClient() {
+
+	}
+
+	public void executeInReplicaManager() {
+
+	}
+
 
 
 }

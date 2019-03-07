@@ -41,13 +41,10 @@ public class RMConnection {
 	public void sendMessage(String msg) {
 		try {
 			StringMsg m = new StringMsg(msg);
-				Envelope envelope = new Envelope(m);
-				OutputStream os = m_socket.getOutputStream();
-				ObjectOutputStream oos = new ObjectOutputStream(os);
-				
-				oos.writeObject(envelope);
-			
-				
+			OutputStream os = m_socket.getOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(os);
+			oos.writeObject(m.serialize());
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -65,7 +62,7 @@ public class RMConnection {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public String receive() {
 		InputStream in;
 		try {
