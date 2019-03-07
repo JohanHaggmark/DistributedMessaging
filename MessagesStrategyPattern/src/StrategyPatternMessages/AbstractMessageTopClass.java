@@ -95,20 +95,21 @@ public class AbstractMessageTopClass extends MessagePayload {
 		}
 	}
 
-	public void executeInClient() {
-
-	}
-
-	public void executeInFrontEndFromRM() {
-
-	}
-
-	public void executeInFrontEndFromClient() {
-
-	}
-
-	public void executeInReplicaManager() {
-
-	}
+//	@Override
+//	public void executeInClient() {
+//
+//	}
+//
+//	public void executeInFrontEndFromRM() {
+//
+//	}
+//
+//	public void executeInFrontEndFromClient() {
+//
+//	}
+//
+//	public void executeInReplicaManager() {
+//
+//	}
 
 }

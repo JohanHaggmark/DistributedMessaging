@@ -29,7 +29,7 @@ public class StringMsg extends AbstractMessageTopClass {
 	@Override
 	public void executeInClient() {
 		// TODO Auto-generated method stub
-		
+		System.out.println("hejsan");
 	}
 
 	@Override
