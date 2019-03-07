@@ -7,7 +7,7 @@ public class Message {
 	private int id;
 	private int attempt = 0;
 	public boolean isAcknowledge = false;
-	private AbstractMessageTopClass msgTopClass;
+	AbstractMessageTopClass msgTopClass;
 
 	public Message(int id, AbstractMessageTopClass msgTopClass) {
 		this.id = id;

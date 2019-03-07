@@ -1,12 +1,17 @@
 package Communication;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Optional;
 
+import se.his.drts.message.AbstractMessageTopClass;
+import se.his.drts.message.MessagePayload;
 import se.his.drts.message.StringMsg;
 
 public class RMConnection {
@@ -38,15 +43,7 @@ public class RMConnection {
 		}
 	}
 
-	public String receive() {
-		InputStream in;
-		try {
-			in = (InputStream) m_socket.getInputStream();
-			return in.toString();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+	public Socket getSocket() {
+		return m_socket;
 	}
 }
