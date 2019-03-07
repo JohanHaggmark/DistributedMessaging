@@ -1,4 +1,4 @@
-package StrategyPatternMessages;
+package se.his.drts.message;
 
 import se.his.drts.message.MessagePayload;
 

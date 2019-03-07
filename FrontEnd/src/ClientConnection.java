@@ -5,14 +5,9 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import DCAD.GObject;
-import StrategyPatternMessages.AbstractMessageTopClass;
-import StrategyPatternMessages.StringMsg;
-import se.his.drts.message.Envelope;
+import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.MessagePayload;
-import se.his.drts.message.MessagePayload.IncorrectMessageException;
+
 
 public class ClientConnection extends Thread {
 
@@ -33,11 +28,10 @@ public class ClientConnection extends Thread {
 				DataInputStream din = new DataInputStream(in);
 				ObjectInputStream oin = new ObjectInputStream(din);
 				byte[] bytes = (byte[]) oin.readObject();
-				Optional<MessagePayload> mpl = MessagePayload.createMessage(bytes);
-			
+				Optional<MessagePayload> opt = MessagePayload.createMessage(bytes);
+				AbstractMessageTopClass msg = (AbstractMessageTopClass) opt.get();
 				
-				MessagePayload obj = (MessagePayload) mpl.get();
-				obj.executeInClient();
+				msg.executeInReplicaManager();
 
 			} catch (IOException e) {
 				e.printStackTrace();

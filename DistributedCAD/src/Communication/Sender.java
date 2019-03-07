@@ -1,7 +1,5 @@
 package Communication;
 
-import se.his.drts.message.Envelope;
-
 public class Sender extends Thread {
 
 	Messages m_messages;

@@ -10,8 +10,6 @@ import java.net.UnknownHostException;
 
 import Communication.Messages;
 import Communication.RMConnection;
-import StrategyPatternMessages.StringMsg;
-import se.his.drts.message.MessagePayload;
 
 public class Cad {
 	private GUI gui;
