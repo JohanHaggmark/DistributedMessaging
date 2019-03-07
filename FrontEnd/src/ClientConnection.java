@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.Optional;
-import java.util.UUID;
+
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.MessagePayload;
 
@@ -29,9 +29,9 @@ public class ClientConnection extends Thread {
 				ObjectInputStream oin = new ObjectInputStream(din);
 				byte[] bytes = (byte[]) oin.readObject();
 				Optional<MessagePayload> opt = MessagePayload.createMessage(bytes);
-				MessagePayload mpl = opt.get();
+				AbstractMessageTopClass msg = (AbstractMessageTopClass) opt.get();
 				
-				mpl.executeInReplicaManager();
+				msg.executeInReplicaManager();
 
 			} catch (IOException e) {
 				e.printStackTrace();
