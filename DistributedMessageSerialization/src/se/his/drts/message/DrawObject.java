@@ -1,14 +1,19 @@
 package se.his.drts.message;
 
+import DCAD.GObject;
+import DCAD.GUI;
 import se.his.drts.message.MessagePayload;
 
 public class DrawObject extends Draw {
 
+	GObject obj;
+	public DrawObject(GObject obj) {
+		this.obj = obj;
+	}
 
 	@Override
 	public void executeInClient() {
-		// rita upp GObjectet
-
+		
 	}
 
 	@Override

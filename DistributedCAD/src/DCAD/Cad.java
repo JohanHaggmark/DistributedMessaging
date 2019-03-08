@@ -16,8 +16,8 @@ public class Cad {
 	private RMConnection rmConnection;
 	private Messages messages;
 
-	public Cad(RMConnection rmc, GUI gui) throws UnknownHostException, SocketException {
-		this.messages = new Messages();
+	public Cad(RMConnection rmc, GUI gui, Messages messages) {
+		this.messages = messages;
 		this.gui = gui;
 		this.rmConnection = rmc;
 		gui.addCad(this);
@@ -25,11 +25,6 @@ public class Cad {
 	}
 
 	public void sendNewObject(GObject obj) {
-
-		// messages.addNewMessage(obj);
-		// StringMsg hej = new StringMsg("hejsan cad 31");
-
-		rmConnection.sendMessage("hej Cad 34");
+		messages.addNewMessage(obj);
 	}
-
 }
