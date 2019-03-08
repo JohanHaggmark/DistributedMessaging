@@ -23,7 +23,6 @@ public class ClientConnection extends Thread {
 		boolean runThread = true;
 		while (runThread) {
 			try {
-				// jackson
 				InputStream in = m_socket.getInputStream();
 				DataInputStream din = new DataInputStream(in);
 				ObjectInputStream oin = new ObjectInputStream(din);
@@ -32,7 +31,7 @@ public class ClientConnection extends Thread {
 				AbstractMessageTopClass msg = (AbstractMessageTopClass) opt.get();
 				
 				msg.executeInReplicaManager();
-
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 				runThread = false;

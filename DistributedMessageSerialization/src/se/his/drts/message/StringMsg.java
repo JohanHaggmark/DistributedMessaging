@@ -1,7 +1,7 @@
 package se.his.drts.message;
 
 import java.util.UUID;
-import se.his.drts.message.MessagePayload;
+
 
 public class StringMsg extends AbstractMessageTopClass {
 
@@ -42,8 +42,8 @@ public class StringMsg extends AbstractMessageTopClass {
 
 	@Override
 	public void executeInReplicaManager() {
-		// TODO Auto-generated method stub
-		System.out.println("hejsan StringMsg RM");		
+		// TODO Auto-generated method 
+		
 	}
 
 	@Override
