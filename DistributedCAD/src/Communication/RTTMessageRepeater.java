@@ -24,15 +24,10 @@ public class RTTMessageRepeater implements Runnable {
 			Message msg = null;
 			try {
 				msg = m_RTTMessageQueue.take();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
-			try {
 				Thread.sleep(averageRTT);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
+			} 
 			m_messageQueue.add(msg);			
 		}
 	}

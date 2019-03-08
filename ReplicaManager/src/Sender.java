@@ -1,13 +1,18 @@
+import java.util.concurrent.LinkedBlockingQueue;
+
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 
-public class Sender {
+import se.his.drts.message.AbstractMessageTopClass;
+
+public class Sender implements Runnable{
 	
 	JChannel m_channel;
-
+	LinkedBlockingQueue<AbstractMessageTopClass> messagesToSender;
 	
-	public Sender(JChannel channel) {
+	public Sender(JChannel channel, LinkedBlockingQueue messagesToSender) {
 		this.m_channel = channel;
+		this.messagesToSender = messagesToSender;
 	}
 	
 	public void receiveFromJGroupsStub(String message) {
@@ -20,8 +25,19 @@ public class Sender {
 		try {
 			m_channel.send(msg);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void run() {
+		while(true) {
+			try {
+				AbstractMessageTopClass msg = messagesToSender.take();
+				msg.executeInReplicaManager();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}	
 	}
 }

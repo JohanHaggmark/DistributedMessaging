@@ -1,3 +1,5 @@
+import java.util.concurrent.LinkedBlockingQueue;
+
 import org.jgroups.JChannel;
 
 public class Main {
@@ -6,11 +8,11 @@ public class Main {
 	
 
 	public static void main(String[] args) throws Exception {
+		LinkedBlockingQueue messagesToSender = new LinkedBlockingQueue<String>();
 		JChannel channel = new JChannel();
 		channel.connect("ChatCluster");
-		Sender sender = new Sender(channel);
-		new Receiver(channel, sender).start();;
-		new ViewChangedMonitor(channel).start();;
+	    new Thread(new Sender(channel, messagesToSender)).start();
+		new Receiver(channel, messagesToSender).start();
+		new ViewChangedMonitor(channel).start();
 	}
-
 }

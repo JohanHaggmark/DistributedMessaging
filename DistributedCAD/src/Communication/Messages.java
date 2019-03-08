@@ -47,6 +47,6 @@ public class Messages {
 	}
 
 	private AbstractMessageTopClass createMessageTopClass(GObject obj) {
-		return new DrawObject(obj);
+		return new DrawObject();
 	}
 }

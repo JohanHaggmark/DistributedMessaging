@@ -1,3 +1,5 @@
+import java.util.concurrent.LinkedBlockingQueue;
+
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
@@ -5,12 +7,12 @@ import org.jgroups.ReceiverAdapter;
 public class Receiver extends ReceiverAdapter {
 
 	JChannel m_channel;
-	Sender m_sender;
+	LinkedBlockingQueue messagesToSender;
 	
 	
-	public Receiver(JChannel channel, Sender sender) {
+	public Receiver(JChannel channel, LinkedBlockingQueue messagesToSender) {
 		this.m_channel = channel;
-		this.m_sender = sender;
+		this.messagesToSender = messagesToSender;
 	}
 	
 	public void start() throws Exception {
@@ -25,6 +27,7 @@ public class Receiver extends ReceiverAdapter {
 	
 	private void send(String message) {
 		// LÄGG TILL NÅGON FORM AV LBQ HÄR ISTÄLLET FÖR EN STUB EFTERSOM DET BLIR CP ATT RECEIVER SKA HA KOLL PÅ SENDER
-		m_sender.receiveFromJGroupsStub(message);
+
+	//	messagesToSender.add(e)
 	}
 }

@@ -9,14 +9,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.MessagePayload;
 
-
 public class ClientConnection extends Thread {
 
 	Socket m_socket;
-	LinkedBlockingQueue messages;
-	public ClientConnection(Socket socket, LinkedBlockingQueue<AbstractMessageTopClass> messages) {
+	LinkedBlockingQueue messagesFromClients;
+
+	public ClientConnection(Socket socket, LinkedBlockingQueue<byte[]> messagesFromClients) {
 		this.m_socket = socket;
-		this.messages = messages;
+		this.messagesFromClients = messagesFromClients;
 		this.start();
 	}
 
@@ -29,13 +29,7 @@ public class ClientConnection extends Thread {
 				DataInputStream din = new DataInputStream(in);
 				ObjectInputStream oin = new ObjectInputStream(din);
 				byte[] bytes = (byte[]) oin.readObject();
-				//Optional<MessagePayload> opt = MessagePayload.createMessage(bytes);
-				//AbstractMessageTopClass msg = (AbstractMessageTopClass) opt.get();
-				
-				//Give message to jgroups thread!
-				//messages.add(msg);
-				//Vi vill ju inte packa upp skiten här egentligen.
-				messages.add(bytes);
+				messagesFromClients.add(bytes);
 
 			} catch (IOException e) {
 				e.printStackTrace();
