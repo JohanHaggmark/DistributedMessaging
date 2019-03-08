@@ -31,10 +31,13 @@ public class ClientConnection extends Thread {
 				byte[] bytes = (byte[]) oin.readObject();
 				//Optional<MessagePayload> opt = MessagePayload.createMessage(bytes);
 				//AbstractMessageTopClass msg = (AbstractMessageTopClass) opt.get();
+
+				// "SKA VI INTE HA DETTA HÄR??"  - Alfred
+        msg.executeInReplicaManager();
 				
 				//Give message to jgroups thread!
 				//messages.add(msg);
-				//Vi vill ju inte packa upp skiten h�r egentligen.
+				//Vi vill ju inte packa upp skiten här egentligen.
 				messages.add(bytes);
 
 			} catch (IOException e) {
