@@ -1,15 +1,20 @@
 package se.his.drts.message;
 
+import java.util.LinkedList;
+import java.util.UUID;
 
-public class DrawObject extends Draw {
-
+public class DrawObjects extends Draw {
+	Object objectList;
 	
-	public DrawObject() {
+	
+	public DrawObjects(Object objectList) {
+		super(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"));
+		this.objectList = objectList;
 	}
 
 	@Override
-	public void executeInClient() {
-		
+	public Object executeInClient() {
+		return objectList;
 	}
 
 	@Override

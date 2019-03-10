@@ -23,9 +23,10 @@ public class StringMsg extends AbstractMessageTopClass {
 	}
 
 	@Override
-	public void executeInClient() {
+	public Object executeInClient() {
 		// TODO Auto-generated method stub
 		System.out.println("hejsan");
+		return new Object();
 	}
 
 	@Override

@@ -4,21 +4,17 @@ import se.his.drts.message.AbstractMessageTopClass;
 
 public class Message {
 
-	private int id;
+	private Integer id;
 	private int attempt = 0;
 	public boolean isAcknowledge = false;
 	AbstractMessageTopClass msgTopClass;
 
-	public Message(int id, AbstractMessageTopClass msgTopClass) {
-		this.id = id;
+	public Message(AbstractMessageTopClass msgTopClass) {
 		this.msgTopClass = msgTopClass;
+		this.id = msgTopClass.getId();
 	}
 	
 	public Message() {
-	}
-	
-	public int getId() {
-		return id;
 	}
 
 	public int getAttempt() {
@@ -26,5 +22,17 @@ public class Message {
 	}
 	public void incrementAttempt() {
 		attempt++;
+	}
+	
+	public void setAcknowledge() {
+		isAcknowledge = true;
+	}
+	
+	public AbstractMessageTopClass getMsgTopClass() {
+		return this.msgTopClass;
+	}
+	
+	public Integer getId() {
+		return id;
 	}
 }

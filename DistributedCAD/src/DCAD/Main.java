@@ -16,9 +16,9 @@ public class Main {
     	rmConnection = new RMConnection("127.0.0.1", 25001);
     	messages = new Messages();
 		new Cad(rmConnection, gui, messages);	
-        new Receiver(rmConnection, gui, messages);
+		new Thread(new Receiver(rmConnection, gui, messages)).start();
        
-        new Sender(rmConnection, messages);
-        new RTTMessageRepeater(messages.getMessageQueue(), messages.getRTTMessageQueue());
+        new Thread(new Sender(rmConnection, messages)).start();
+        new Thread(new RTTMessageRepeater(messages.getMessageQueue(), messages.getRTTMessageQueue())).start();
     }
 }

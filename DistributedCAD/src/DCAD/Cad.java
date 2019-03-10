@@ -5,8 +5,7 @@
 
 package DCAD;
 
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.util.LinkedList;
 
 import Communication.Messages;
 import Communication.RMConnection;
@@ -24,7 +23,7 @@ public class Cad {
 		gui.addToListener();
 	}
 
-	public void sendNewObject(GObject obj) {
-		messages.addNewMessage(obj);
+	public void sendState(LinkedList<GObject> objectList) {
+		messages.addNewMessage(objectList);
 	}
 }

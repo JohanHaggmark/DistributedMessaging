@@ -31,12 +31,13 @@ public class RMConnection {
 		}
 	}
 
-	public void sendMessage(String msg) {
-		try {
-			StringMsg m = new StringMsg(msg);
+	public void sendMessage(AbstractMessageTopClass msg) {
+	
+		try {	
 			OutputStream os = m_socket.getOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(os);
-			oos.writeObject(m.serialize());
+			oos.writeObject(msg.serialize());
+			System.out.println("sending!");
 
 		} catch (IOException e) {
 			e.printStackTrace();
