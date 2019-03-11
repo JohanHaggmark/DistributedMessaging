@@ -5,10 +5,10 @@ import java.util.UUID;
 
 public class DrawObjects extends Draw {
 	Object objectList;
-	
+	private static UUID uuid = UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03");
 	
 	public DrawObjects(Object objectList) {
-		super(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"));
+		super(uuid);
 		this.objectList = objectList;
 	}
 
@@ -34,5 +34,10 @@ public class DrawObjects extends Draw {
 		// spara det ritade state
 		// skicka ut meddelandet till FrontEnd
 		return objectList;
+	}
+	
+	@Override
+	public UUID getUUID() {
+		return uuid;
 	}
 }

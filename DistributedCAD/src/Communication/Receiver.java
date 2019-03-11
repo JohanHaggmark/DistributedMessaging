@@ -11,15 +11,16 @@ import java.util.UUID;
 import DCAD.GObject;
 import DCAD.GUI;
 import se.his.drts.message.AbstractMessageTopClass;
+import se.his.drts.message.LocalMessages;
 import se.his.drts.message.MessagePayload;
 
 public class Receiver implements Runnable {
 
 	RMConnection rmConnection;
 	GUI gui;
-	Messages messages;
+	LocalMessages messages;
 
-	public Receiver(RMConnection rmConnection, GUI gui, Messages messages) {
+	public Receiver(RMConnection rmConnection, GUI gui, LocalMessages messages) {
 		this.rmConnection = rmConnection;
 		this.gui = gui;
 		this.messages = messages;
