@@ -169,24 +169,5 @@ class inheritanceTest2 {
 	void tearDown() throws Exception {
 	}
 
-	@Test
-	void test() {
-		TestUniqueMessage tumA = new TestUniqueMessage("A");
-		byte[] byteA = tumA.serialize();
-		Optional<MessagePayload> tumA2 = MessagePayload.createMessage(byteA);
-		assertTrue(tumA2.isPresent());
-		assertTrue(tumA2.get().equals(tumA));
-		Envelope envelope = new Envelope(tumA);
-		Optional<MessagePayload> tumA3 = envelope.getMessage();
-		assertTrue(tumA3.get().equals(tumA));
-		byte[] envNetworkMessage = envelope.serialize();
-		try {
-			Envelope envelope2 = Envelope.createEnvelope(envNetworkMessage);
-			Optional<MessagePayload> tumA4 = envelope2.getMessage();
-			assertTrue(tumA.equals(tumA4.get()));
-		} catch (IncorrectMessageException e) {
-			fail(e);
-		}
-	}
 
 }

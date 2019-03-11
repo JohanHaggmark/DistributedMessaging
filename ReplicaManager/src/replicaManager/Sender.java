@@ -1,3 +1,4 @@
+package replicaManager;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jgroups.JChannel;
@@ -13,6 +14,7 @@ public class Sender implements Runnable{
 	public Sender(JChannel channel, LinkedBlockingQueue messagesToSender) {
 		this.m_channel = channel;
 		this.messagesToSender = messagesToSender;
+
 	}
 	
 	public void receiveFromJGroupsStub(String message) {
@@ -20,21 +22,28 @@ public class Sender implements Runnable{
 		this.send(message);
 	}
 
+
 	private void send(String message) {
-		Message msg = new Message(null, message.getBytes());
+		Message msg = new Message(null, message);
 		try {
 			m_channel.send(msg);
+			System.out.println("sending");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	private void sendName() {
+		send("hej");
+	}
 	@Override
 	public void run() {
 		while(true) {
 			try {
-				AbstractMessageTopClass msg = messagesToSender.take();
-				msg.executeInReplicaManager();
+				Thread.sleep(1000);
+				sendName();
+				//AbstractMessageTopClass msg = messagesToSender.take();
+				//msg.executeInReplicaManager();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

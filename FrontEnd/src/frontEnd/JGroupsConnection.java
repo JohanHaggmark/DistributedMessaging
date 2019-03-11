@@ -1,3 +1,4 @@
+package frontEnd;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jgroups.JChannel;
