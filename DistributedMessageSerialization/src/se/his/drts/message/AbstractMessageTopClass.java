@@ -1,6 +1,7 @@
 package se.his.drts.message;
 
 import java.math.BigInteger;
+import java.util.LinkedList;
 import java.util.UUID;
 
 import se.his.drts.message.MessagePayload;
@@ -12,26 +13,18 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 	private int attempt = 0;
 	private static BigInteger nextSubIdentity = BigInteger.ONE;
 	private static UUID uuid = UUID.fromString("d96d5262-4dfb-4639-82c3-15eb3c0fa789");
-	private BigInteger subIdentity;
-
+	private static Integer id = 0;
 	
 	public AbstractMessageTopClass() {
 		super(AbstractMessageTopClass.uuid);
-		synchronized (AbstractMessageTopClass.nextSubIdentity) {
-			this.subIdentity = AbstractMessageTopClass.nextSubIdentity;
-			AbstractMessageTopClass.nextSubIdentity = AbstractMessageTopClass.nextSubIdentity.add(BigInteger.ONE);
-		}
 	}
 
 	protected AbstractMessageTopClass(UUID uuid) {
 		super(uuid);
-		synchronized (AbstractMessageTopClass.nextSubIdentity) {
-			this.subIdentity = AbstractMessageTopClass.nextSubIdentity;
-			AbstractMessageTopClass.nextSubIdentity = AbstractMessageTopClass.nextSubIdentity.add(BigInteger.ONE);
-		}
+		id++;
 	}
 
-	public abstract void executeInClient();
+	public abstract Object executeInClient();
 
 	public abstract void executeInFrontEndFromRM();
 
@@ -39,4 +32,11 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 
 	public abstract void executeInReplicaManager() ;
 
+	public UUID getUUID() {
+		return uuid;
+	}
+	
+	public Integer getId() {
+		return id;
+	}
 }

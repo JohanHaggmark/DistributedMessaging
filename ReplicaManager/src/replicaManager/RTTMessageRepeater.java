@@ -1,3 +1,4 @@
+package replicaManager;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.jgroups.Message;
 

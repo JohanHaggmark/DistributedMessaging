@@ -1,6 +1,6 @@
 package Communication;
 
-public class Sender extends Thread {
+public class Sender implements Runnable {
 
 	Messages m_messages;
 	RMConnection m_RMConnection;
@@ -18,15 +18,13 @@ public class Sender extends Thread {
 			try {
 				Message msg = (Message) m_messages.getMessageQueue().take();
 				if (!msg.isAcknowledge && msg.getAttempt() < ATTEMPTS) {
-					m_RMConnection.sendMessage("hej ,Sender 23");
+					m_RMConnection.sendMessage(msg.getMsgTopClass());
 					msg.incrementAttempt();
 					m_messages.addToRTTMessageQueue(msg);
 				}
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
-
 }

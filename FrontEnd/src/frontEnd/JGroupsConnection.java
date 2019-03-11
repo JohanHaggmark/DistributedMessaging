@@ -1,3 +1,4 @@
+package frontEnd;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jgroups.JChannel;
@@ -27,7 +28,7 @@ public class JGroupsConnection implements Runnable{
 		public void run() {
 			while(true) {
 				//måste ta reda på vilken replica manager som ska ha meddelandet.
-				channel.send("Addresss", messages.take());
+				//channel.send("Addresss", messages.take());
 			}		
 		}	
 	}
