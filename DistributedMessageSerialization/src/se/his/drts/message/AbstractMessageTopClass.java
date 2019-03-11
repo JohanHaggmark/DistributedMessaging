@@ -21,7 +21,9 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 
 	protected AbstractMessageTopClass(UUID uuid) {
 		super(uuid);
-		id++;
+		if (!uuid.toString().equals("bb5eeb2c-fa66-4e70-891b-382d87b64814")) {
+			id++;
+		}
 	}
 	
 //	public abstract UUID getClassUUID();

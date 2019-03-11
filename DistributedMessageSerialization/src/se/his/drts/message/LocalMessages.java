@@ -8,7 +8,6 @@ public class LocalMessages {
 	private LinkedBlockingQueue m_messageQueue;
 	private LinkedBlockingQueue m_RTTMessageQueue;
 	private ConcurrentHashMap<Integer, LocalMessage> m_mapOfMessages;
-	Integer id = 0;
 
 	public LocalMessages() {
 		m_messageQueue = new LinkedBlockingQueue<LocalMessage>();
@@ -16,8 +15,8 @@ public class LocalMessages {
 		m_mapOfMessages = new ConcurrentHashMap<Integer, LocalMessage>();
 	}
 
-	public void addNewMessage(Object object) {
-		LocalMessage msg = new LocalMessage(createMessageTopClass(object));
+	public void addNewMessage(AbstractMessageTopClass aMsgTopClass) {
+		LocalMessage msg = new LocalMessage(aMsgTopClass);
 		m_mapOfMessages.put(msg.getId(), msg);
 		addToMessageQueue(msg);
 	}
@@ -37,19 +36,14 @@ public class LocalMessages {
 	public LinkedBlockingQueue getRTTMessageQueue() {
 		return m_RTTMessageQueue;
 	}
-	
+
 	public ConcurrentHashMap<Integer, LocalMessage> getMapOfMessages() {
 		return m_mapOfMessages;
 	}
 
-	private AbstractMessageTopClass createMessageTopClass(Object object) {
-		return new DrawObjects(object);
-	}
-	
-	public void acknowledgeMessage(Integer id) {
-		if(m_mapOfMessages.containsKey(id)) {
-			m_mapOfMessages.get(id).setAcknowledge();
-			m_mapOfMessages.remove(id);
-		}
+	public void removeAcknowledgeFromMessage(Integer id) {
+		m_mapOfMessages.get(id).setAcknowledge();
+		m_mapOfMessages.remove(id);
+
 	}
 }
