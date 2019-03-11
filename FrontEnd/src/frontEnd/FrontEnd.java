@@ -1,16 +1,15 @@
 package frontEnd;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import se.his.drts.message.AbstractMessageTopClass;
-
 public class FrontEnd {
 	ArrayList<ClientConnection> m_connectedClients = new ArrayList<ClientConnection>();
 	LinkedBlockingQueue messagesFromClients;
-	
+
 	private ServerSocket m_socket;
 
 	public FrontEnd(int portNumber) {
@@ -36,8 +35,8 @@ public class FrontEnd {
 			}
 		}
 	}
-	
-	private void startJGroupsConnection(){
+
+	private void startJGroupsConnection() {
 		new Thread(new JGroupsConnection(messagesFromClients)).start();
 	}
 }
