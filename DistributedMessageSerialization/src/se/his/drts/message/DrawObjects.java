@@ -30,10 +30,9 @@ public class DrawObjects extends Draw {
 	}
 
 	@Override
-	public void executeInReplicaManager() {
+	public Object executeInReplicaManager() {
 		// spara det ritade state
 		// skicka ut meddelandet till FrontEnd
-
+		return objectList;
 	}
-
 }
