@@ -9,13 +9,13 @@ import org.jgroups.ReceiverAdapter;
 import org.jgroups.View;
 
 import se.his.drts.message.AbstractMessageTopClass;
+import se.his.drts.message.LocalMessages;
 
 public class Receiver extends ReceiverAdapter {
-
 	JChannel m_channel;
-	Messages m_messages;
+	LocalMessages m_messages;
 
-	public Receiver(JChannel channel, Messages messages) {
+	public Receiver(JChannel channel, LocalMessages messages) {
 		this.m_channel = channel;
 		this.m_messages = messages;
 	}

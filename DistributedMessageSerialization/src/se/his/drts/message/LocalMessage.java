@@ -1,6 +1,4 @@
-package replicaManager;
-
-import se.his.drts.message.AbstractMessageTopClass;
+package se.his.drts.message;
 
 public class LocalMessage {
 

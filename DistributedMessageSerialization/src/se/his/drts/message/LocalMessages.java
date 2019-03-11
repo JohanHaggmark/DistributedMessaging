@@ -1,18 +1,16 @@
-package replicaManager;
+package se.his.drts.message;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
-import se.his.drts.message.AbstractMessageTopClass;
-import se.his.drts.message.DrawObjects;
 
 //Class purpose is to enable threads to communicate and pass messages with each other
-public class Messages {
+public class LocalMessages {
 	private LinkedBlockingQueue m_messageQueue;
 	private LinkedBlockingQueue m_RTTMessageQueue;
 	private ConcurrentHashMap<Integer, LocalMessage> m_mapOfMessages;
 	Integer id = 0;
 
-	public Messages() {
+	public LocalMessages() {
 		m_messageQueue = new LinkedBlockingQueue<LocalMessage>();
 		m_RTTMessageQueue = new LinkedBlockingQueue<LocalMessage>();
 		m_mapOfMessages = new ConcurrentHashMap<Integer, LocalMessage>();

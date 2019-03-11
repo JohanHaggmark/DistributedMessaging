@@ -4,14 +4,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jgroups.JChannel;
 
+import se.his.drts.message.LocalMessages;
+
 public class Main {
 	
 	String user_name = System.getProperty("user.name", "n/a");
 	
 
 	public static void main(String[] args) throws Exception {
-		Messages messages = new Messages();
-		LinkedBlockingQueue messagesToSender = new LinkedBlockingQueue<String>();
+		LocalMessages messages = new LocalMessages();
 		JChannel channel = new JChannel();
 		new Receiver(channel, messages).start();
 	    new Thread(new Sender(channel, messages)).start();	

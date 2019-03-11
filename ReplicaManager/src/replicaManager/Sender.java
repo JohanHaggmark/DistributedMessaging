@@ -6,15 +6,17 @@ import org.jgroups.JChannel;
 import org.jgroups.Message;
 
 import se.his.drts.message.AbstractMessageTopClass;
+import se.his.drts.message.LocalMessage;
+import se.his.drts.message.LocalMessages;
 
 public class Sender implements Runnable {
 
 	JChannel m_channel;
 	LinkedBlockingQueue<AbstractMessageTopClass> messagesToSender;
-	Messages m_messages;
+	LocalMessages m_messages;
 	private static int ATTEMPTS = 10;
 
-	public Sender(JChannel channel, Messages messages) {
+	public Sender(JChannel channel, LocalMessages messages) {
 		this.m_channel = channel;
 		this.messagesToSender = messagesToSender;
 		this.m_messages = messages;
@@ -42,7 +44,6 @@ public class Sender implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
 		}
 	}
 }
