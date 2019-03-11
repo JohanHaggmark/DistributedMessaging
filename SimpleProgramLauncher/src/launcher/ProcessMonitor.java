@@ -107,8 +107,7 @@ public class ProcessMonitor  {
 		public String toString() {
 			return "LaunchSpecification [argument=" + Arrays.toString(argument) + ", relaunch=" + relaunch
 					+ ", noOfRetries=" + noOfRetries + "]";
-		}
-		
+		}		
 	}
 	/**
 	 * The purpose of this class is the actual thread that monitors the process. The reason is that the main object should

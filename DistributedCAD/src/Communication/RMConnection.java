@@ -32,7 +32,6 @@ public class RMConnection {
 	}
 
 	public void sendMessage(AbstractMessageTopClass msg) {
-	
 		try {	
 			OutputStream os = m_socket.getOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(os);

@@ -1,7 +1,10 @@
 package replicaManager;
+import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jgroups.JChannel;
+
+import se.his.drts.message.LocalMessages;
 
 public class Main {
 	
@@ -9,9 +12,10 @@ public class Main {
 	
 
 	public static void main(String[] args) throws Exception {
-		LinkedBlockingQueue messagesToSender = new LinkedBlockingQueue<String>();
+		LocalMessages messages = new LocalMessages();
 		JChannel channel = new JChannel();
-		new Receiver(channel, messagesToSender).start();
-	    new Thread(new Sender(channel, messagesToSender)).start();	
+		new Receiver(channel, messages).start();
+	    new Thread(new Sender(channel, messages)).start();	
+	    new Thread(new RTTMessageRepeater(messages.getMessageQueue(), messages.getRTTMessageQueue())).start();
 	}
 }

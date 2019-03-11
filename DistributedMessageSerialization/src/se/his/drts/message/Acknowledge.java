@@ -28,9 +28,9 @@ public class Acknowledge extends AbstractMessageTopClass{
 	}
 
 	@Override
-	public void executeInReplicaManager() {
+	public Object executeInReplicaManager() {
 		// TODO Auto-generated method stub
-		
+		return id;
 	}
 
 }

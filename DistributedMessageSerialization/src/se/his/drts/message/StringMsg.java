@@ -42,9 +42,8 @@ public class StringMsg extends AbstractMessageTopClass {
 	}
 
 	@Override
-	public void executeInReplicaManager() {
-		// TODO Auto-generated method 
-		
+	public Object executeInReplicaManager() {
+		return new Object();
 	}
 
 	@Override

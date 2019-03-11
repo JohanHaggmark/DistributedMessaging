@@ -38,7 +38,7 @@ public class Receiver implements Runnable {
 				Optional<MessagePayload> opt = MessagePayload.createMessage(bytes);
 				AbstractMessageTopClass msg = (AbstractMessageTopClass) opt.get();
 
-				// if message is a acknowledge message
+				// if message is an acknowledge message
 				if (msg.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
 					messages.acknowledgeMessage((Integer) msg.executeInClient());
 					System.out.println("acknowledged Receiver 42");

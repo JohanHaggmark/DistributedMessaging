@@ -30,7 +30,7 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 
 	public abstract void executeInFrontEndFromClient();
 
-	public abstract void executeInReplicaManager() ;
+	public abstract Object executeInReplicaManager() ;
 
 	public UUID getUUID() {
 		return uuid;
