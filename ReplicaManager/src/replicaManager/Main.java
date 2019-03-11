@@ -1,7 +1,4 @@
 package replicaManager;
-import java.util.LinkedList;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import org.jgroups.JChannel;
 
 import se.his.drts.message.LocalMessages;

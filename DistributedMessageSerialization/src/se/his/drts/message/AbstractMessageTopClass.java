@@ -23,6 +23,8 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 		super(uuid);
 		id++;
 	}
+	
+//	public abstract UUID getClassUUID();
 
 	public abstract Object executeInClient();
 
@@ -32,9 +34,7 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 
 	public abstract Object executeInReplicaManager() ;
 
-	public UUID getUUID() {
-		return uuid;
-	}
+	public abstract UUID getUUID();
 	
 	public Integer getId() {
 		return id;

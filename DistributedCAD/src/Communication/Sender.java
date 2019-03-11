@@ -1,12 +1,15 @@
 package Communication;
 
+import se.his.drts.message.LocalMessage;
+import se.his.drts.message.LocalMessages;
+
 public class Sender implements Runnable {
 
-	Messages m_messages;
+	LocalMessages m_messages;
 	RMConnection m_RMConnection;
 	private final int ATTEMPTS = 10;
 
-	public Sender(RMConnection rmConnection, Messages messages) {
+	public Sender(RMConnection rmConnection, LocalMessages messages) {
 		this.m_RMConnection = rmConnection;
 		this.m_messages = messages;
 
@@ -16,7 +19,7 @@ public class Sender implements Runnable {
 	public void run() {
 		while (true) {
 			try {
-				Message msg = (Message) m_messages.getMessageQueue().take();
+				LocalMessage msg = (LocalMessage) m_messages.getMessageQueue().take();
 				if (!msg.isAcknowledge && msg.getAttempt() < ATTEMPTS) {
 					m_RMConnection.sendMessage(msg.getMsgTopClass());
 					msg.incrementAttempt();

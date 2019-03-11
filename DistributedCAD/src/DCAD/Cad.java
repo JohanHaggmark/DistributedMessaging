@@ -7,15 +7,15 @@ package DCAD;
 
 import java.util.LinkedList;
 
-import Communication.Messages;
 import Communication.RMConnection;
+import se.his.drts.message.LocalMessages;
 
 public class Cad {
 	private GUI gui;
 	private RMConnection rmConnection;
-	private Messages messages;
+	private LocalMessages messages;
 
-	public Cad(RMConnection rmc, GUI gui, Messages messages) {
+	public Cad(RMConnection rmc, GUI gui, LocalMessages messages) {
 		this.messages = messages;
 		this.gui = gui;
 		this.rmConnection = rmc;

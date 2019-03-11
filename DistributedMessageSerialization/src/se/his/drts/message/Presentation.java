@@ -2,19 +2,16 @@ package se.his.drts.message;
 
 import java.util.UUID;
 
-
-public class StringMsg extends AbstractMessageTopClass {
-
-	private static UUID uuid = UUID.fromString("9dbc5c87-9bf2-477a-8437-a2f617f0bad8");
+public class Presentation extends AbstractMessageTopClass{
+	private static UUID uuid = UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd");
 	private String name;
 	
-	
-	public StringMsg() {
-		super(StringMsg.uuid);
+	public Presentation() {
+		super(Presentation.uuid);
 	}
 
-	public StringMsg(String name) {
-		super(StringMsg.uuid);
+	public Presentation(String name) {
+		super(Presentation.uuid);
 		this.name = name;
 	}
 
@@ -43,12 +40,13 @@ public class StringMsg extends AbstractMessageTopClass {
 
 	@Override
 	public Object executeInReplicaManager() {
-		return new Object();
+		System.out.println("hallojsan");
+		return this.name;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		String objName = ((StringMsg)obj).getName();
+		String objName = ((Presentation)obj).getName();
 		return super.equals(obj) && this.name.compareTo(objName)==0;
 	}
 	/* (non-Javadoc)
@@ -60,7 +58,7 @@ public class StringMsg extends AbstractMessageTopClass {
 		if (n!=0) {
 			return n;
 		}
-		return this.name.compareTo(((StringMsg)arg0).getName());
+		return this.name.compareTo(((Presentation)arg0).getName());
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -69,7 +67,7 @@ public class StringMsg extends AbstractMessageTopClass {
 	public String toString() {
 		return "TestMessage [name=" + name + ", getUuid()=" + getUuid() + "]";
 	}
-	
+
 	@Override
 	public UUID getUUID() {
 		return uuid;

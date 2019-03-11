@@ -1,7 +1,8 @@
 package replicaManager;
-import java.util.LinkedList;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jgroups.JChannel;
 import org.jgroups.Message;
@@ -9,15 +10,22 @@ import org.jgroups.ReceiverAdapter;
 import org.jgroups.View;
 
 import se.his.drts.message.AbstractMessageTopClass;
+import se.his.drts.message.LocalMessage;
 import se.his.drts.message.LocalMessages;
+import se.his.drts.message.Presentation;
 
 public class Receiver extends ReceiverAdapter {
 	JChannel m_channel;
 	LocalMessages m_messages;
+	Thread thread;
+	LocalMessage localMessage;
+	Map<String,String> listOfNames = new HashMap();
 
 	public Receiver(JChannel channel, LocalMessages messages) {
 		this.m_channel = channel;
 		this.m_messages = messages;
+		this.startThread();
+		thread.start();
 	}
 
 	public void start() throws Exception {
@@ -29,21 +37,52 @@ public class Receiver extends ReceiverAdapter {
 		System.out.println("view " + new_view);
 	}
 
+	public void startThread() {
+		thread = new Thread() {
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						sleep(1000);
+						Presentation presentation = new Presentation(m_channel.getName());
+						localMessage = new LocalMessage(presentation);
+						System.out.println("RMName: " + presentation.getName());
+						m_messages.addToMessageQueue(localMessage);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+	}
+
 	public void receive(Message msg) {
 		AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) msg.getObject();
-			
-		//if messages is not acknowledge message
-		//add make a new message and add it to senders message queue
+		// if messages is not acknowledge message
+		// add make a new message and add it to senders message queue
 		if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
-			//update the state and add the message
-			//gui.setObjectList((LinkedList<GObject>) msgTopClass.executeInReplicaManager());
+			// update the state and add the message
+			// gui.setObjectList((LinkedList<GObject>)
+			// msgTopClass.executeInReplicaManager());
 			m_messages.addNewMessage(msgTopClass.executeInReplicaManager());
 		}
-		
-		//if message is an acknowledge message
+
+		// if message is an acknowledge message
 		else if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
 			m_messages.acknowledgeMessage((Integer) msgTopClass.executeInReplicaManager());
 			System.out.println("acknowledged Receiver 42");
+		} 
+		// presentation
+		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
+			String name = (String) msgTopClass.executeInReplicaManager();
+			System.out.println("pressss - received Name from RM: " + name);
+			listOfNames.put(name,"replica manager");
+		} else {
+			System.out.println(msgTopClass.getUUID().toString());
+			msgTopClass.executeInReplicaManager();
+//			Presentation amsg = (Presentation) msgTopClass;
+			System.out.println("else");
+//			System.out.println("received from RM: " + amsg.getName());
 		}
 	}
 }
