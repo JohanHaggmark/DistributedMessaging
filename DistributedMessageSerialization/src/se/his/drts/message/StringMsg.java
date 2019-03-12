@@ -10,11 +10,11 @@ public class StringMsg extends AbstractMessageTopClass {
 	
 	
 	public StringMsg() {
-		super(StringMsg.uuid);
+		super(uuid);
 	}
 
 	public StringMsg(String name) {
-		super(StringMsg.uuid);
+		super(uuid);
 		this.name = name;
 	}
 
