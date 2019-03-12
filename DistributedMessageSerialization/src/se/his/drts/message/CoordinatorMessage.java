@@ -2,18 +2,25 @@ package se.his.drts.message;
 
 import java.util.UUID;
 
-public class Acknowledge extends AbstractMessageTopClass{
-	private Object id;
-	private static UUID uuid = UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814");
+public class CoordinatorMessage extends AbstractMessageTopClass {
 	
-	public Acknowledge(Object id) {
+	private static UUID uuid = UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27");
+	private Integer id;
+
+	
+	public CoordinatorMessage() {
+		super(uuid);
+	}
+	
+	public CoordinatorMessage(Integer id) {
 		super(uuid);
 		this.id = id;
 	}
 	
 	@Override
 	public Object executeInClient() {
-		return id;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -33,9 +40,11 @@ public class Acknowledge extends AbstractMessageTopClass{
 		// TODO Auto-generated method stub
 		return id;
 	}
-	
+
 	@Override
 	public UUID getUUID() {
-		return uuid;
+		// TODO Auto-generated method stub
+		return null;
 	}
+
 }

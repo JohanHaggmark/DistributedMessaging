@@ -26,6 +26,6 @@ public class Cad {
 	}
 
 	public void sendState(LinkedList<GObject> objectList) {
-		messages.addNewMessage(new DrawObjects(objectList));
+		messages.addNewMessageWithAcknowledge(new DrawObjects(objectList));
 	}
 }

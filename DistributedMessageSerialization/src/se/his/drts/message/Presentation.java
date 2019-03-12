@@ -2,16 +2,25 @@ package se.his.drts.message;
 
 import java.util.UUID;
 
-public class Presentation extends AbstractMessageTopClass{
+public class Presentation extends AbstractMessageTopClass {
+	
 	private static UUID uuid = UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd");
 	private String name;
 	
+	public static Presentation createReplicaManagerPresentation(String name) {
+		return new Presentation(name + "-ReplicaManager");
+	}
+
+	public static Presentation createFrontEndPresentation(String name) {
+		return new Presentation(name + "-FrontEnd");
+	}
+	
 	public Presentation() {
-		super(Presentation.uuid);
+		super(uuid);
 	}
 
 	public Presentation(String name) {
-		super(Presentation.uuid);
+		super(uuid);
 		this.name = name;
 	}
 
@@ -22,7 +31,6 @@ public class Presentation extends AbstractMessageTopClass{
 	@Override
 	public Object executeInClient() {
 		// TODO Auto-generated method stub
-		System.out.println("hejsan");
 		return new Object();
 	}
 
@@ -40,7 +48,6 @@ public class Presentation extends AbstractMessageTopClass{
 
 	@Override
 	public Object executeInReplicaManager() {
-		System.out.println("hallojsan");
 		return this.name;
 	}
 

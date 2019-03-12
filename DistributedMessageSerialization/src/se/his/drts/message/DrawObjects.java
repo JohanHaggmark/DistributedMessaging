@@ -1,9 +1,8 @@
 package se.his.drts.message;
 
-import java.util.LinkedList;
 import java.util.UUID;
 
-public class DrawObjects extends Draw {
+public class DrawObjects extends AbstractMessageTopClass {
 	Object objectList;
 	private static UUID uuid = UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03");
 	

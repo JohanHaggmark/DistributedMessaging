@@ -15,9 +15,14 @@ public class LocalMessages {
 		m_mapOfMessages = new ConcurrentHashMap<Integer, LocalMessage>();
 	}
 
-	public void addNewMessage(AbstractMessageTopClass aMsgTopClass) {
-		LocalMessage msg = new LocalMessage(aMsgTopClass);
+	public void addNewMessageWithAcknowledge(AbstractMessageTopClass msgTopClass) {
+		LocalMessage msg = new LocalMessage(msgTopClass);
 		m_mapOfMessages.put(msg.getId(), msg);
+		addToMessageQueue(msg);
+	}
+	
+	public void addNewMessage(AbstractMessageTopClass msgTopClass) {
+		LocalMessage msg = new LocalMessage(msgTopClass);
 		addToMessageQueue(msg);
 	}
 

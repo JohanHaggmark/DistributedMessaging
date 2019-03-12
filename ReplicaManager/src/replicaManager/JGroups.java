@@ -1,12 +1,15 @@
 package replicaManager;
 
+import org.jgroups.Address;
 import org.jgroups.JChannel;
 
 import se.his.drts.message.LocalMessages;
 
 public class JGroups {
-	public static String primaryRM = null;
-	public static String frontEnd = null;
+	public static Address primaryRM = null;
+	public static Address frontEnd = null;
+	public static Election newestElection = null;
+	public static volatile boolean isCoordinator = false;
 
 	public static void start() {
 		try {
