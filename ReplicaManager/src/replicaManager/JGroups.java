@@ -1,15 +1,18 @@
 package replicaManager;
 
+import java.util.concurrent.LinkedBlockingQueue;
+
 import org.jgroups.Address;
 import org.jgroups.JChannel;
 
+import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.LocalMessages;
 
 public class JGroups {
 	public static Address primaryRM = null;
 	public static Address frontEnd = null;
-	public static Election newestElection = null;
 	public static volatile boolean isCoordinator = false;
+	public static LinkedBlockingQueue electionQueue = new LinkedBlockingQueue<AbstractMessageTopClass>();
 
 	public static void start() {
 		try {
@@ -20,6 +23,8 @@ public class JGroups {
 			new JGroups();
 			new Thread(new Sender(channel, messages)).start();
 			new Thread(new RTTMessageRepeater(messages.getMessageQueue(), messages.getRTTMessageQueue())).start();
+			
+			new Thread(new Election(channel, messages)).start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

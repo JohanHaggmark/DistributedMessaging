@@ -2,19 +2,18 @@ package se.his.drts.message;
 
 import java.util.UUID;
 
-public class CoordinatorMessage extends AbstractMessageTopClass {
+public class TimeOutMessage extends AbstractMessageTopClass{
 	
-	private static UUID uuid = UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27");
-	private Integer id;
-
+	private static UUID uuid = UUID.fromString("0d61e561-116e-48e3-9259-8170c9623da3");
+	private long timeStamp;
 	
-	public CoordinatorMessage() {
+	public TimeOutMessage() {
 		super(uuid);
 	}
 	
-	public CoordinatorMessage(Integer id) {
+	public TimeOutMessage(long timeStamp) {
 		super(uuid);
-		this.id = id;
+		this.timeStamp = timeStamp;
 	}
 	
 	@Override
@@ -37,13 +36,11 @@ public class CoordinatorMessage extends AbstractMessageTopClass {
 
 	@Override
 	public Object executeInReplicaManager() {
-		// TODO Auto-generated method stub
-		return id;
+		return timeStamp;
 	}
 
 	@Override
 	public UUID getUUID() {
-		// TODO Auto-generated method stub
 		return uuid;
 	}
 

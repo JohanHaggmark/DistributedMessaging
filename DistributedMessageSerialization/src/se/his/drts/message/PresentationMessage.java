@@ -2,24 +2,24 @@ package se.his.drts.message;
 
 import java.util.UUID;
 
-public class Presentation extends AbstractMessageTopClass {
+public class PresentationMessage extends AbstractMessageTopClass {
 	
 	private static UUID uuid = UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd");
 	private String name;
 	
-	public static Presentation createReplicaManagerPresentation(String name) {
-		return new Presentation(name + "-ReplicaManager");
+	public static PresentationMessage createReplicaManagerPresentation(String name) {
+		return new PresentationMessage(name + "-ReplicaManager");
 	}
 
-	public static Presentation createFrontEndPresentation(String name) {
-		return new Presentation(name + "-FrontEnd");
+	public static PresentationMessage createFrontEndPresentation(String name) {
+		return new PresentationMessage(name + "-FrontEnd");
 	}
 	
-	public Presentation() {
+	public PresentationMessage() {
 		super(uuid);
 	}
 
-	public Presentation(String name) {
+	public PresentationMessage(String name) {
 		super(uuid);
 		this.name = name;
 	}
@@ -53,7 +53,7 @@ public class Presentation extends AbstractMessageTopClass {
 
 	@Override
 	public boolean equals(Object obj) {
-		String objName = ((Presentation)obj).getName();
+		String objName = ((PresentationMessage)obj).getName();
 		return super.equals(obj) && this.name.compareTo(objName)==0;
 	}
 	/* (non-Javadoc)
@@ -65,7 +65,7 @@ public class Presentation extends AbstractMessageTopClass {
 		if (n!=0) {
 			return n;
 		}
-		return this.name.compareTo(((Presentation)arg0).getName());
+		return this.name.compareTo(((PresentationMessage)arg0).getName());
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

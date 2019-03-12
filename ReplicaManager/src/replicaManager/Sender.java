@@ -29,7 +29,6 @@ public class Sender implements Runnable {
 				LocalMessage msg = (LocalMessage) m_messages.getMessageQueue().take();
 				if (!msg.isAcknowledge && msg.getAttempt() < ATTEMPTS) {
 					m_channel.send(new Message(null, msg.getMsgTopClass()));
-					System.out.println(msg.getMsgTopClass().getUUID());
 					if (msg.getMsgTopClass().getUUID().toString().equals("54f642d7-eaf6-4d62-ad2d-316e4b821c03")) {
 						msg.incrementAttempt();
 						m_messages.addToRTTMessageQueue(msg);
