@@ -2,11 +2,11 @@ package se.his.drts.message;
 
 import java.util.UUID;
 
-public class DrawObjects extends AbstractMessageTopClass {
+public class DrawObjectsMessage extends AbstractMessageTopClass {
 	Object objectList;
 	private static UUID uuid = UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03");
 	
-	public DrawObjects(Object objectList) {
+	public DrawObjectsMessage(Object objectList) {
 		super(uuid);
 		this.objectList = objectList;
 	}

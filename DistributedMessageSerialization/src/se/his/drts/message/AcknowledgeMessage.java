@@ -2,11 +2,11 @@ package se.his.drts.message;
 
 import java.util.UUID;
 
-public class Acknowledge extends AbstractMessageTopClass{
+public class AcknowledgeMessage extends AbstractMessageTopClass{
 	private Object id;
 	private static UUID uuid = UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814");
 	
-	public Acknowledge(Object id) {
+	public AcknowledgeMessage(Object id) {
 		super(uuid);
 		this.id = id;
 	}

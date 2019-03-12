@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import se.his.drts.message.AbstractMessageTopClass;
-import se.his.drts.message.Acknowledge;
+import se.his.drts.message.AcknowledgeMessage;
 import se.his.drts.message.MessagePayload;
 
 public class ClientConnection extends Thread {
@@ -54,7 +54,7 @@ public class ClientConnection extends Thread {
 		try {
 			OutputStream os = m_socket.getOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(os);
-			oos.writeObject(new Acknowledge(msg.getId()).serialize());
+			oos.writeObject(new AcknowledgeMessage(msg.getId()).serialize());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

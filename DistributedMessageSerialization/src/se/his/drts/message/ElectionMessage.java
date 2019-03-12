@@ -36,14 +36,12 @@ public class ElectionMessage extends AbstractMessageTopClass {
 
 	@Override
 	public Object executeInReplicaManager() {
-		// TODO Auto-generated method stub
 		return id;
 	}
 
 	@Override
 	public UUID getUUID() {
-		// TODO Auto-generated method stub
-		return null;
+		return uuid;
 	}
 
 }

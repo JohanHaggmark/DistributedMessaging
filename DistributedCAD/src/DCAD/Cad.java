@@ -8,7 +8,7 @@ package DCAD;
 import java.util.LinkedList;
 
 import Communication.RMConnection;
-import se.his.drts.message.DrawObjects;
+import se.his.drts.message.DrawObjectsMessage;
 import se.his.drts.message.LocalMessage;
 import se.his.drts.message.LocalMessages;
 
@@ -26,6 +26,6 @@ public class Cad {
 	}
 
 	public void sendState(LinkedList<GObject> objectList) {
-		messages.addNewMessageWithAcknowledge(new DrawObjects(objectList));
+		messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(objectList));
 	}
 }
