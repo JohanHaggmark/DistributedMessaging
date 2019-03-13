@@ -14,7 +14,7 @@ import se.his.drts.message.LocalMessages;
 
 public class FrontEnd {
 	public static ProjectLogger logger;
-	public static Address primaryRM;
+	public static Address primaryRM = null;
 	
 	private ArrayList<ClientConnection> m_connectedClients = new ArrayList<ClientConnection>();
 	private LinkedBlockingQueue m_messagesFromClients;

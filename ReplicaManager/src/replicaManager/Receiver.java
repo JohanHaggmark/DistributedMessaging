@@ -79,7 +79,6 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	public void receive(Message msg) {
-
 		this.receiveAsCoordinator(msg);
 	}
 
