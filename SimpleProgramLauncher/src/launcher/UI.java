@@ -2,8 +2,6 @@ package launcher;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -11,26 +9,31 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import javax.swing.BoundedRangeModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.JScrollBar;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import Logging.ProjectLogger;
 
 public class UI extends JFrame {
-	protected GridBagConstraints m_gbc;
+//	protected GridBagConstraints m_gbc;
 	private JPanel m_replicaManagerPanel;
 	private JPanel m_frontEndPanel;
+	private JPanel m_consolePanel;
+
 	private JButton m_startReplicaManagerButton;
 	private JButton m_startFrontEndButton;
 
-	private JPanel m_consolePanel;
-	private JTextArea m_textArea;
+	private JTextField m_textField;
 	private BufferedReader br;
-	
+
 	public static ProjectLogger replicaLogger = new ProjectLogger("ReplicaManager");
 	public static ProjectLogger frontEndLogger = new ProjectLogger("FrontEnd");
 
@@ -43,36 +46,26 @@ public class UI extends JFrame {
 	}
 
 	public UI() {
-		this.createGridBag();
-		this.configurePanels();
-		this.addPanels();
+//		this.addPanels();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		pack();
-		setSize(450, 450);
+		setBounds(100, 100, 450, 450);
 		setLocationRelativeTo(null);
-		setMinimumSize(new Dimension(450, 450));
 		setVisible(true);
+//		setLayout(null);
+		getContentPane().setLayout(null);
+		this.configurePanels();
 	}
 
-	private void createGridBag() {
-		this.setLayout(new GridBagLayout());
-		m_gbc = new GridBagConstraints();
-		m_gbc.fill = GridBagConstraints.BOTH;
-		m_gbc.weightx = 1;
-	}
-
-	private void addPanels() {
-		m_gbc.gridx = 0;
-		m_gbc.gridy = 0;
-		m_gbc.weighty = 1;
-		this.add(m_replicaManagerPanel, m_gbc);
-		m_gbc.gridy = 1;
-		m_gbc.weighty = 1;
-		this.add(m_frontEndPanel, m_gbc);
-		m_gbc.gridy = 2;
-		m_gbc.weighty = 0.5;
-		this.add(m_consolePanel, m_gbc);
-	}
+//	private void addPanels() {
+//
+//		this.getContentPane().add(m_replicaManagerPanel);
+//
+//		this.getContentPane().add(m_frontEndPanel);
+//
+//		this.getContentPane().add(m_consolePanel);
+//	}
 
 	private void configurePanels() {
 		m_replicaManagerPanel = new JPanel();
@@ -85,27 +78,35 @@ public class UI extends JFrame {
 	}
 
 	private void getConsoleText() {
-		
+
 		Thread textReadingThread = new Thread() {
 			public void run() {
 				while (true) {
 					try {
 						sleep(1000);
 						br = new BufferedReader(new InputStreamReader(new FileInputStream(m_fileName)));
-						m_textArea.read(br, "m_textArea");
+						m_textField.read(br, "m_textArea");
 						br.close();
 					} catch (InterruptedException | IOException e) {
 						e.printStackTrace();
-					} 
-				}				
+					}
+				}
 			}
 		};
 		textReadingThread.start();
 	}
-	
+
 	private void configureReplicaManagerPanel() {
 		m_replicaManagerPanel.setBackground(Color.lightGray);
+		m_replicaManagerPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		m_replicaManagerPanel.setBounds(10, 11, 414, 135);
+		m_replicaManagerPanel.setLayout(null);
+		getContentPane().add(m_replicaManagerPanel);
+
 		m_startReplicaManagerButton = new JButton("Start Replica Manager");
+		m_startReplicaManagerButton.setBounds(125, 50, 160, 40);
+		m_replicaManagerPanel.add(m_startReplicaManagerButton);
+
 		m_startReplicaManagerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				startReplicaManager();
@@ -113,14 +114,21 @@ public class UI extends JFrame {
 		});
 
 		// add buttons
-		m_replicaManagerPanel.add(m_startReplicaManagerButton, m_gbc);
+		m_replicaManagerPanel.add(m_startReplicaManagerButton);
 	}
 
 	private void configureFrontEndPanel() {
 		m_frontEndPanel.setBackground(Color.darkGray);
 		m_frontEndPanel.setMaximumSize(new Dimension(450, 200));
+		m_frontEndPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		m_frontEndPanel.setBounds(10, 157, 414, 133);
+		m_frontEndPanel.setLayout(null);
+		getContentPane().add(m_frontEndPanel);
+
 		m_startFrontEndButton = new JButton("Start Front End");
-		
+		m_startFrontEndButton.setBounds(125, 40, 160, 40);
+		m_frontEndPanel.add(m_startFrontEndButton);
+
 		m_startFrontEndButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				startFrontEnd();
@@ -130,19 +138,29 @@ public class UI extends JFrame {
 		// add buttons
 		m_frontEndPanel.add(m_startFrontEndButton);
 	}
-	
+
 	private void configureConsolePanel() {
-		m_consolePanel.setMaximumSize(new Dimension(450, 50));
-		m_consolePanel.setBackground(Color.gray);
-		m_consolePanel.setBorder(new TitledBorder(new EmptyBorder(10, 10, 10, 10), "Console"));
-		m_textArea = new JTextArea();
-		m_textArea.setSize(m_consolePanel.getWidth() - 10, m_consolePanel.getHeight() - 10);
-		m_textArea.setEditable(false);
-		m_textArea.setWrapStyleWord(true);
-		m_textArea.setBackground(Color.gray);
-		m_textArea.setText("testing");
+		m_consolePanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Console",
+				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 0, 204)));
+		m_consolePanel.setBounds(10, 301, 414, 99);
+		m_consolePanel.setBackground(new Color(204, 153, 102));
+		getContentPane().add(m_consolePanel);
+		m_consolePanel.setLayout(null);
+
 		
-		m_consolePanel.add(m_textArea);
+		m_textField = new JTextField();
+		m_textField.setEditable(false);
+		m_textField.setBackground(Color.gray);
+		m_textField.setBounds(10, 15, 378, 73);
+		m_textField.setText("initializing...");
+		JScrollBar scrollBar = new JScrollBar();
+		scrollBar.setBounds(387, 15, 17, 73);
+		
+		BoundedRangeModel brm = m_textField.getHorizontalVisibility();
+		scrollBar.setModel(brm);
+		
+		m_consolePanel.add(m_textField);
+		m_consolePanel.add(scrollBar);
 		getConsoleText();
 	}
 
