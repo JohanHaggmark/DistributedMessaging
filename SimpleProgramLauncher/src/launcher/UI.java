@@ -30,12 +30,12 @@ public class UI extends JFrame {
 
 	private JPanel m_console;
 	private JTextArea m_textArea;
-	private String m_fileName = "C:\\Java\\logs\\ReplicaManager.txt";
 	private BufferedReader br;
 	
 	public static ProjectLogger replicaLogger = new ProjectLogger("ReplicaManager");
 	public static ProjectLogger frontEndLogger = new ProjectLogger("FrontEnd");
 
+	private String m_fileName = replicaLogger.getDebugFileName();
 	static String[] argis;
 
 	public static void main(String[] args) {
