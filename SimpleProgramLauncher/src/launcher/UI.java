@@ -9,12 +9,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import javax.swing.BoundedRangeModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
@@ -23,7 +22,6 @@ import javax.swing.border.TitledBorder;
 import Logging.ProjectLogger;
 
 public class UI extends JFrame {
-//	protected GridBagConstraints m_gbc;
 	private JPanel m_replicaManagerPanel;
 	private JPanel m_frontEndPanel;
 	private JPanel m_consolePanel;
@@ -31,7 +29,7 @@ public class UI extends JFrame {
 	private JButton m_startReplicaManagerButton;
 	private JButton m_startFrontEndButton;
 
-	private JTextField m_textField;
+	private JTextArea m_textArea;
 	private BufferedReader br;
 
 	public static ProjectLogger replicaLogger = new ProjectLogger("ReplicaManager");
@@ -46,26 +44,14 @@ public class UI extends JFrame {
 	}
 
 	public UI() {
-//		this.addPanels();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		pack();
 		setBounds(100, 100, 450, 450);
 		setLocationRelativeTo(null);
 		setVisible(true);
-//		setLayout(null);
 		getContentPane().setLayout(null);
 		this.configurePanels();
 	}
-
-//	private void addPanels() {
-//
-//		this.getContentPane().add(m_replicaManagerPanel);
-//
-//		this.getContentPane().add(m_frontEndPanel);
-//
-//		this.getContentPane().add(m_consolePanel);
-//	}
 
 	private void configurePanels() {
 		m_replicaManagerPanel = new JPanel();
@@ -85,7 +71,7 @@ public class UI extends JFrame {
 					try {
 						sleep(1000);
 						br = new BufferedReader(new InputStreamReader(new FileInputStream(m_fileName)));
-						m_textField.read(br, "m_textArea");
+						m_textArea.read(br, "m_textArea");
 						br.close();
 					} catch (InterruptedException | IOException e) {
 						e.printStackTrace();
@@ -148,19 +134,15 @@ public class UI extends JFrame {
 		m_consolePanel.setLayout(null);
 
 		
-		m_textField = new JTextField();
-		m_textField.setEditable(false);
-		m_textField.setBackground(Color.gray);
-		m_textField.setBounds(10, 15, 378, 73);
-		m_textField.setText("initializing...");
-		JScrollBar scrollBar = new JScrollBar();
-		scrollBar.setBounds(387, 15, 17, 73);
-		
-		BoundedRangeModel brm = m_textField.getHorizontalVisibility();
-		scrollBar.setModel(brm);
-		
-		m_consolePanel.add(m_textField);
-		m_consolePanel.add(scrollBar);
+		m_textArea = new JTextArea();
+		m_textArea.setEditable(false);
+		m_textArea.setBackground(Color.gray);
+		m_textArea.setBounds(10, 15, 378, 73);
+		m_textArea.setText("initializing...");
+		JScrollPane scrollPane = new JScrollPane(m_textArea);
+		scrollPane.setBounds(10, 15, 394, 73);
+
+		m_consolePanel.add(scrollPane);
 		getConsoleText();
 	}
 
