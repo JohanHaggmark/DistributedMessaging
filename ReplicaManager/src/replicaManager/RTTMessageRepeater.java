@@ -26,14 +26,14 @@ public class RTTMessageRepeater implements Runnable {
 			try {
 				msg = m_messageQueue.take();
 			} catch (InterruptedException e) {
-				System.out.println("RTT interruptException e");
+				JGroups.logger.debugLog("RTT interruptException e");
 				e.printStackTrace();
 			}
 			
 			try {
 				Thread.sleep(averageRTT);
 			} catch (InterruptedException e) {
-				System.out.println("RTT interruptException sleep");
+				JGroups.logger.debugLog("RTT interruptException sleep");
 				e.printStackTrace();
 			}
 			messagesToSender.add(msg);			
