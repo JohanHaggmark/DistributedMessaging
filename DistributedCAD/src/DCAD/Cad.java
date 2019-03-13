@@ -8,11 +8,13 @@ package DCAD;
 import java.util.LinkedList;
 
 import Communication.RMConnection;
+import Logging.ProjectLogger;
 import se.his.drts.message.DrawObjectsMessage;
-import se.his.drts.message.LocalMessage;
 import se.his.drts.message.LocalMessages;
 
 public class Cad {
+	public static ProjectLogger logger = new ProjectLogger("CAD");
+	
 	private GUI gui;
 	private RMConnection rmConnection;
 	private LocalMessages messages;
