@@ -17,8 +17,7 @@ import se.his.drts.message.LocalMessage;
 import se.his.drts.message.LocalMessages;
 
 public class Receiver extends ReceiverAdapter {
-	
-	private Integer m_id;
+
 	private JChannel m_channel;
 	private LocalMessages m_messages;
 	private View m_oldView;
@@ -36,19 +35,21 @@ public class Receiver extends ReceiverAdapter {
 
 	private void setId() {
 		String[] split = m_channel.getName().split("-");
-		this.m_id = Integer.parseInt(split[split.length - 1]);
+		JGroups.id = Integer.parseInt(split[split.length - 1]);
 	}
 
 	public void viewAccepted(View new_view) {
 		JGroups.logger.debugLog("Receiver 42 " + m_channel.getAddress() + " ");
 		if (!new_view.containsMember(JGroups.frontEnd)) {
 			// Exponential backoff tills FrontEnd är uppe igen
+			JGroups.frontEnd = null;
 		}
-		//Election happens when primary left:
+		// Election happens when primary left:
 		if (JGroups.primaryRM != null && !new_view.containsMember(JGroups.primaryRM) && new_view.size() > 1) {
 			JGroups.logger.debugLog("sending election");
-			JGroups.electionQueue.add(new ElectionMessage(m_id));
-		//Only the primary sends out to new replica managers about the coordinator
+			JGroups.isCoordinator = true;
+			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
+			// Only the primary sends out to new replica managers about the coordinator
 		} else if (m_channel.getAddress().equals(JGroups.primaryRM)) {
 			List<Address> new_RM = View.newMembers(m_oldView, new_view);
 			if (new_RM.isEmpty()) {
@@ -56,14 +57,16 @@ public class Receiver extends ReceiverAdapter {
 			} else {
 				for (Address newMember : new_RM) {
 					try {
-						m_channel.send(new Message(newMember, new CoordinatorMessage(this.m_id)));
+						JGroups.logger.debugLog("sending I am coordinator");
+						m_channel.send(new Message(newMember, new CoordinatorMessage(JGroups.id)));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 			}
 		} else if (new_view.size() == 1) {
-			//sets the first replica manager to the coordinator:
+			// sets the first replica manager to the coordinator:
+			JGroups.logger.debugLog("set myself to coordinator");
 			JGroups.isCoordinator = true;
 			JGroups.primaryRM = m_channel.getAddress();
 		}
@@ -76,11 +79,8 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	public void receive(Message msg) {
-		if (JGroups.isCoordinator) {
-			this.receiveAsCoordinator(msg);
-		} else {
-			this.receiveAsBackup(msg);
-		}
+
+		this.receiveAsCoordinator(msg);
 	}
 
 	private void receiveAsCoordinator(Message msg) {
@@ -108,11 +108,11 @@ public class Receiver extends ReceiverAdapter {
 		else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {
 			JGroups.logger.debugLog("ElectionMessage - Receiver 108");
 			Integer id = (Integer) msgTopClass.executeInReplicaManager();
-			if (!this.m_id.equals(id)) {
-				if (this.m_id > id) {
-					JGroups.logger.debugLog("My id: " + m_id + " other id: " + id);
+			if (!JGroups.id.equals(id)) {
+				if (JGroups.id > id) {
+					JGroups.logger.debugLog("My id: " + JGroups.id + " other id: " + id);
 					JGroups.isCoordinator = true;
-					JGroups.electionQueue.add(new ElectionMessage(m_id));
+					JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
 				} else {
 					JGroups.logger.debugLog("Receiver 115, Im not the coordinator");
 					JGroups.isCoordinator = false;
@@ -124,44 +124,10 @@ public class Receiver extends ReceiverAdapter {
 		else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
 			JGroups.logger.debugLog("Coordinator - Receiver 109");
 			JGroups.primaryRM = msg.getSrc();
-			if (!m_id.equals((Integer) msgTopClass.executeInReplicaManager())) {
-				JGroups.logger
-						.criticalLog("My id: " + m_id + " other id: " + (Integer) msgTopClass.executeInReplicaManager()
-								+ "\n" + "Received coordinator message from other dude while being coordinator myself");
-			}
-		} else {
-			JGroups.logger.debugLog("Else - Receiver 118:  " + msgTopClass.getUUID());
-			JGroups.logger.debugLog("Could not find the correct type");
-		}
-	}
-
-	private void receiveAsBackup(Message msg) {
-		AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) msg.getObject();
-		// DrawObjects
-		if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
-			sendAcknowledge(msgTopClass.getId());
-		}
-		// ElectionMessage
-		else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {
-			JGroups.logger.debugLog("ElectionMessage - Receiver 137");
-			Integer id = (Integer) msgTopClass.executeInReplicaManager();
-			if (!this.m_id.equals(id)) {
-				if (this.m_id > id) {
-					JGroups.logger.debugLog("My id: " + m_id + " other id: " + id);
-					JGroups.electionQueue.add(new ElectionMessage(m_id));
-				} else {
-					JGroups.logger.debugLog("Receiver 143, I am not the coordinator");
-					JGroups.isCoordinator = false;
-				}
-			}
-		}
-		// CoordinatorMessage
-		else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
-			JGroups.logger.debugLog("Coordinator - Receiver 147");
-			JGroups.primaryRM = msg.getSrc();
 			JGroups.logger.debugLog(JGroups.primaryRM + " is the address of the current coordinator");
 		} else {
-			JGroups.logger.debugLog("Could not find the correct type - Receiver 140  " + msgTopClass.getUUID());
+			JGroups.logger.criticalLog("Else - Receiver 118:  " + msgTopClass.getUUID());
+			JGroups.logger.criticalLog("Could not find the correct type");
 		}
 	}
 }
