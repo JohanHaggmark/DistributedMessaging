@@ -30,26 +30,34 @@ public class Receiver extends ReceiverAdapter {
 	public void start() throws Exception {
 		m_channel.setReceiver(this);
 		m_channel.connect("ChatCluster");
+		setId();
+	}
+
+	private void setId() {
 		String[] split = m_channel.getName().split("-");
-		String id = split[split.length - 1];
-		this.m_id = Integer.parseInt(id);
+		this.m_id = Integer.parseInt(split[split.length - 1]);
 	}
 
 	public void viewAccepted(View new_view) {
-		System.out.println("view " + new_view);
+		System.out.println("Receiver 42 " + m_channel.getAddress() + " ");
 		if (!new_view.containsMember(JGroups.frontEnd)) {
 			// Exponential backoff tills FrontEnd är uppe igen
 		}
+		// if there is no primary:
 		if (!new_view.containsMember(JGroups.primaryRM)) {
+			System.out.println("sending election");
 			JGroups.electionQueue.add(new ElectionMessage(m_id));
-		} else {
-			List<Address> new_RM = View.newMembers(m_oldView, new_view);
-			System.out.println("Innan");
+		} else if (m_channel.getAddress().equals(JGroups.primaryRM)) {
+			List<Address> new_RM;
+			if (m_oldView != null) {
+				new_RM = View.newMembers(m_oldView, new_view);
+			} else {
+				new_RM = new_view.getMembers();
+			}
 			if (new_RM.isEmpty()) {
 				System.out.println("Member left");
-			}
-			else {
-				for(Address newMember : new_RM) {
+			} else {
+				for (Address newMember : new_RM) {
 					try {
 						m_channel.send(new Message(newMember, new CoordinatorMessage(this.m_id)));
 					} catch (Exception e) {
@@ -96,14 +104,17 @@ public class Receiver extends ReceiverAdapter {
 		}
 		// ElectionMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {
-			System.out.println("ElectionMessage - Receiver 100");
+			System.out.println("ElectionMessage - Receiver 108");
 			Integer id = (Integer) msgTopClass.executeInReplicaManager();
-			if (this.m_id > id) {
-				System.out.println("My id: " + m_id + " other id: " + id);
-				JGroups.isCoordinator = true;
-				JGroups.electionQueue.add(new ElectionMessage(m_id));
-			} else {
-				JGroups.isCoordinator = false;
+			if (!this.m_id.equals(id)) {
+				if (this.m_id > id) {
+					System.out.println("My id: " + m_id + " other id: " + id);
+					JGroups.isCoordinator = true;
+					JGroups.electionQueue.add(new ElectionMessage(m_id));
+				} else {
+					System.out.println("Receiver 115, Im not the coordinator");
+					JGroups.isCoordinator = false;
+				}
 			}
 		}
 		// CoordinatorMessage
@@ -125,18 +136,21 @@ public class Receiver extends ReceiverAdapter {
 		}
 		// ElectionMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {
-			System.out.println("ElectionMessage - Receiver 100");
+			System.out.println("ElectionMessage - Receiver 137");
 			Integer id = (Integer) msgTopClass.executeInReplicaManager();
-			if (this.m_id > id) {
-				System.out.println("My id: " + m_id + " other id: " + id);
-				JGroups.electionQueue.add(new ElectionMessage(m_id));
-			} else {
-				JGroups.isCoordinator = false;
+			if (!this.m_id.equals(id)) {
+				if (this.m_id > id) {
+					System.out.println("My id: " + m_id + " other id: " + id);
+					JGroups.electionQueue.add(new ElectionMessage(m_id));
+				} else {
+					System.out.println("Receiver 143, I am not the coordinator");
+					JGroups.isCoordinator = false;
+				}
 			}
 		}
 		// CoordinatorMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
-			System.out.println("Coordinator - Receiver 135");
+			System.out.println("Coordinator - Receiver 147");
 			JGroups.primaryRM = msg.getSrc();
 			JGroups.isCoordinator = false;
 			System.out.println(JGroups.primaryRM + " is the address of the current coordinator");
