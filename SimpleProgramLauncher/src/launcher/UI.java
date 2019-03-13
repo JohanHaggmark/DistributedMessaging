@@ -33,11 +33,9 @@ public class UI extends JFrame {
 	private JTextArea m_textArea;
 	private BufferedReader br;
 
-	public static ProjectLogger replicaLogger = new ProjectLogger("ReplicaManager");
-	public static ProjectLogger frontEndLogger = new ProjectLogger("FrontEnd");
 	private static volatile UI single_instance = null;
 
-	private String m_fileName = replicaLogger.getDebugFileName();
+	private String m_fileName = ProjectLogger.getDebugFileName("ReplicaManager");
 
 	static String[] argis;
 
@@ -91,7 +89,9 @@ public class UI extends JFrame {
 					try {
 						sleep(1000);
 						br = new BufferedReader(new InputStreamReader(new FileInputStream(m_fileName)));
+						m_textArea.setText("");
 						m_textArea.read(br, "m_textArea");
+						setTitle(m_fileName);
 						br.close();
 					} catch (InterruptedException | IOException e) {
 						e.printStackTrace();
@@ -167,8 +167,9 @@ public class UI extends JFrame {
 
 	private void startReplicaManager() {
 		// KANSKE LÄGGA IN SÅ MAN MÅSTE SKRIVA IN IP OSV
-		m_fileName = replicaLogger.getDebugFileName();
+		m_fileName = ProjectLogger.getDebugFileName("ReplicaManager");
 		m_consolePanel.setBorder(new TitledBorder(new EmptyBorder(10, 10, 10, 10), "Replica Console"));
+		
 		Thread rmThread = new Thread() {
 			@Override
 			public void run() {
@@ -184,7 +185,7 @@ public class UI extends JFrame {
 
 	private void startFrontEnd() {
 		// KANSKE LÄGGA IN SÅ MAN MÅSTE SKRIVA IN IP OSV
-		m_fileName = frontEndLogger.getDebugFileName();
+		m_fileName = ProjectLogger.getDebugFileName("FrontEnd");
 		m_consolePanel.setBorder(new TitledBorder(new EmptyBorder(10, 10, 10, 10), "Frontend Console"));
 
 		Thread feThread = new Thread() {

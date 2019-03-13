@@ -13,7 +13,7 @@ import Logging.ProjectLogger;
 import se.his.drts.message.LocalMessages;
 
 public class FrontEnd {
-	public static ProjectLogger logger = new ProjectLogger("FrontEnd");
+	public static ProjectLogger logger;
 	public static Address primaryRM;
 	
 	private ArrayList<ClientConnection> m_connectedClients = new ArrayList<ClientConnection>();
@@ -21,6 +21,7 @@ public class FrontEnd {
 	private ServerSocket m_socket;
 
 	public FrontEnd(int portNumber) {
+		logger = new ProjectLogger("FrontEnd");
 		m_messagesFromClients = new LinkedBlockingQueue<byte[]>();
 		startJGroupsConnection();
 
