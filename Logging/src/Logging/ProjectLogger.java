@@ -13,32 +13,51 @@ public class ProjectLogger {
 	FileHandler debugFileHandler;
 	FileHandler criticalFileHandler;
 	String date;
+	String fileName;
+	String debugFileName;
+	String criticalFileName;
 	
 	public ProjectLogger(String filename) {
-		logger = Logger.getLogger("MyLog");  
-        
+		logger = Logger.getLogger("logger");  
+        debugLogger = Logger.getLogger("debugLogger");
+        criticalLogger = Logger.getLogger("criticalLogger");
         try {  
             // This block configure the logger with handler and formatter  
             SimpleFormatter formatter = new SimpleFormatter(); 
     		Calendar cal = Calendar.getInstance();	
             date = (cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.MONTH) + "-" + cal.get(Calendar.DAY_OF_MONTH));
             
-        	fileHandler = new FileHandler("C:/java/logs/" + date + "_" + filename + ".txt");  
-            logger.addHandler(fileHandler); 
-            fileHandler.setFormatter(formatter);   
+            fileName = "C:/java/logs/" + date + "_" + filename + ".txt";
+        	fileHandler = new FileHandler(fileName);  
+            logger.addHandler(fileHandler);  
+            fileHandler.setFormatter(formatter);  
             
-            debugFileHandler = new FileHandler("C:/java/logs/" + date + "_debug_" + filename + ".txt");  
+            debugFileName = "C:/java/logs/" + date + "_debug_" + filename + ".txt";
+            debugFileHandler = new FileHandler(debugFileName); 
             debugLogger.addHandler(debugFileHandler); 
-            debugFileHandler.setFormatter(formatter); 
+            debugFileHandler.setFormatter(formatter);
             
-            criticalFileHandler = new FileHandler("C:/java/logs/" + date + "_critical_" + filename + ".txt");  
+            criticalFileName = "C:/java/logs/" + date + "_critical_" + filename + ".txt";
+            criticalFileHandler = new FileHandler(criticalFileName); 
             criticalLogger.addHandler(criticalFileHandler); 
-            criticalFileHandler.setFormatter(formatter); 
+            criticalFileHandler.setFormatter(formatter);
         } catch (SecurityException e) {  
             e.printStackTrace();  
         } catch (IOException e) {  
             e.printStackTrace();  
         }  
+	}
+	
+	public String getFileName() {
+		return fileName;
+	}
+	
+	public String getDebugFileName() {
+		return debugFileName;
+	}
+	
+	public String getCriticalFileName() {
+		return criticalFileName;
 	}
 	
 	public void log(String message) {	
