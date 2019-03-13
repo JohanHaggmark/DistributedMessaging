@@ -34,15 +34,25 @@ public class UI extends JFrame {
 
 	public static ProjectLogger replicaLogger = new ProjectLogger("ReplicaManager");
 	public static ProjectLogger frontEndLogger = new ProjectLogger("FrontEnd");
-
+	private static volatile UI single_instance = null;
+	
+	
 	private String m_fileName = replicaLogger.getDebugFileName();
+	
 	static String[] argis;
 
 	public static void main(String[] args) {
-		new UI();
+		getInstance();
 		argis = args;
 	}
-
+	
+	public static UI getInstance() {
+		if (single_instance == null) {
+			single_instance = new UI();
+		}
+		return single_instance;
+	}
+	
 	public UI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
