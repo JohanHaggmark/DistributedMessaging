@@ -30,15 +30,15 @@ public class StringMsg extends AbstractMessageTopClass {
 	}
 
 	@Override
-	public void executeInFrontEndFromRM() {
+	public Object executeInFrontEndFromRM() {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void executeInFrontEndFromClient() {
+	public Object executeInFrontEndFromClient() {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override

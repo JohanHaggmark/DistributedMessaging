@@ -27,17 +27,17 @@ public class ProjectLogger {
     		Calendar cal = Calendar.getInstance();	
             date = (cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.MONTH) + "-" + cal.get(Calendar.DAY_OF_MONTH));
             
-            fileName = "C:/java/logs/" + date + "_" + filename + ".txt";
+            fileName = "C:/java/logs/log/" + date + "_" + filename + ".txt";
         	fileHandler = new FileHandler(fileName);  
             logger.addHandler(fileHandler);  
             fileHandler.setFormatter(formatter);  
             
-            debugFileName = "C:/java/logs/" + date + "_debug_" + filename + ".txt";
+            debugFileName = "C:/java/logs/debug/" + date + "_debug_" + filename + ".txt";
             debugFileHandler = new FileHandler(debugFileName); 
             debugLogger.addHandler(debugFileHandler); 
             debugFileHandler.setFormatter(formatter);
             
-            criticalFileName = "C:/java/logs/" + date + "_critical_" + filename + ".txt";
+            criticalFileName = "C:/java/logs/critical/" + date + "_critical_" + filename + ".txt";
             criticalFileHandler = new FileHandler(criticalFileName); 
             criticalLogger.addHandler(criticalFileHandler); 
             criticalFileHandler.setFormatter(formatter);

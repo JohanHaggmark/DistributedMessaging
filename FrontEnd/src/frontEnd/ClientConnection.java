@@ -33,9 +33,8 @@ public class ClientConnection extends Thread {
 				DataInputStream din = new DataInputStream(in);
 				ObjectInputStream oin = new ObjectInputStream(din);
 				byte[] bytes = (byte[]) oin.readObject();
-				// messagesFromClients.add(bytes);
-				sendAcknowledgeTemp(bytes);
-
+				messagesFromClients.add(bytes);
+//				sendAcknowledgeTemp(bytes);
 			} catch (IOException e) {
 				e.printStackTrace();
 				runThread = false;

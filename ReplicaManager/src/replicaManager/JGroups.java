@@ -25,7 +25,6 @@ public class JGroups {
 			new JGroups();
 			new Thread(new Sender(channel, messages)).start();
 			new Thread(new RTTMessageRepeater(messages.getMessageQueue(), messages.getRTTMessageQueue())).start();
-			
 			new Thread(new Election(channel, messages)).start();
 		} catch (Exception e) {
 			e.printStackTrace();
