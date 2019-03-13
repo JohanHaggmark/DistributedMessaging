@@ -14,10 +14,9 @@ public class JGroups {
 	public static Address frontEnd = null;
 	public static volatile boolean isCoordinator = false;
 	public static LinkedBlockingQueue electionQueue = new LinkedBlockingQueue<AbstractMessageTopClass>();
-	public static ProjectLogger logger = new ProjectLogger("Replica Manager");
+	public static ProjectLogger logger = new ProjectLogger("ReplicaManager");
 
 	public static void start() {
-		logger.log("Startade JGroups");
 		try {
 			LocalMessages messages = new LocalMessages();
 			JChannel channel;

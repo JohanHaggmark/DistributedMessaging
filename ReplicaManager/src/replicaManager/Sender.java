@@ -35,10 +35,10 @@ public class Sender implements Runnable {
 					}
 				}
 			} catch (InterruptedException e1) {
-				System.out.println("IE e1");
+				JGroups.logger.debugLog("IE e1");
 				e1.printStackTrace();
 			} catch (Exception e) {
-				System.out.println("exception e");
+				JGroups.logger.debugLog("exception e");
 				e.printStackTrace();
 			}
 		}

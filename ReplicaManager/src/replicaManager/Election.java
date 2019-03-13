@@ -54,7 +54,7 @@ public class Election implements Runnable {
 			JGroups.primaryRM = this.m_address;
 			m_messages.addNewMessage(new CoordinatorMessage(this.m_id));
 		} else {
-			System.out.println(JGroups.primaryRM + " is the new coordinator");
+			JGroups.logger.debugLog(JGroups.primaryRM + " is the new coordinator");
 		}
 	}
 }

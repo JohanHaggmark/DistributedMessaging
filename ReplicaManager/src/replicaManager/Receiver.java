@@ -39,13 +39,13 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	public void viewAccepted(View new_view) {
-		System.out.println("Receiver 42 " + m_channel.getAddress() + " ");
+		JGroups.logger.debugLog("Receiver 42 " + m_channel.getAddress() + " ");
 		if (!new_view.containsMember(JGroups.frontEnd)) {
 			// Exponential backoff tills FrontEnd är uppe igen
 		}
 		// if there is no primary:
 		if (!new_view.containsMember(JGroups.primaryRM)) {
-			System.out.println("sending election");
+			JGroups.logger.debugLog("sending election");
 			JGroups.primaryRM = null;
 			JGroups.electionQueue.add(new ElectionMessage(m_id));
 		} else if (m_channel.getAddress().equals(JGroups.primaryRM)) {
@@ -56,7 +56,7 @@ public class Receiver extends ReceiverAdapter {
 				new_RM = new_view.getMembers();
 			}
 			if (new_RM.isEmpty()) {
-				System.out.println("Member left");
+				JGroups.logger.debugLog("Member left");
 			} else {
 				for (Address newMember : new_RM) {
 					try {
@@ -86,17 +86,17 @@ public class Receiver extends ReceiverAdapter {
 		AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) msg.getObject();
 		// AcknowledgeMessage
 		if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
-			System.out.println("AcknowledgeMessage - Receiver 84");
+			JGroups.logger.debugLog("AcknowledgeMessage - Receiver 84");
 			m_messages.removeAcknowledgeFromMessage(msgTopClass.getId());
 		}
 		// draw
 		else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
-			System.out.println("DrawObjectsMessage - Receiver 88");
+			JGroups.logger.debugLog("DrawObjectsMessage - Receiver 88");
 			sendAcknowledge(msgTopClass.getId());
 		}
 		// presentation
 		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
-			System.out.println("Presentation - Receiver 92");
+			JGroups.logger.debugLog("Presentation - Receiver 92");
 			String[] names = ((String) msgTopClass.executeInReplicaManager()).split("-");
 			if (names[names.length - 1].equals("FrontEnd")) {
 				JGroups.frontEnd = msg.src();
@@ -105,15 +105,15 @@ public class Receiver extends ReceiverAdapter {
 		}
 		// ElectionMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {
-			System.out.println("ElectionMessage - Receiver 108");
+			JGroups.logger.debugLog("ElectionMessage - Receiver 108");
 			Integer id = (Integer) msgTopClass.executeInReplicaManager();
 			if (!this.m_id.equals(id)) {
 				if (this.m_id > id) {
-					System.out.println("My id: " + m_id + " other id: " + id);
+					JGroups.logger.debugLog("My id: " + m_id + " other id: " + id);
 					JGroups.isCoordinator = true;
 					JGroups.electionQueue.add(new ElectionMessage(m_id));
 				} else {
-					System.out.println("Receiver 115, Im not the coordinator");
+					JGroups.logger.debugLog("Receiver 115, Im not the coordinator");
 					JGroups.isCoordinator = false;
 				}
 
@@ -121,15 +121,15 @@ public class Receiver extends ReceiverAdapter {
 		}
 		// CoordinatorMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
-			System.out.println("Coordinator - Receiver 109");
+			JGroups.logger.debugLog("Coordinator - Receiver 109");
 			JGroups.primaryRM = msg.getSrc();
 			if(m_id.equals((Integer) msgTopClass.executeInReplicaManager())) {
 				JGroups.logger.criticalLog("My id: " + m_id + " other id: " + (Integer) msgTopClass.executeInReplicaManager() + "\n"
 											+ "Received coordinator message from other dude while being coordinator myself");				
 			}
 		} else {
-			System.out.println("Else - Receiver 118:  " + msgTopClass.getUUID());
-			System.out.println("Could not find the correct type");
+			JGroups.logger.debugLog("Else - Receiver 118:  " + msgTopClass.getUUID());
+			JGroups.logger.debugLog("Could not find the correct type");
 		}
 	}
 
@@ -141,25 +141,25 @@ public class Receiver extends ReceiverAdapter {
 		}
 		// ElectionMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {
-			System.out.println("ElectionMessage - Receiver 137");
+			JGroups.logger.debugLog("ElectionMessage - Receiver 137");
 			Integer id = (Integer) msgTopClass.executeInReplicaManager();
 			if (!this.m_id.equals(id)) {
 				if (this.m_id > id) {
-					System.out.println("My id: " + m_id + " other id: " + id);
+					JGroups.logger.debugLog("My id: " + m_id + " other id: " + id);
 					JGroups.electionQueue.add(new ElectionMessage(m_id));
 				} else {
-					System.out.println("Receiver 143, I am not the coordinator");
+					JGroups.logger.debugLog("Receiver 143, I am not the coordinator");
 					JGroups.isCoordinator = false;
 				}
 			}
 		}
 		// CoordinatorMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
-			System.out.println("Coordinator - Receiver 147");
+			JGroups.logger.debugLog("Coordinator - Receiver 147");
 			JGroups.primaryRM = msg.getSrc();
-			System.out.println(JGroups.primaryRM + " is the address of the current coordinator");
+			JGroups.logger.debugLog(JGroups.primaryRM + " is the address of the current coordinator");
 		} else {
-			System.out.println("Could not find the correct type - Receiver 140  " + msgTopClass.getUUID());
+			JGroups.logger.debugLog("Could not find the correct type - Receiver 140  " + msgTopClass.getUUID());
 		}
 	}
 }
