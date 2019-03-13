@@ -43,18 +43,13 @@ public class Receiver extends ReceiverAdapter {
 		if (!new_view.containsMember(JGroups.frontEnd)) {
 			// Exponential backoff tills FrontEnd är uppe igen
 		}
-		// if there is no primary:
-		if (!new_view.containsMember(JGroups.primaryRM)) {
+		//Election happens when primary left:
+		if (JGroups.primaryRM != null && !new_view.containsMember(JGroups.primaryRM) && new_view.size() > 1) {
 			JGroups.logger.debugLog("sending election");
-			JGroups.primaryRM = null;
 			JGroups.electionQueue.add(new ElectionMessage(m_id));
+		//Only the primary sends out to new replica managers about the coordinator
 		} else if (m_channel.getAddress().equals(JGroups.primaryRM)) {
-			List<Address> new_RM;
-			if (m_oldView != null) {
-				new_RM = View.newMembers(m_oldView, new_view);
-			} else {
-				new_RM = new_view.getMembers();
-			}
+			List<Address> new_RM = View.newMembers(m_oldView, new_view);
 			if (new_RM.isEmpty()) {
 				JGroups.logger.debugLog("Member left");
 			} else {
@@ -66,12 +61,17 @@ public class Receiver extends ReceiverAdapter {
 					}
 				}
 			}
+		} else if (new_view.size() == 1) {
+			//sets the first replica manager to the coordinator:
+			JGroups.isCoordinator = true;
+			JGroups.primaryRM = m_channel.getAddress();
 		}
 		m_oldView = new_view;
 	}
 
 	private void sendAcknowledge(Integer id) {
 		m_messages.addToMessageQueue(new LocalMessage(new AcknowledgeMessage(id)));
+
 	}
 
 	public void receive(Message msg) {
@@ -123,9 +123,10 @@ public class Receiver extends ReceiverAdapter {
 		else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
 			JGroups.logger.debugLog("Coordinator - Receiver 109");
 			JGroups.primaryRM = msg.getSrc();
-			if(m_id.equals((Integer) msgTopClass.executeInReplicaManager())) {
-				JGroups.logger.criticalLog("My id: " + m_id + " other id: " + (Integer) msgTopClass.executeInReplicaManager() + "\n"
-											+ "Received coordinator message from other dude while being coordinator myself");				
+			if (!m_id.equals((Integer) msgTopClass.executeInReplicaManager())) {
+				JGroups.logger
+						.criticalLog("My id: " + m_id + " other id: " + (Integer) msgTopClass.executeInReplicaManager()
+								+ "\n" + "Received coordinator message from other dude while being coordinator myself");
 			}
 		} else {
 			JGroups.logger.debugLog("Else - Receiver 118:  " + msgTopClass.getUUID());
