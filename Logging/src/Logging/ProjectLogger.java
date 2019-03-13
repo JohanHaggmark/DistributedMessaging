@@ -41,6 +41,7 @@ public class ProjectLogger {
             criticalFileHandler = new FileHandler(criticalFileName); 
             criticalLogger.addHandler(criticalFileHandler); 
             criticalFileHandler.setFormatter(formatter);
+            //master
         } catch (SecurityException e) {  
             e.printStackTrace();  
         } catch (IOException e) {  
