@@ -20,6 +20,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import Logging.ProjectLogger;
+import replicaManager.JGroups;
 
 public class UI extends JFrame {
 	private JPanel m_replicaManagerPanel;
@@ -34,13 +35,32 @@ public class UI extends JFrame {
 
 	public static ProjectLogger replicaLogger = new ProjectLogger("ReplicaManager");
 	public static ProjectLogger frontEndLogger = new ProjectLogger("FrontEnd");
+	private static volatile UI single_instance = null;
 
 	private String m_fileName = replicaLogger.getDebugFileName();
+
 	static String[] argis;
 
 	public static void main(String[] args) {
-		new UI();
+		getInstance();
 		argis = args;
+	}
+
+	public static UI getInstance() {
+		if (single_instance == null) { // if there is no instance available... create new one
+			synchronized (UI.class) {
+				if (single_instance == null) {
+					single_instance = new UI();
+					JGroups.logger.debugLog("UI identifier: " + String.valueOf(single_instance.hashCode()));
+				}
+			}
+		}
+
+		return single_instance;
+	}
+
+	protected static UI readResolve() {
+		return single_instance;
 	}
 
 	public UI() {
@@ -133,7 +153,6 @@ public class UI extends JFrame {
 		getContentPane().add(m_consolePanel);
 		m_consolePanel.setLayout(null);
 
-		
 		m_textArea = new JTextArea();
 		m_textArea.setEditable(false);
 		m_textArea.setBackground(Color.gray);
