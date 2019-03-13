@@ -17,15 +17,15 @@ public class DrawObjectsMessage extends AbstractMessageTopClass {
 	}
 
 	@Override
-	public void executeInFrontEndFromClient() {
+	public Object executeInFrontEndFromClient() {
 		// skickavidare till destination
-
+		return null;
 	}
 
 	@Override
-	public void executeInFrontEndFromRM() {
+	public Object executeInFrontEndFromRM() {
 		// skickavidare till destination
-
+		return null;
 	}
 
 	@Override

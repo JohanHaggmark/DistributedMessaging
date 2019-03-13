@@ -17,6 +17,7 @@ import se.his.drts.message.LocalMessage;
 import se.his.drts.message.LocalMessages;
 
 public class Receiver extends ReceiverAdapter {
+	
 	private Integer m_id;
 	private JChannel m_channel;
 	private LocalMessages m_messages;

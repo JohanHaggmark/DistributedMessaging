@@ -18,20 +18,17 @@ public class ElectionMessage extends AbstractMessageTopClass {
 	
 	@Override
 	public Object executeInClient() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void executeInFrontEndFromRM() {
-		// TODO Auto-generated method stub
-		
+	public Object executeInFrontEndFromRM() {
+		return id;		
 	}
 
 	@Override
-	public void executeInFrontEndFromClient() {
-		// TODO Auto-generated method stub
-		
+	public Object executeInFrontEndFromClient() {
+		return id;		
 	}
 
 	@Override
