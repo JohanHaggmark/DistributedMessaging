@@ -4,10 +4,11 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-	<classpathentry kind="lib" path="C:/java/jackson-annotations-2.9.8.jar"/>
-	<classpathentry kind="lib" path="C:/java/jackson-core-2.9.8.jar"/>
-	<classpathentry kind="lib" path="C:/java/jackson-databind-2.9.8.jar"/>
+	<classpathentry kind="lib" path="C:/Java/jackson-annotations-2.9.8.jar"/>
+	<classpathentry kind="lib" path="C:/Java/jackson-core-2.9.8.jar"/>
+	<classpathentry kind="lib" path="C:/Java/jackson-databind-2.9.8.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/FrontEnd"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ReplicaManager"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Logging"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
