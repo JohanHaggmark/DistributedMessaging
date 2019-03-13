@@ -28,6 +28,7 @@ public class Sender implements Runnable {
 			try {
 				LocalMessage msg = (LocalMessage) m_messages.getMessageQueue().take();
 				if (!msg.isAcknowledge && msg.getAttempt() < ATTEMPTS) {
+					JGroups.logger.debugLog("Sending - Sender 32");
 					m_channel.send(new Message(null, msg.getMsgTopClass()));
 					if (msg.getMsgTopClass().getUUID().toString().equals("54f642d7-eaf6-4d62-ad2d-316e4b821c03")) {
 						msg.incrementAttempt();

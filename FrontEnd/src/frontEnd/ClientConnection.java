@@ -46,15 +46,15 @@ public class ClientConnection extends Thread {
 	}
 
 	// TEMPORARY METHOD TO CHECK CAD ACKNOWLEDGE
-	private void sendAcknowledgeTemp(byte[] bytes) {
-		Optional<MessagePayload> opt = MessagePayload.createMessage(bytes);
-		AbstractMessageTopClass msg = (AbstractMessageTopClass) opt.get();
-		try {
-			OutputStream os = m_socket.getOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(os);
-			oos.writeObject(new AcknowledgeMessage(msg.getId()).serialize());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	private void sendAcknowledgeTemp(byte[] bytes) {
+//		Optional<MessagePayload> opt = MessagePayload.createMessage(bytes);
+//		AbstractMessageTopClass msg = (AbstractMessageTopClass) opt.get();
+//		try {
+//			OutputStream os = m_socket.getOutputStream();
+//			ObjectOutputStream oos = new ObjectOutputStream(os);
+//			oos.writeObject(new AcknowledgeMessage(msg.getId()).serialize());
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 }
