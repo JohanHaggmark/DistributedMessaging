@@ -6,10 +6,12 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class FrontEnd {
-	ArrayList<ClientConnection> m_connectedClients = new ArrayList<ClientConnection>();
-	LinkedBlockingQueue messagesFromClients;
+import Logging.ProjectLogger;
 
+public class FrontEnd {
+	public static ProjectLogger logger = new ProjectLogger("FrontEnd");
+	private ArrayList<ClientConnection> m_connectedClients = new ArrayList<ClientConnection>();
+	private LinkedBlockingQueue messagesFromClients;
 	private ServerSocket m_socket;
 
 	public FrontEnd(int portNumber) {

@@ -1,3 +1,4 @@
+package Logging;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.logging.FileHandler;
@@ -13,11 +14,10 @@ public class ProjectLogger {
         
         try {  
             // This block configure the logger with handler and formatter  
-            fh = new FileHandler("C:/java/logs/" + filename);  
+            fh = new FileHandler("C:/java/logs/" + filename + ".txt");  
             logger.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();  
-            fh.setFormatter(formatter);  
-            
+            fh.setFormatter(formatter);   
         } catch (SecurityException e) {  
             e.printStackTrace();  
         } catch (IOException e) {  

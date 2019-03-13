@@ -5,6 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.jgroups.Address;
 import org.jgroups.JChannel;
 
+import Logging.ProjectLogger;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.LocalMessages;
 
@@ -13,8 +14,10 @@ public class JGroups {
 	public static Address frontEnd = null;
 	public static volatile boolean isCoordinator = false;
 	public static LinkedBlockingQueue electionQueue = new LinkedBlockingQueue<AbstractMessageTopClass>();
+	public static ProjectLogger logger = new ProjectLogger("Replica Manager");
 
 	public static void start() {
+		logger.log("Startade JGroups");
 		try {
 			LocalMessages messages = new LocalMessages();
 			JChannel channel;
