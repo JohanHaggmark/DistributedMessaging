@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -28,7 +27,7 @@ public class UI extends JFrame {
 	private JButton m_startReplicaManagerButton;
 	private JButton m_startFrontEndButton;
 
-	private JPanel m_console;
+	private JPanel m_consolePanel;
 	private JTextArea m_textArea;
 	private BufferedReader br;
 	
@@ -72,13 +71,13 @@ public class UI extends JFrame {
 		this.add(m_frontEndPanel, m_gbc);
 		m_gbc.gridy = 2;
 		m_gbc.weighty = 0.5;
-		this.add(m_console, m_gbc);
+		this.add(m_consolePanel, m_gbc);
 	}
 
 	private void configurePanels() {
 		m_replicaManagerPanel = new JPanel();
 		m_frontEndPanel = new JPanel();
-		m_console = new JPanel();
+		m_consolePanel = new JPanel();
 
 		configureReplicaManagerPanel();
 		configureFrontEndPanel();
@@ -86,40 +85,24 @@ public class UI extends JFrame {
 	}
 
 	private void getConsoleText() {
-		try {
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(m_fileName)));
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		}
+		
 		Thread textReadingThread = new Thread() {
 			public void run() {
-				try {
-					sleep(5000);
-					m_textArea.read(br, "m_textArea");
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				while (true) {
+					try {
+						sleep(1000);
+						br = new BufferedReader(new InputStreamReader(new FileInputStream(m_fileName)));
+						m_textArea.read(br, "m_textArea");
+						br.close();
+					} catch (InterruptedException | IOException e) {
+						e.printStackTrace();
+					} 
+				}				
 			}
 		};
 		textReadingThread.start();
 	}
 	
-	private void configureConsolePanel() {
-		m_console.setMaximumSize(new Dimension(450, 50));
-		m_console.setBackground(Color.gray);
-		m_console.setBorder(new TitledBorder(new EmptyBorder(10, 10, 10, 10), "Console"));
-		m_textArea = new JTextArea();
-		m_textArea.setSize(m_console.getWidth() - 10, m_console.getHeight() - 10);
-		m_textArea.setEditable(false);
-		m_textArea.setWrapStyleWord(true);
-		m_textArea.setBackground(Color.gray);
-		m_textArea.setText("testing");
-		m_console.add(m_textArea);
-		getConsoleText();
-	}
-
 	private void configureReplicaManagerPanel() {
 		m_replicaManagerPanel.setBackground(Color.lightGray);
 		m_startReplicaManagerButton = new JButton("Start Replica Manager");
@@ -130,7 +113,7 @@ public class UI extends JFrame {
 		});
 
 		// add buttons
-		m_replicaManagerPanel.add(m_startReplicaManagerButton);
+		m_replicaManagerPanel.add(m_startReplicaManagerButton, m_gbc);
 	}
 
 	private void configureFrontEndPanel() {
@@ -147,11 +130,26 @@ public class UI extends JFrame {
 		// add buttons
 		m_frontEndPanel.add(m_startFrontEndButton);
 	}
+	
+	private void configureConsolePanel() {
+		m_consolePanel.setMaximumSize(new Dimension(450, 50));
+		m_consolePanel.setBackground(Color.gray);
+		m_consolePanel.setBorder(new TitledBorder(new EmptyBorder(10, 10, 10, 10), "Console"));
+		m_textArea = new JTextArea();
+		m_textArea.setSize(m_consolePanel.getWidth() - 10, m_consolePanel.getHeight() - 10);
+		m_textArea.setEditable(false);
+		m_textArea.setWrapStyleWord(true);
+		m_textArea.setBackground(Color.gray);
+		m_textArea.setText("testing");
+		
+		m_consolePanel.add(m_textArea);
+		getConsoleText();
+	}
 
 	private void startReplicaManager() {
 		// KANSKE LÄGGA IN SÅ MAN MÅSTE SKRIVA IN IP OSV
 		m_fileName = replicaLogger.getDebugFileName();
-		m_console.setBorder(new TitledBorder(new EmptyBorder(10, 10, 10, 10), "Replica Console"));
+		m_consolePanel.setBorder(new TitledBorder(new EmptyBorder(10, 10, 10, 10), "Replica Console"));
 		Thread rmThread = new Thread() {
 			@Override
 			public void run() {
@@ -168,7 +166,7 @@ public class UI extends JFrame {
 	private void startFrontEnd() {
 		// KANSKE LÄGGA IN SÅ MAN MÅSTE SKRIVA IN IP OSV
 		m_fileName = frontEndLogger.getDebugFileName();
-		m_console.setBorder(new TitledBorder(new EmptyBorder(10, 10, 10, 10), "Frontend Console"));
+		m_consolePanel.setBorder(new TitledBorder(new EmptyBorder(10, 10, 10, 10), "Frontend Console"));
 
 		Thread feThread = new Thread() {
 			@Override
