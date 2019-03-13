@@ -46,17 +46,15 @@ public class Election implements Runnable {
 		m_timeStamp = System.currentTimeMillis();
 		new Thread(new TimeOuter(m_timeStamp)).start();
 		JGroups.isCoordinator = true;
-		JGroups.primaryRM = this.m_address;
 		m_messages.addNewMessage(msgTopClass);
 	}
 
 	private void endElection() {
 		if (JGroups.isCoordinator) {
+			JGroups.primaryRM = this.m_address;
 			m_messages.addNewMessage(new CoordinatorMessage(this.m_id));
-			System.out.println("I am the coordinator, respect my authority! " + m_id);
 		} else {
-			System.out.println(JGroups.primaryRM);
+			System.out.println(JGroups.primaryRM + " is the new coordinator");
 		}
 	}
-
 }

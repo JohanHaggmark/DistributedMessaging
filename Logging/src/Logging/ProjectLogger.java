@@ -6,18 +6,24 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 public class ProjectLogger {
-	Logger logger;
-	FileHandler fh;
+	Logger casualLogger;
+	Logger criticalLogger;
+	FileHandler casualFileHandler;
+	FileHandler criticalFileHandler;
 	
 	public ProjectLogger(String filename) {
-		logger = Logger.getLogger("MyLog");  
+		casualLogger = Logger.getLogger("MyLog");  
         
         try {  
             // This block configure the logger with handler and formatter  
-            fh = new FileHandler("C:/java/logs/" + filename + ".txt");  
-            logger.addHandler(fh);
+        	casualFileHandler = new FileHandler("C:/java/logs/" + filename + ".txt");  
+            casualLogger.addHandler(casualFileHandler);
             SimpleFormatter formatter = new SimpleFormatter();  
-            fh.setFormatter(formatter);   
+            casualFileHandler.setFormatter(formatter);   
+            
+            criticalFileHandler = new FileHandler("C:/java/logs/critical_" + filename + ".txt");  
+            criticalLogger.addHandler(criticalFileHandler); 
+            criticalFileHandler.setFormatter(formatter); 
         } catch (SecurityException e) {  
             e.printStackTrace();  
         } catch (IOException e) {  
@@ -27,6 +33,11 @@ public class ProjectLogger {
 	
 	public void log(String message) {
 		Calendar cal = Calendar.getInstance();		
-		logger.info(cal.getTime() + ":   " + message);
+		casualLogger.info(cal.getTime() + ":   " + message);
+	}
+	
+	public void criticalLog(String message) {
+		Calendar cal = Calendar.getInstance();		
+		casualLogger.info(cal.getTime() + ":   " + message);
 	}
 }
