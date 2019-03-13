@@ -17,7 +17,8 @@ public class JGroupsSender implements Runnable {
 	public void run() {
 		while (true) {
 			try {
-				byte[] bytes = m_messages.take();
+				Object obj = m_messages.take();
+				byte[] bytes = (byte[]) obj;
 				// OM PRIMARY INTE FINNS SKA VI DÅ LÄGGA TILL DENNA I LBQ??
 				// KANSKE ÄR RIMLIGARE ATT CLIENT SKICKAR OM OCH HAR HAND OM EXPONENTIAL BACKOFF
 				if(FrontEnd.primaryRM != null) {
