@@ -24,7 +24,11 @@ public class JGroupsSender implements Runnable {
 					FrontEnd.logger.debugLog("Sending bytes from client");
 					m_channel.send(new Message(FrontEnd.primaryRM, bytes));					
 				}
+				else {
+					FrontEnd.logger.debugLog("No primary when received from client");					
+				}
 			} catch (Exception e) {
+				FrontEnd.logger.criticalLog("Exception in JGroupsSender");
 				e.printStackTrace();
 			}
 		}
