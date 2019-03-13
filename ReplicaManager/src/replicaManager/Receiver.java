@@ -46,6 +46,7 @@ public class Receiver extends ReceiverAdapter {
 		// if there is no primary:
 		if (!new_view.containsMember(JGroups.primaryRM)) {
 			System.out.println("sending election");
+			JGroups.primaryRM = null;
 			JGroups.electionQueue.add(new ElectionMessage(m_id));
 		} else if (m_channel.getAddress().equals(JGroups.primaryRM)) {
 			List<Address> new_RM;
@@ -115,13 +116,17 @@ public class Receiver extends ReceiverAdapter {
 					System.out.println("Receiver 115, Im not the coordinator");
 					JGroups.isCoordinator = false;
 				}
+
 			}
 		}
 		// CoordinatorMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
 			System.out.println("Coordinator - Receiver 109");
 			JGroups.primaryRM = msg.getSrc();
-			JGroups.isCoordinator = false;
+			if(m_id.equals((Integer) msgTopClass.executeInReplicaManager())) {
+				JGroups.logger.criticalLog("My id: " + m_id + " other id: " + (Integer) msgTopClass.executeInReplicaManager() + "\n"
+											+ "Received coordinator message from other dude while being coordinator myself");				
+			}
 		} else {
 			System.out.println("Else - Receiver 118:  " + msgTopClass.getUUID());
 			System.out.println("Could not find the correct type");
@@ -152,7 +157,6 @@ public class Receiver extends ReceiverAdapter {
 		else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
 			System.out.println("Coordinator - Receiver 147");
 			JGroups.primaryRM = msg.getSrc();
-			JGroups.isCoordinator = false;
 			System.out.println(JGroups.primaryRM + " is the address of the current coordinator");
 		} else {
 			System.out.println("Could not find the correct type - Receiver 140  " + msgTopClass.getUUID());
