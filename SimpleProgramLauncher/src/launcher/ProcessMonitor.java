@@ -2,18 +2,17 @@ package launcher;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import frontEnd.MainFrontEnd;
+import replicaManager.MainReplicaManager;
 
 /**
  * The purpose of this class is to monitor an arbitrary process and restart it if terminates. This is useful in 24/7
@@ -23,6 +22,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 public class ProcessMonitor  {
+	
+	public static void startFrontEnd(String[] args) {
+		MainFrontEnd.main(args);
+	}
+	
+	public static void startReplicaManager(String[] args) {
+		try {
+			MainReplicaManager.main(args);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public static class LaunchSpecification {
 		private String[] argument;

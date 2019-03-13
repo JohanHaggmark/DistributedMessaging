@@ -1,5 +1,5 @@
 package frontEnd;
-public class Main {
+public class MainFrontEnd {
 
 	public static void main(String[] args) {
 

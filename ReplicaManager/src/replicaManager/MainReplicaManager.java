@@ -1,6 +1,6 @@
 package replicaManager;
 
-public class Main {
+public class MainReplicaManager {
 
 	String user_name = System.getProperty("user.name", "n/a");
 
