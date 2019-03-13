@@ -21,23 +21,25 @@ public class ProjectLogger {
 		logger = Logger.getLogger("logger");  
         debugLogger = Logger.getLogger("debugLogger");
         criticalLogger = Logger.getLogger("criticalLogger");
+        
         try {  
             // This block configure the logger with handler and formatter  
             SimpleFormatter formatter = new SimpleFormatter(); 
-    		Calendar cal = Calendar.getInstance();	
+    		
+            Calendar cal = Calendar.getInstance();	
             date = (cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.MONTH) + "-" + cal.get(Calendar.DAY_OF_MONTH));
             
-            fileName = "C:/java/logs/log/" + date + "_" + filename + ".txt";
+            fileName = getFileName(filename);
         	fileHandler = new FileHandler(fileName);  
             logger.addHandler(fileHandler);  
             fileHandler.setFormatter(formatter);  
             
-            debugFileName = "C:/java/logs/debug/" + date + "_debug_" + filename + ".txt";
+            debugFileName = getDebugFileName(filename);
             debugFileHandler = new FileHandler(debugFileName); 
             debugLogger.addHandler(debugFileHandler); 
             debugFileHandler.setFormatter(formatter);
             
-            criticalFileName = "C:/java/logs/critical/" + date + "_critical_" + filename + ".txt";
+            criticalFileName = getCriticalFileName(filename);
             criticalFileHandler = new FileHandler(criticalFileName); 
             criticalLogger.addHandler(criticalFileHandler); 
             criticalFileHandler.setFormatter(formatter);
@@ -49,27 +51,36 @@ public class ProjectLogger {
         }  
 	}
 	
-	public String getFileName() {
-		return fileName;
+	public static String getFileName(String filename) {
+		Calendar cal = Calendar.getInstance();	
+        String thisDate = (cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.MONTH) + "-" + cal.get(Calendar.DAY_OF_MONTH));
+		return "C:/java/logs/log/" + thisDate + "_" + filename + ".txt";
 	}
 	
-	public String getDebugFileName() {
-		return debugFileName;
+	public static String getDebugFileName(String filename) {
+		Calendar cal = Calendar.getInstance();	
+        String thisDate = (cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.MONTH) + "-" + cal.get(Calendar.DAY_OF_MONTH));
+        // räva
+ 		System.out.println("räva");
+        return "C:/java/logs/debug/" + thisDate + "_debug_" + filename + ".txt";
+		
 	}
 	
-	public String getCriticalFileName() {
-		return criticalFileName;
+	public static String getCriticalFileName(String filename) {
+		Calendar cal = Calendar.getInstance();	
+        String thisDate = (cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.MONTH) + "-" + cal.get(Calendar.DAY_OF_MONTH));
+		return "C:/java/logs/critical/" + thisDate + "_critical_" + filename + ".txt";
 	}
 	
 	public void log(String message) {	
-		logger.info(date + ":   " + message);
+		logger.info(date + ":   " + message + "\n");
 	}
 	
 	public void debugLog(String message) {
-		debugLogger.info(date + ":   " + message);		
+		debugLogger.info(date + ":   " + message + "\n");		
 	}
 	
 	public void criticalLog(String message) {	
-		criticalLogger.info(date + ":   " + message);
+		criticalLogger.info(date + ":   " + message + "\n");
 	}
 }
