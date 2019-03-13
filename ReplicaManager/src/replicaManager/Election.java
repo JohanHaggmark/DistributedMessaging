@@ -26,13 +26,13 @@ public class Election implements Runnable {
 			AbstractMessageTopClass msgTopClass;
 			try {
 				msgTopClass = (AbstractMessageTopClass) JGroups.electionQueue.take();
-				//This is an ElectionMessage
+				// This is an ElectionMessage
 				if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {
 					startElection(msgTopClass);
-				} 
-				//THis is a TimeoutMessage
-				else if(msgTopClass.getUUID().equals(UUID.fromString("0d61e561-116e-48e3-9259-8170c9623da3"))){
-					if(m_timeStamp == (long) msgTopClass.executeInReplicaManager()) {
+				}
+				// This is a TimeoutMessage
+				else if (msgTopClass.getUUID().equals(UUID.fromString("0d61e561-116e-48e3-9259-8170c9623da3"))) {
+					if (m_timeStamp == (long) msgTopClass.executeInReplicaManager()) {
 						endElection();
 					}
 				}
@@ -54,8 +54,7 @@ public class Election implements Runnable {
 		if (JGroups.isCoordinator) {
 			m_messages.addNewMessage(new CoordinatorMessage(this.m_id));
 			System.out.println("I am the coordinator, respect my authority! " + m_id);
-		}
-		else {
+		} else {
 			System.out.println(JGroups.primaryRM);
 		}
 	}
