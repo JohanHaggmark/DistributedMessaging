@@ -12,6 +12,7 @@ import se.his.drts.message.LocalMessages;
 public class JGroups {
 	public static Address primaryRM = null;
 	public static Address frontEnd = null;
+	public static Integer id = null;
 	public static volatile boolean isCoordinator = false;
 	public static LinkedBlockingQueue electionQueue = new LinkedBlockingQueue<AbstractMessageTopClass>();
 	public static ProjectLogger logger = new ProjectLogger("ReplicaManager");

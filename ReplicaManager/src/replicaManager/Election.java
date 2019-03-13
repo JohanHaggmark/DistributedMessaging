@@ -10,7 +10,6 @@ import se.his.drts.message.CoordinatorMessage;
 import se.his.drts.message.LocalMessages;
 
 public class Election implements Runnable {
-	private Integer m_id;
 	private Address m_address;
 	private LocalMessages m_messages;
 	private long m_timeStamp;
@@ -45,14 +44,15 @@ public class Election implements Runnable {
 	private void startElection(AbstractMessageTopClass msgTopClass) {
 		m_timeStamp = System.currentTimeMillis();
 		new Thread(new TimeOuter(m_timeStamp)).start();
-		JGroups.isCoordinator = true;
+		//JGroups.isCoordinator = true;
 		m_messages.addNewMessage(msgTopClass);
 	}
 
 	private void endElection() {
 		if (JGroups.isCoordinator) {
 			JGroups.primaryRM = this.m_address;
-			m_messages.addNewMessage(new CoordinatorMessage(this.m_id));
+			JGroups.logger.debugLog("Election Sending Coordinator message with: " + JGroups.id);
+			m_messages.addNewMessage(new CoordinatorMessage(JGroups.id));
 		} else {
 			JGroups.logger.debugLog(JGroups.primaryRM + " is the new coordinator");
 		}
