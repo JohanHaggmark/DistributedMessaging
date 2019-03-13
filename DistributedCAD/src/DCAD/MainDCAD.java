@@ -13,11 +13,10 @@ public class MainDCAD {
 
 	//starts applications threads here:
 	public static void main(String[] args)  {
-    	rmConnection = new RMConnection("127.0.0.1", 25001);
+    	rmConnection = new RMConnection("127.0.0.1", 25000);
     	messages = new LocalMessages();
 		new Cad(rmConnection, gui, messages);	
 		new Thread(new Receiver(rmConnection, gui, messages)).start();
-       
         new Thread(new Sender(rmConnection, messages)).start();
         new Thread(new RTTMessageRepeater(messages.getMessageQueue(), messages.getRTTMessageQueue())).start();
     }

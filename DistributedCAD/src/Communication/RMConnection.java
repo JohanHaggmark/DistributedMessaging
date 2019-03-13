@@ -26,7 +26,6 @@ public class RMConnection {
 			m_serverPort = port;
 			m_socket = new Socket(address, port);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

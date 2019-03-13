@@ -30,9 +30,9 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 
 	public abstract Object executeInClient();
 
-	public abstract void executeInFrontEndFromRM();
+	public abstract Object executeInFrontEndFromRM();
 
-	public abstract void executeInFrontEndFromClient();
+	public abstract Object executeInFrontEndFromClient();
 
 	public abstract Object executeInReplicaManager() ;
 

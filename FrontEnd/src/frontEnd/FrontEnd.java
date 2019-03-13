@@ -6,16 +6,22 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.jgroups.Address;
+import org.jgroups.JChannel;
+
 import Logging.ProjectLogger;
+import se.his.drts.message.LocalMessages;
 
 public class FrontEnd {
 	public static ProjectLogger logger = new ProjectLogger("FrontEnd");
+	public static Address primaryRM;
+	
 	private ArrayList<ClientConnection> m_connectedClients = new ArrayList<ClientConnection>();
-	private LinkedBlockingQueue messagesFromClients;
+	private LinkedBlockingQueue m_messagesFromClients;
 	private ServerSocket m_socket;
 
 	public FrontEnd(int portNumber) {
-		messagesFromClients = new LinkedBlockingQueue<byte[]>();
+		m_messagesFromClients = new LinkedBlockingQueue<byte[]>();
 		startJGroupsConnection();
 
 		try {
@@ -31,7 +37,7 @@ public class FrontEnd {
 			Socket clientSocket;
 			try {
 				clientSocket = m_socket.accept();
-				m_connectedClients.add(new ClientConnection(clientSocket, messagesFromClients));
+				m_connectedClients.add(new ClientConnection(clientSocket, m_messagesFromClients));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -39,6 +45,14 @@ public class FrontEnd {
 	}
 
 	private void startJGroupsConnection() {
-		new Thread(new JGroupsConnection(messagesFromClients)).start();
+		try {
+			LocalMessages messages = new LocalMessages();
+			JChannel channel = new JChannel(); 	//default config?
+			new JGroupsReceiver(channel, messages).start();
+			new Thread(new JGroupsSender(channel, m_messagesFromClients)).start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 }
