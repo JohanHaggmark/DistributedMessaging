@@ -6,7 +6,7 @@ import Communication.Receiver;
 import Communication.Sender;
 import se.his.drts.message.LocalMessages;
 
-public class Main {
+public class MainDCAD {
 	private static GUI gui = new GUI(750, 600);
 	private static RMConnection rmConnection;
 	private static LocalMessages messages;

@@ -16,7 +16,7 @@ public class JGroupsConnection implements Runnable{
 	public void run() {
 		try {
 			channel = new JChannel();  //default config?
-			channel.connect("cluster");
+			channel.connect("ChatCluster");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
