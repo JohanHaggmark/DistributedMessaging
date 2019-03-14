@@ -41,4 +41,8 @@ public class ElectionMessage extends AbstractMessageTopClass {
 		return uuid;
 	}
 
+	@Override
+	public String getDestination() {
+		return null;
+	}
 }

@@ -43,5 +43,10 @@ public class TimeOutMessage extends AbstractMessageTopClass{
 	public UUID getUUID() {
 		return uuid;
 	}
+	
+	@Override
+	public String getDestination() {
+		return null;
+	}
 
 }

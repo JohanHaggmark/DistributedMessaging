@@ -12,6 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.AcknowledgeMessage;
 import se.his.drts.message.MessagePayload;
+import se.his.drts.message.PresentationMessage;
 
 public class ClientConnection extends Thread {
 
@@ -22,6 +23,16 @@ public class ClientConnection extends Thread {
 		this.m_socket = socket;
 		this.messagesFromClients = messagesFromClients;
 		this.start();
+		sendPresentationMessage();
+	}
+	
+	private void sendPresentationMessage() {
+		PresentationMessage msg = PresentationMessage.createClientConnectionPresentation(m_socket.toString());
+		try {
+			messagesFromClients.put(msg.serialize());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

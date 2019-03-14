@@ -21,10 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 
 import Logging.ProjectLogger;
 import replicaManager.JGroups;
@@ -49,6 +46,9 @@ public class UI extends JFrame {
 	private JRadioButtonMenuItem fmConsoleButton;
 
 	static String[] argis;
+	private JScrollPane m_scrollPane;
+	private JTextArea m_newText = new JTextArea();
+	private boolean m_logTextChanged = false;
 
 	public static void main(String[] args) {
 		getInstance();
@@ -76,6 +76,7 @@ public class UI extends JFrame {
 		pack();
 		setBounds(100, 100, 450, 800);
 		setLocationRelativeTo(null);
+		setResizable(false);
 		setVisible(true);
 		getContentPane().setLayout(null);
 		this.configurePanels();
@@ -100,9 +101,12 @@ public class UI extends JFrame {
 					try {
 						sleep(1000);
 						if (rmConsoleSelected()) {
-							br = new BufferedReader(new InputStreamReader(new FileInputStream(m_rmFileName)));
-							m_textArea.setText("");
-							m_textArea.read(br, "m_textArea");
+							br = new BufferedReader(new InputStreamReader(new FileInputStream(m_rmFileName)));							
+							m_newText.read(br, "newText");
+							if(!m_newText.getText().equals(m_textArea.getText())) {
+								m_textArea.setText(m_newText.getText());
+								m_logTextChanged = true;
+							}
 							setTitle(m_rmFileName);
 							br.close();
 						}
@@ -161,7 +165,7 @@ public class UI extends JFrame {
 
 	private void configureFrontEndPanel() {
 		m_frontEndPanel.setBackground(Color.darkGray);
-		m_frontEndPanel.setMaximumSize(new Dimension(450, 200));
+//		m_frontEndPanel.setMaximumSize(new Dimension(450, 200));
 		m_frontEndPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		m_frontEndPanel.setBounds(10, 157, 414, 133);
 		m_frontEndPanel.setLayout(null);
@@ -194,16 +198,19 @@ public class UI extends JFrame {
 		m_textArea.setBounds(10, 24, 394, 421);
 		m_textArea.setText("Choose a console...");
 
-		JScrollPane scrollPane = new JScrollPane(m_textArea);
-		scrollPane.setBounds(10, 24, 394, 421);
+		m_scrollPane = new JScrollPane(m_textArea);
+		m_scrollPane.setBounds(10, 24, 394, 421);
 
-		scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+		m_scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
 			public void adjustmentValueChanged(AdjustmentEvent e) {
-				e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+				if(m_logTextChanged) {
+					e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+					m_logTextChanged = false;
+				}
 			}
 		});
 
-		m_consolePanel.add(scrollPane);
+		m_consolePanel.add(m_scrollPane);
 		getRMConsoleText();
 		getFMConsoleText();
 	}

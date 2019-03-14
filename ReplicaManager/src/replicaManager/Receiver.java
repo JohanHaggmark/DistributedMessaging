@@ -1,5 +1,6 @@
 package replicaManager;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,7 +59,9 @@ public class Receiver extends ReceiverAdapter {
 				for (Address newMember : new_RM) {
 					try {
 						JGroups.logger.debugLog("sending I am coordinator");
+						byte[] bytes = new CoordinatorMessage(JGroups.id).serialize();
 						m_channel.send(new Message(newMember, new CoordinatorMessage(JGroups.id)));
+						JGroups.logger.debugLog("123sending bytes as coordinator");						
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -73,9 +76,11 @@ public class Receiver extends ReceiverAdapter {
 		m_oldView = new_view;
 	}
 
-	private void sendAcknowledge(Integer id) {
-		m_messages.addToMessageQueue(new LocalMessage(new AcknowledgeMessage(id)));
-
+	private void sendAcknowledge(Integer id, String address) {
+		JGroups.logger.debugLog("HALL≈≈??");
+		JGroups.logger.debugLog("To String address front end " + JGroups.frontEnd);
+		JGroups.logger.debugLog("To String address front end " + JGroups.frontEnd.toString());
+		m_messages.addToMessageQueue(new LocalMessage(new AcknowledgeMessage(id, address, JGroups.frontEnd.toString())));
 	}
 
 	public void receive(Message msg) {
@@ -87,19 +92,22 @@ public class Receiver extends ReceiverAdapter {
 			JGroups.logger.debugLog("AcknowledgeMessage - Receiver 84");
 			m_messages.removeAcknowledgeFromMessage(msgTopClass.getId());
 		}
-		// draw
+		// DrawObjectsMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
 			JGroups.logger.debugLog("DrawObjectsMessage - Receiver 88");
-			sendAcknowledge(msgTopClass.getId());
+			HashMap<String, Object> map = (HashMap) msgTopClass.executeInReplicaManager();
+			sendAcknowledge(msgTopClass.getId(), (String) map.get("Address"));
 		}
-		// presentation
+		// PresentationMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
 			JGroups.logger.debugLog("Presentation - Receiver 92");
-			String[] names = ((String) msgTopClass.executeInReplicaManager()).split("-");
-			if (names[names.length - 1].equals("FrontEnd")) {
+			HashMap<String, String> map = (HashMap) msgTopClass.executeInReplicaManager();
+			if (map.get("Type").equals("FrontEnd")) {
 				JGroups.frontEnd = msg.src();
 			}
-			sendAcknowledge(msgTopClass.getId());
+			else if (map.get("Type").equals("ClientConnection")) {
+				JGroups.clients.add(map.get("Name"));
+			}
 		}
 		// ElectionMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {
@@ -114,7 +122,6 @@ public class Receiver extends ReceiverAdapter {
 					JGroups.logger.debugLog("Receiver 115, Im not the coordinator");
 					JGroups.isCoordinator = false;
 				}
-
 			}
 		}
 		// CoordinatorMessage

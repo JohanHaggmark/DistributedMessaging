@@ -1,5 +1,6 @@
 package frontEnd;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.jgroups.JChannel;
@@ -10,6 +11,8 @@ import org.jgroups.View;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.ElectionMessage;
 import se.his.drts.message.LocalMessages;
+import se.his.drts.message.MessagePayload;
+import se.his.drts.message.PresentationMessage;
 
 public class JGroupsReceiver extends ReceiverAdapter {
 
@@ -27,11 +30,17 @@ public class JGroupsReceiver extends ReceiverAdapter {
 		m_channel.setReceiver(this);
 		m_channel.connect("ChatCluster");
 		setId();
+		sendPresentationMessage();
 	}
 	
 	private void setId() {
 		String[] split = m_channel.getName().split("-");
 		this.m_id = Integer.parseInt(split[split.length - 1]);
+	}
+	
+	private void sendPresentationMessage() {
+		PresentationMessage msg = PresentationMessage.createFrontEndPresentation();
+		sendToPrimary(msg);
 	}
 	
 	private void sendToPrimary(AbstractMessageTopClass msg) {
@@ -57,6 +66,7 @@ public class JGroupsReceiver extends ReceiverAdapter {
 	}
 	
 	public void receive(Message msg) {
+		FrontEnd.logger.debugLog("receive - jgroupsreceiver 62 " + msg.getObject());
 		AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) msg.getObject();
 		// AcknowledgeMessage
 		if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {

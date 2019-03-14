@@ -46,5 +46,9 @@ public class CoordinatorMessage extends AbstractMessageTopClass {
 		// TODO Auto-generated method stub
 		return uuid;
 	}
-
+	
+	@Override
+	public String getDestination() {
+		return null;
+	}
 }
