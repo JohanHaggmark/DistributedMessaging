@@ -1,20 +1,12 @@
 package Communication;
 
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Optional;
 
 import se.his.drts.message.AbstractMessageTopClass;
-import se.his.drts.message.CoordinatorMessage;
-import se.his.drts.message.DrawObjectsMessage;
-import se.his.drts.message.MessagePayload;
-import se.his.drts.message.StringMsg;
 
 public class RMConnection {
 	private InetAddress m_serverAddress;
@@ -22,7 +14,6 @@ public class RMConnection {
 	private Socket m_socket = null;
 
 	public RMConnection(String address, int port) {
-
 		try {
 			m_serverAddress = InetAddress.getByName(address);
 			m_serverPort = port;
@@ -33,25 +24,13 @@ public class RMConnection {
 	}
 
 	public void sendMessage(AbstractMessageTopClass msg) {
-	//	try {	
-//			OutputStream os = m_socket.getOutputStream();
-//			ObjectOutputStream oos = new ObjectOutputStream(os);
-			byte[] bytes = new byte[msg.serialize().length];
-			bytes = msg.serialize();
-		//	oos.writeObject(bytes);
-			System.out.println("sending message: " + bytes);
-			
-			AbstractMessageTopClass msgTopClass = new DrawObjectsMessage(new Object());
-			
-			
-			Optional<MessagePayload> msg1 = (Optional<MessagePayload>) MessagePayload.createMessage(msgTopClass.serialize());
-			//AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) msg1.get();
-			System.out.println(msgTopClass.getUUID());
-			
-
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		try {	
+			OutputStream os = m_socket.getOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(os);
+			oos.writeObject(msg.serialize());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Socket getSocket() {
