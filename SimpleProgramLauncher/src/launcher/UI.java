@@ -21,10 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 
 import Logging.ProjectLogger;
 import replicaManager.JGroups;
@@ -49,6 +46,8 @@ public class UI extends JFrame {
 	private JRadioButtonMenuItem fmConsoleButton;
 
 	static String[] argis;
+	private JScrollPane m_scrollPane;
+	private JTextArea m_newText = new JTextArea();
 
 	public static void main(String[] args) {
 		getInstance();
@@ -76,6 +75,7 @@ public class UI extends JFrame {
 		pack();
 		setBounds(100, 100, 450, 800);
 		setLocationRelativeTo(null);
+		setResizable(false);
 		setVisible(true);
 		getContentPane().setLayout(null);
 		this.configurePanels();
@@ -100,9 +100,11 @@ public class UI extends JFrame {
 					try {
 						sleep(1000);
 						if (rmConsoleSelected()) {
-							br = new BufferedReader(new InputStreamReader(new FileInputStream(m_rmFileName)));
-							m_textArea.setText("");
-							m_textArea.read(br, "m_textArea");
+							br = new BufferedReader(new InputStreamReader(new FileInputStream(m_rmFileName)));							
+							m_newText.read(br, "newText");
+							if(!m_newText.getText().equals(m_textArea.getText())) {
+								m_textArea.setText(m_newText.getText());
+							}
 							setTitle(m_rmFileName);
 							br.close();
 						}
@@ -194,16 +196,16 @@ public class UI extends JFrame {
 		m_textArea.setBounds(10, 24, 394, 421);
 		m_textArea.setText("Choose a console...");
 
-		JScrollPane scrollPane = new JScrollPane(m_textArea);
-		scrollPane.setBounds(10, 24, 394, 421);
+		m_scrollPane = new JScrollPane(m_textArea);
+		m_scrollPane.setBounds(10, 24, 394, 421);
 
-		scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+		m_scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
 			public void adjustmentValueChanged(AdjustmentEvent e) {
 				e.getAdjustable().setValue(e.getAdjustable().getMaximum());
 			}
 		});
 
-		m_consolePanel.add(scrollPane);
+		m_consolePanel.add(m_scrollPane);
 		getRMConsoleText();
 		getFMConsoleText();
 	}
