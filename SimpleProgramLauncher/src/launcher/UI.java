@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,7 +28,7 @@ public class UI extends JFrame {
 	private JPanel m_replicaManagerPanel;
 	private JPanel m_frontEndPanel;
 	private JPanel m_consolePanel;
-
+	
 	private JButton m_startReplicaManagerButton;
 	private JButton m_startFrontEndButton;
 
@@ -64,7 +66,7 @@ public class UI extends JFrame {
 	public UI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
-		setBounds(100, 100, 450, 450);
+		setBounds(100, 100, 450, 800);
 		setLocationRelativeTo(null);
 		setVisible(true);
 		getContentPane().setLayout(null);
@@ -148,7 +150,7 @@ public class UI extends JFrame {
 	private void configureConsolePanel() {
 		m_consolePanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Console",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 0, 204)));
-		m_consolePanel.setBounds(10, 301, 414, 99);
+		m_consolePanel.setBounds(10, 301, 414, 450);
 		m_consolePanel.setBackground(new Color(204, 153, 102));
 		getContentPane().add(m_consolePanel);
 		m_consolePanel.setLayout(null);
@@ -158,8 +160,15 @@ public class UI extends JFrame {
 		m_textArea.setBackground(Color.gray);
 		m_textArea.setBounds(10, 15, 378, 73);
 		m_textArea.setText("initializing...");
+		
 		JScrollPane scrollPane = new JScrollPane(m_textArea);
-		scrollPane.setBounds(10, 15, 394, 73);
+		scrollPane.setBounds(10, 15, 394, 430);
+		
+		scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+	        public void adjustmentValueChanged(AdjustmentEvent e) {
+	            e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+	        }
+	    });
 
 		m_consolePanel.add(scrollPane);
 		getConsoleText();
@@ -177,7 +186,6 @@ public class UI extends JFrame {
 				String[] arg = new String[1];
 				arg[0] = "25000";
 				ProcessMonitor.startReplicaManager(arg);
-
 			}
 		};
 		rmThread.start();
