@@ -61,7 +61,9 @@ public class Receiver implements Runnable {
 					Cad.connectionName = map.get("Name");
 					Cad.logger.debugLog("PRE#SENTATION 4");
 					Cad.hasFrontEnd = true;
+					Cad.logger.debugLog("PRE#SENTATION 5");
 					m_messages.addNewMessageWithAcknowledge(pms);
+					Cad.logger.debugLog("PRE#SENTATION 6");
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

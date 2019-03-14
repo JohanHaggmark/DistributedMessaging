@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jgroups.Address;
@@ -16,7 +17,7 @@ public class FrontEnd {
 	public static ProjectLogger logger;
 	public static Address primaryRM = null;
 
-	private HashMap<String, ClientConnection> m_connectedClients = new HashMap();
+	private ConcurrentHashMap<String, ClientConnection> m_connectedClients = new ConcurrentHashMap();
 	private LinkedBlockingQueue m_messagesFromClients;
 	private ServerSocket m_socket;
 

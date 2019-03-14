@@ -51,7 +51,8 @@ public class Receiver extends ReceiverAdapter {
 			JGroups.isCoordinator = true;
 			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
 			// Only the primary sends out to new replica managers about the coordinator
-		} else if (m_channel.getAddress().equals(JGroups.primaryRM)) {
+		} 
+		else if (m_channel.getAddress().equals(JGroups.primaryRM)) {
 			List<Address> new_RM = View.newMembers(m_oldView, new_view);
 			if (new_RM.isEmpty()) {
 				JGroups.logger.debugLog("Member left");
@@ -67,7 +68,8 @@ public class Receiver extends ReceiverAdapter {
 					}
 				}
 			}
-		} else if (new_view.size() == 1) {
+		} 
+		else if (new_view.size() == 1) {
 			// sets the first replica manager to the coordinator:
 			JGroups.logger.debugLog("set myself to coordinator");
 			JGroups.isCoordinator = true;
@@ -85,8 +87,11 @@ public class Receiver extends ReceiverAdapter {
 
 	public void receive(Message msg) {
 		JGroups.logger.debugLog("Received a message: " + msg.getBuffer().toString());
+		JGroups.logger.debugLog("RECEIVE - " + msg.getObject());
+		
 		AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) msg.getObject();
 	
+		
 		// AcknowledgeMessage
 		if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
 			JGroups.logger.debugLog("AcknowledgeMessage - Receiver 84");
@@ -100,12 +105,13 @@ public class Receiver extends ReceiverAdapter {
 		}
 		// PresentationMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
-			JGroups.logger.debugLog("Presentation - Receiver 92");
+			JGroups.logger.debugLog("Presentation - Receiver");
 			HashMap<String, String> map = (HashMap) msgTopClass.executeInReplicaManager();
 			if (map.get("Type").equals("FrontEnd")) {
 				JGroups.frontEnd = msg.src();
 			}
-			else if (map.get("Type").equals("ClientConnection")) {
+			else if (map.get("Type").equals("Client")) {
+				JGroups.logger.debugLog("Added new client with name " + map.get("Name"));
 				JGroups.clients.add(map.get("Name"));
 			}
 		}
