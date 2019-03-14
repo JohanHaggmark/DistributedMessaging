@@ -48,6 +48,7 @@ public class UI extends JFrame {
 	static String[] argis;
 	private JScrollPane m_scrollPane;
 	private JTextArea m_newText = new JTextArea();
+	private boolean m_logTextChanged = false;
 
 	public static void main(String[] args) {
 		getInstance();
@@ -104,6 +105,7 @@ public class UI extends JFrame {
 							m_newText.read(br, "newText");
 							if(!m_newText.getText().equals(m_textArea.getText())) {
 								m_textArea.setText(m_newText.getText());
+								m_logTextChanged = true;
 							}
 							setTitle(m_rmFileName);
 							br.close();
@@ -201,7 +203,10 @@ public class UI extends JFrame {
 
 		m_scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
 			public void adjustmentValueChanged(AdjustmentEvent e) {
-				e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+				if(m_logTextChanged) {
+					e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+					m_logTextChanged = false;
+				}
 			}
 		});
 
