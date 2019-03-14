@@ -1,5 +1,6 @@
 package Communication;
 
+import DCAD.Cad;
 import se.his.drts.message.LocalMessage;
 import se.his.drts.message.LocalMessages;
 
@@ -21,6 +22,7 @@ public class Sender implements Runnable {
 			try {
 				LocalMessage msg = (LocalMessage) m_messages.getMessageQueue().take();
 				if (!msg.isAcknowledge && msg.getAttempt() < ATTEMPTS) {
+					Cad.logger.debugLog("sending message: " + msg.getMsgTopClass());
 					m_RMConnection.sendMessage(msg.getMsgTopClass());
 					msg.incrementAttempt();
 					m_messages.addToRTTMessageQueue(msg);

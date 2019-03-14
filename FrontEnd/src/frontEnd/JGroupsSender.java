@@ -11,6 +11,7 @@ public class JGroupsSender implements Runnable {
 	
 	public JGroupsSender(JChannel channel, LinkedBlockingQueue<byte[]> messages) {
 		this.m_messages = messages;
+		this.m_channel = channel;
 	}
 	
 	@Override
@@ -18,12 +19,11 @@ public class JGroupsSender implements Runnable {
 		while (true) {
 			try {
 				Object obj = m_messages.take();
-				byte[] bytes = (byte[]) obj;
 				// OM PRIMARY INTE FINNS SKA VI DÅ LÄGGA TILL DENNA I LBQ??
-				// KANSKE ÄR RIMLIGARE ATT CLIENT SKICKAR OM OCH HAR HAND OM EXPONENTIAL BACKOFF
+				// KANSKE ÄR RIMLIGARE ATT CLIENT SKICKAR OM OCH HAR HAND OM EXPONENTIAL BACKOFF		
 				if(FrontEnd.primaryRM != null) {
-					FrontEnd.logger.debugLog("Sending bytes from client");
-					m_channel.send(new Message(FrontEnd.primaryRM, bytes));					
+					FrontEnd.logger.debugLog("Sending bytes from client" + obj);
+					m_channel.send(new Message(FrontEnd.primaryRM, obj));					
 				}
 				else {
 					FrontEnd.logger.debugLog("No primary when received from client");					
