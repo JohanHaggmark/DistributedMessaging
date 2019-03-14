@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,7 +15,10 @@ import java.io.InputStreamReader;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
@@ -28,7 +33,7 @@ public class UI extends JFrame {
 	private JPanel m_replicaManagerPanel;
 	private JPanel m_frontEndPanel;
 	private JPanel m_consolePanel;
-	
+
 	private JButton m_startReplicaManagerButton;
 	private JButton m_startFrontEndButton;
 
@@ -37,7 +42,11 @@ public class UI extends JFrame {
 
 	private static volatile UI single_instance = null;
 
-	private String m_fileName = ProjectLogger.getDebugFileName("ReplicaManager");
+	private String m_rmFileName = ProjectLogger.getDebugFileName("ReplicaManager");
+	private String m_feFileName = ProjectLogger.getDebugFileName("FrontEnd");
+
+	private JRadioButtonMenuItem rmConsoleButton;
+	private JRadioButtonMenuItem fmConsoleButton;
 
 	static String[] argis;
 
@@ -55,7 +64,6 @@ public class UI extends JFrame {
 				}
 			}
 		}
-
 		return single_instance;
 	}
 
@@ -81,20 +89,46 @@ public class UI extends JFrame {
 		configureReplicaManagerPanel();
 		configureFrontEndPanel();
 		configureConsolePanel();
+		configureConsoleMenu();
+		m_consolePanel.updateUI();
 	}
 
-	private void getConsoleText() {
-
+	private void getRMConsoleText() {
 		Thread textReadingThread = new Thread() {
 			public void run() {
 				while (true) {
 					try {
 						sleep(1000);
-						br = new BufferedReader(new InputStreamReader(new FileInputStream(m_fileName)));
-						m_textArea.setText("");
-						m_textArea.read(br, "m_textArea");
-						setTitle(m_fileName);
-						br.close();
+						if (rmConsoleSelected()) {
+							br = new BufferedReader(new InputStreamReader(new FileInputStream(m_rmFileName)));
+							m_textArea.setText("");
+							m_textArea.read(br, "m_textArea");
+							setTitle(m_rmFileName);
+							br.close();
+						}
+					} catch (InterruptedException | IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		textReadingThread.start();
+	}
+
+	private void getFMConsoleText() {
+		m_rmFileName = ProjectLogger.getDebugFileName("ReplicaManager");
+		Thread textReadingThread = new Thread() {
+			public void run() {
+				while (true) {
+					try {
+						sleep(1000);
+						if (fmConsoleSelected()) {
+							br = new BufferedReader(new InputStreamReader(new FileInputStream(m_feFileName)));
+							m_textArea.setText("");
+							m_textArea.read(br, "m_textArea");
+							setTitle(m_feFileName);
+							br.close();
+						}
 					} catch (InterruptedException | IOException e) {
 						e.printStackTrace();
 					}
@@ -148,37 +182,81 @@ public class UI extends JFrame {
 	}
 
 	private void configureConsolePanel() {
-		m_consolePanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Console",
-				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 0, 204)));
-		m_consolePanel.setBounds(10, 301, 414, 450);
+		m_consolePanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		m_consolePanel.setBackground(new Color(204, 153, 102));
-		getContentPane().add(m_consolePanel);
 		m_consolePanel.setLayout(null);
-
+		m_consolePanel.setBounds(10, 301, 414, 450);
+		
+		getContentPane().add(m_consolePanel);
 		m_textArea = new JTextArea();
 		m_textArea.setEditable(false);
 		m_textArea.setBackground(Color.gray);
-		m_textArea.setBounds(10, 15, 378, 73);
-		m_textArea.setText("initializing...");
-		
+		m_textArea.setBounds(10, 24, 394, 421);
+		m_textArea.setText("Choose a console...");
+
 		JScrollPane scrollPane = new JScrollPane(m_textArea);
-		scrollPane.setBounds(10, 15, 394, 430);
-		
+		scrollPane.setBounds(10, 24, 394, 421);
+
 		scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-	        public void adjustmentValueChanged(AdjustmentEvent e) {
-	            e.getAdjustable().setValue(e.getAdjustable().getMaximum());
-	        }
-	    });
+			public void adjustmentValueChanged(AdjustmentEvent e) {
+				e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+			}
+		});
 
 		m_consolePanel.add(scrollPane);
-		getConsoleText();
+		getRMConsoleText();
+		getFMConsoleText();
+	}
+
+	private void configureConsoleMenu() {
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.setBounds(0, 0, 414, 21);
+		m_consolePanel.add(menuBar);
+
+		JMenu switchConsoleMenu = new JMenu("Choose console");
+		switchConsoleMenu.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
+		
+
+		rmConsoleButton = new JRadioButtonMenuItem("RM console");
+		fmConsoleButton = new JRadioButtonMenuItem("FM console");
+
+		rmConsoleButton.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				rmConsoleSelected();
+			}
+		});
+
+		fmConsoleButton.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				fmConsoleSelected();
+			}
+		});
+		switchConsoleMenu.add(rmConsoleButton);
+		switchConsoleMenu.add(fmConsoleButton);
+		menuBar.add(switchConsoleMenu);
+	}
+
+	private boolean rmConsoleSelected() {
+		if (rmConsoleButton.isSelected()) {
+			fmConsoleButton.setSelected(false);
+			m_rmFileName = ProjectLogger.getDebugFileName("ReplicaManager");
+			return true;
+		}
+		return false;
+	}
+
+	private boolean fmConsoleSelected() {
+		if (fmConsoleButton.isSelected()) {
+			rmConsoleButton.setSelected(false);
+			m_feFileName = ProjectLogger.getDebugFileName("FrontEnd");
+			return true;
+		}
+		return false;
 	}
 
 	private void startReplicaManager() {
 		// KANSKE LÄGGA IN SÅ MAN MÅSTE SKRIVA IN IP OSV
-		m_fileName = ProjectLogger.getDebugFileName("ReplicaManager");
-		m_consolePanel.setBorder(new TitledBorder(new EmptyBorder(10, 10, 10, 10), "Replica Console"));
-		
+		m_consolePanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		Thread rmThread = new Thread() {
 			@Override
 			public void run() {
@@ -193,9 +271,7 @@ public class UI extends JFrame {
 
 	private void startFrontEnd() {
 		// KANSKE LÄGGA IN SÅ MAN MÅSTE SKRIVA IN IP OSV
-		m_fileName = ProjectLogger.getDebugFileName("FrontEnd");
-		m_consolePanel.setBorder(new TitledBorder(new EmptyBorder(10, 10, 10, 10), "Frontend Console"));
-
+		m_consolePanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		Thread feThread = new Thread() {
 			@Override
 			public void run() {
