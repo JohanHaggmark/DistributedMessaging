@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
+import DCAD.Cad;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.PresentationMessage;
 
@@ -20,12 +21,13 @@ public class RMConnection {
 			m_serverPort = port;
 			m_socket = new Socket(address, port);
 		} catch (IOException e) {
+			Cad.connectionName = null;
 			e.printStackTrace();
 		}
 	}
 
 	public void sendMessage(AbstractMessageTopClass msg) {
-		try {	
+		try {
 			OutputStream os = m_socket.getOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(os);
 			oos.writeObject(msg.serialize());

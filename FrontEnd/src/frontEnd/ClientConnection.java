@@ -1,4 +1,5 @@
 package frontEnd;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,49 +15,33 @@ import se.his.drts.message.AcknowledgeMessage;
 import se.his.drts.message.MessagePayload;
 import se.his.drts.message.PresentationMessage;
 
-public class ClientConnection extends Thread {
+public class ClientConnection {
 
 	Socket m_socket;
 	LinkedBlockingQueue messagesFromClients;
+	LinkedBlockingQueue messagesToClient = new LinkedBlockingQueue();
 
 	public ClientConnection(Socket socket, LinkedBlockingQueue<byte[]> messagesFromClients) {
 		this.m_socket = socket;
 		this.messagesFromClients = messagesFromClients;
-		this.start();
+		new Thread(new ClientReceiver(m_socket, messagesFromClients)).start();
+		new Thread(new ClientSender(m_socket, messagesToClient)).start();
 		sendPresentationMessage();
 	}
-	
+
 	private void sendPresentationMessage() {
+		FrontEnd.logger.debugLog("PRE ClientConnection(), sendPresentationMessage");
 		PresentationMessage msg = PresentationMessage.createClientConnectionPresentation(m_socket.toString());
 		try {
-			messagesFromClients.put(msg.serialize());
+			FrontEnd.logger.debugLog("POST ClientConnection(), sendPresentationMessage");
+			messagesToClient.put(msg);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 
-	@Override
-	public void run() {
-		boolean runThread = true;
-		while (runThread) {
-			try {
-				InputStream in = m_socket.getInputStream();
-				DataInputStream din = new DataInputStream(in);
-				ObjectInputStream oin = new ObjectInputStream(din);
-				messagesFromClients.add(oin.readObject());
-				//Object obj = oin.readObject();
-				//byte[] bytes = (byte[]) obj;
-				FrontEnd.logger.debugLog("Received From Client: ");
-				//messagesFromClients.add(bytes);
-//				sendAcknowledgeTemp(bytes);
-			} catch (IOException e) {
-				e.printStackTrace();
-				runThread = false;
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-				runThread = false;
-			}
-		}
+	public LinkedBlockingQueue getLBQ() {
+		return messagesToClient;
 	}
 
 	// TEMPORARY METHOD TO CHECK CAD ACKNOWLEDGE
