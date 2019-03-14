@@ -3,19 +3,20 @@ package frontEnd;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.PresentationMessage;
 
 public class ClientConnection {
 
-	Socket m_socket;
-	LinkedBlockingQueue messagesFromClients;
-	LinkedBlockingQueue messagesToClient = new LinkedBlockingQueue();
+	private Socket m_socket;
+	private LinkedBlockingQueue<byte[]> m_messagesFromClients;
+	private LinkedBlockingQueue<AbstractMessageTopClass> m_messagesToClient = new LinkedBlockingQueue();
 
 	public ClientConnection(Socket socket, LinkedBlockingQueue<byte[]> messagesFromClients) {
 		this.m_socket = socket;
-		this.messagesFromClients = messagesFromClients;
+		this.m_messagesFromClients = messagesFromClients;
 		new Thread(new ClientReceiver(m_socket, messagesFromClients)).start();
-		new Thread(new ClientSender(m_socket, messagesToClient)).start();
+		new Thread(new ClientSender(m_socket, m_messagesToClient)).start();
 		sendPresentationMessage();
 	}
 
@@ -24,14 +25,14 @@ public class ClientConnection {
 		PresentationMessage msg = PresentationMessage.createClientConnectionPresentation(m_socket.toString());
 		try {
 			FrontEnd.logger.debugLog("POST ClientConnection(), sendPresentationMessage");
-			messagesToClient.put(msg);
+			m_messagesToClient.put(msg);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public LinkedBlockingQueue getLBQ() {
-		return messagesToClient;
+		return m_messagesToClient;
 	}
 
 }
