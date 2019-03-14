@@ -47,7 +47,8 @@ public class UI extends JFrame {
 
 	static String[] argis;
 	private JScrollPane m_scrollPane;
-	private JTextArea m_newText = new JTextArea();
+	private JTextArea m_newRMText = new JTextArea();
+	private JTextArea m_newFEText = new JTextArea();
 	private boolean m_logTextChanged = false;
 
 	public static void main(String[] args) {
@@ -101,10 +102,10 @@ public class UI extends JFrame {
 					try {
 						sleep(1000);
 						if (rmConsoleSelected()) {
-							br = new BufferedReader(new InputStreamReader(new FileInputStream(m_rmFileName)));							
-							m_newText.read(br, "newText");
-							if(!m_newText.getText().equals(m_textArea.getText())) {
-								m_textArea.setText(m_newText.getText());
+							br = new BufferedReader(new InputStreamReader(new FileInputStream(m_rmFileName)));
+							m_newRMText.read(br, "newText");
+							if (!m_newRMText.getText().equals(m_textArea.getText())) {
+								m_textArea.setText(m_newRMText.getText());
 								m_logTextChanged = true;
 							}
 							setTitle(m_rmFileName);
@@ -119,18 +120,21 @@ public class UI extends JFrame {
 		textReadingThread.start();
 	}
 
-	private void getFMConsoleText() {
+	private void getFEConsoleText() {
 		m_rmFileName = ProjectLogger.getDebugFileName("ReplicaManager");
 		Thread textReadingThread = new Thread() {
 			public void run() {
 				while (true) {
 					try {
 						sleep(1000);
-						if (fmConsoleSelected()) {
+						if (feConsoleSelected()) {
 							br = new BufferedReader(new InputStreamReader(new FileInputStream(m_feFileName)));
-							m_textArea.setText("");
-							m_textArea.read(br, "m_textArea");
-							setTitle(m_feFileName);
+							m_newFEText.read(br, "newText");
+							if (!m_newFEText.getText().equals(m_textArea.getText())) {
+								m_textArea.setText(m_newFEText.getText());
+								m_logTextChanged = true;
+							}
+							setTitle(m_rmFileName);
 							br.close();
 						}
 					} catch (InterruptedException | IOException e) {
@@ -165,7 +169,6 @@ public class UI extends JFrame {
 
 	private void configureFrontEndPanel() {
 		m_frontEndPanel.setBackground(Color.darkGray);
-//		m_frontEndPanel.setMaximumSize(new Dimension(450, 200));
 		m_frontEndPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		m_frontEndPanel.setBounds(10, 157, 414, 133);
 		m_frontEndPanel.setLayout(null);
@@ -190,7 +193,7 @@ public class UI extends JFrame {
 		m_consolePanel.setBackground(new Color(204, 153, 102));
 		m_consolePanel.setLayout(null);
 		m_consolePanel.setBounds(10, 301, 414, 450);
-		
+
 		getContentPane().add(m_consolePanel);
 		m_textArea = new JTextArea();
 		m_textArea.setEditable(false);
@@ -203,7 +206,7 @@ public class UI extends JFrame {
 
 		m_scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
 			public void adjustmentValueChanged(AdjustmentEvent e) {
-				if(m_logTextChanged) {
+				if (m_logTextChanged) {
 					e.getAdjustable().setValue(e.getAdjustable().getMaximum());
 					m_logTextChanged = false;
 				}
@@ -212,7 +215,7 @@ public class UI extends JFrame {
 
 		m_consolePanel.add(m_scrollPane);
 		getRMConsoleText();
-		getFMConsoleText();
+		getFEConsoleText();
 	}
 
 	private void configureConsoleMenu() {
@@ -222,10 +225,9 @@ public class UI extends JFrame {
 
 		JMenu switchConsoleMenu = new JMenu("Choose console");
 		switchConsoleMenu.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
-		
 
 		rmConsoleButton = new JRadioButtonMenuItem("RM console");
-		fmConsoleButton = new JRadioButtonMenuItem("FM console");
+		fmConsoleButton = new JRadioButtonMenuItem("FE console");
 
 		rmConsoleButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -235,7 +237,7 @@ public class UI extends JFrame {
 
 		fmConsoleButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				fmConsoleSelected();
+				feConsoleSelected();
 			}
 		});
 		switchConsoleMenu.add(rmConsoleButton);
@@ -252,7 +254,7 @@ public class UI extends JFrame {
 		return false;
 	}
 
-	private boolean fmConsoleSelected() {
+	private boolean feConsoleSelected() {
 		if (fmConsoleButton.isSelected()) {
 			rmConsoleButton.setSelected(false);
 			m_feFileName = ProjectLogger.getDebugFileName("FrontEnd");
