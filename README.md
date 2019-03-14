@@ -5,3 +5,5 @@
 
 ![Alt text](./StrategyPatternMessages.svg)
 
+![Alt text](./election.svg)
+
