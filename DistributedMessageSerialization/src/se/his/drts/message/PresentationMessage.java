@@ -1,15 +1,21 @@
 package se.his.drts.message;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 public class PresentationMessage extends AbstractMessageTopClass {
 	
 	private static UUID uuid = UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd");
+	private HashMap<String, String> map = new HashMap();
 	private String name;
 	private String type;
 	
-	public static PresentationMessage createReplicaManagerPresentation() {
-		return new PresentationMessage("ReplicaManager");
+	public static PresentationMessage createClientPresentation(String name) {
+		return new PresentationMessage("Client", name);
+	}
+	
+	public static PresentationMessage createClientConnectionPresentation(String name) {
+		return new PresentationMessage("ClientConnection", name);
 	}
 
 	public static PresentationMessage createFrontEndPresentation() {
@@ -23,57 +29,41 @@ public class PresentationMessage extends AbstractMessageTopClass {
 	public PresentationMessage(String type) {
 		super(uuid);
 		this.type = type;
+		map = new HashMap();
+		map.put("Type", type);
 	}
 
+	public PresentationMessage(String type, String name) {
+		super(uuid);
+		this.type = type;
+		this.name = name;
+		map.put("Type", type);	
+		map.put("Name", name);
+	}
+
+	
 	public String getName() {
 		return this.name;
 	}
 
 	@Override
 	public Object executeInClient() {
-		// TODO Auto-generated method stub
-		return new Object();
+		return map;
 	}
 
 	@Override
 	public Object executeInFrontEndFromRM() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object executeInFrontEndFromClient() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object executeInReplicaManager() {
-		return this.type;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		String objName = ((PresentationMessage)obj).getName();
-		return super.equals(obj) && this.name.compareTo(objName)==0;
-	}
-	/* (non-Javadoc)
-	 * @see se.his.drts.message.Message#compareTo(se.his.drts.message.Message)
-	 */
-	@Override
-	public int compareTo(MessagePayload arg0) {
-		final int n = super.compareTo(arg0);
-		if (n!=0) {
-			return n;
-		}
-		return this.name.compareTo(((PresentationMessage)arg0).getName());
-	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "TestMessage [name=" + name + ", getUuid()=" + getUuid() + "]";
+		return map;
 	}
 
 	@Override

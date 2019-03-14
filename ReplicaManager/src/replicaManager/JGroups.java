@@ -1,5 +1,6 @@
 package replicaManager;
 
+import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jgroups.Address;
@@ -16,9 +17,10 @@ public class JGroups {
 	public static volatile boolean isCoordinator = false;
 	public static LinkedBlockingQueue electionQueue = new LinkedBlockingQueue<AbstractMessageTopClass>();
 	public static ProjectLogger logger;
+	public static LinkedList<String> clients = new LinkedList();
 
 	public static void start() {
-		logger = new ProjectLogger("ReplicaManager");
+		logger = new ProjectLogger("ReplicaManager");		
 		try {
 			LocalMessages messages = new LocalMessages();
 			JChannel channel;

@@ -165,7 +165,7 @@ public class UI extends JFrame {
 
 	private void configureFrontEndPanel() {
 		m_frontEndPanel.setBackground(Color.darkGray);
-		m_frontEndPanel.setMaximumSize(new Dimension(450, 200));
+//		m_frontEndPanel.setMaximumSize(new Dimension(450, 200));
 		m_frontEndPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		m_frontEndPanel.setBounds(10, 157, 414, 133);
 		m_frontEndPanel.setLayout(null);
