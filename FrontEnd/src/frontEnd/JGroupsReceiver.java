@@ -16,7 +16,6 @@ public class JGroupsReceiver extends ReceiverAdapter {
 	private Integer m_id;
 	private JChannel m_channel;
 	private LocalMessages m_messages;
-	private View m_oldView;
 	
 	public JGroupsReceiver(JChannel channel, LocalMessages messages) {
 		this.m_channel = channel;
@@ -41,6 +40,7 @@ public class JGroupsReceiver extends ReceiverAdapter {
 			try {
 				m_channel.send(FrontEnd.primaryRM, msg);
 			} catch (Exception e) {
+				FrontEnd.logger.criticalLog("could not send message to primaryRM");
 				e.printStackTrace();
 			}
 		}
@@ -54,7 +54,6 @@ public class JGroupsReceiver extends ReceiverAdapter {
 			FrontEnd.primaryRM = null;
 			FrontEnd.logger.debugLog("Primary left");
 		}
-		m_oldView = new_view;
 	}
 	
 	public void receive(Message msg) {

@@ -32,9 +32,11 @@ public class ClientConnection extends Thread {
 				InputStream in = m_socket.getInputStream();
 				DataInputStream din = new DataInputStream(in);
 				ObjectInputStream oin = new ObjectInputStream(din);
-				Object obj = oin.readObject();
-				byte[] bytes = (byte[]) obj;
-				messagesFromClients.add(bytes);
+				messagesFromClients.add(oin.readObject());
+				//Object obj = oin.readObject();
+				//byte[] bytes = (byte[]) obj;
+				FrontEnd.logger.debugLog("Received From Client: ");
+				//messagesFromClients.add(bytes);
 //				sendAcknowledgeTemp(bytes);
 			} catch (IOException e) {
 				e.printStackTrace();
