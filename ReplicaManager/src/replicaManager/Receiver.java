@@ -2,6 +2,7 @@ package replicaManager;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.jgroups.Address;
@@ -16,6 +17,7 @@ import se.his.drts.message.CoordinatorMessage;
 import se.his.drts.message.ElectionMessage;
 import se.his.drts.message.LocalMessage;
 import se.his.drts.message.LocalMessages;
+import se.his.drts.message.MessagePayload;
 
 public class Receiver extends ReceiverAdapter {
 
@@ -86,11 +88,13 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	public void receive(Message msg) {
-		JGroups.logger.debugLog("Received a message: " + msg.getBuffer().toString());
-		JGroups.logger.debugLog("RECEIVE - " + msg.getObject());
+		byte[] bytes = msg.getBuffer();
+		JGroups.logger.debugLog("Receiver() - Received a message: " + bytes.toString());
 		
-		AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) msg.getObject();
-	
+		Optional<MessagePayload> mpl = MessagePayload.createMessage(bytes);
+		JGroups.logger.debugLog("Receiver() - Trying to unpack");
+		AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) mpl.get();
+		JGroups.logger.debugLog("Receiver() - Successfully unpacked!!");
 		
 		// AcknowledgeMessage
 		if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
