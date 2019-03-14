@@ -1,9 +1,13 @@
 package frontEnd;
 
+import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jgroups.JChannel;
 import org.jgroups.Message;
+
+import se.his.drts.message.AbstractMessageTopClass;
+import se.his.drts.message.MessagePayload;
 
 public class JGroupsSender implements Runnable {
 
@@ -30,6 +34,11 @@ public class JGroupsSender implements Runnable {
 						new ResendThread().start();
 					}
 					FrontEnd.logger.debugLog("Sending bytes from client" + obj);
+					FrontEnd.logger.debugLog("Trying to cast | 1 " + obj);
+					Optional<MessagePayload> mpl = MessagePayload.createMessage((byte[]) obj);
+					AbstractMessageTopClass topClass = (AbstractMessageTopClass) mpl.get();
+					FrontEnd.logger.debugLog("Trying to cast | 2 ");
+					FrontEnd.logger.debugLog("Trying to cast | 3 " + topClass.getId());
 					m_channel.send(new Message(FrontEnd.primaryRM, obj));
 				} else {
 					FrontEnd.logger.debugLog("No primary when received from client");
