@@ -79,11 +79,9 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	public void receive(Message msg) {
-		this.receiveAsCoordinator(msg);
-	}
-
-	private void receiveAsCoordinator(Message msg) {
+		JGroups.logger.debugLog("Received a message: " + msg.getBuffer().toString());
 		AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) msg.getObject();
+	
 		// AcknowledgeMessage
 		if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
 			JGroups.logger.debugLog("AcknowledgeMessage - Receiver 84");

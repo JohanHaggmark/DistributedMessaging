@@ -11,6 +11,8 @@ import java.net.Socket;
 import java.util.Optional;
 
 import se.his.drts.message.AbstractMessageTopClass;
+import se.his.drts.message.CoordinatorMessage;
+import se.his.drts.message.DrawObjectsMessage;
 import se.his.drts.message.MessagePayload;
 import se.his.drts.message.StringMsg;
 
@@ -31,15 +33,25 @@ public class RMConnection {
 	}
 
 	public void sendMessage(AbstractMessageTopClass msg) {
-		try {	
-			OutputStream os = m_socket.getOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(os);
-			oos.writeObject(msg.serialize());
-			System.out.println("sending!");
+	//	try {	
+//			OutputStream os = m_socket.getOutputStream();
+//			ObjectOutputStream oos = new ObjectOutputStream(os);
+			byte[] bytes = new byte[msg.serialize().length];
+			bytes = msg.serialize();
+		//	oos.writeObject(bytes);
+			System.out.println("sending message: " + bytes);
+			
+			AbstractMessageTopClass msgTopClass = new DrawObjectsMessage(new Object());
+			
+			
+			Optional<MessagePayload> msg1 = (Optional<MessagePayload>) MessagePayload.createMessage(msgTopClass.serialize());
+			//AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) msg1.get();
+			System.out.println(msgTopClass.getUUID());
+			
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public Socket getSocket() {
