@@ -6,6 +6,7 @@ public class TimeOutMessage extends AbstractMessageTopClass{
 	
 	private static UUID uuid = UUID.fromString("0d61e561-116e-48e3-9259-8170c9623da3");
 	private long timeStamp;
+	private String destination = null;
 	
 	public TimeOutMessage() {
 		super(uuid);

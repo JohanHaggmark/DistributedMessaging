@@ -10,7 +10,7 @@ import org.jgroups.View;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.ElectionMessage;
 import se.his.drts.message.LocalMessages;
-import se.his.drts.message.StringMsg;
+import se.his.drts.message.PresentationMessage;
 
 public class JGroupsReceiver extends ReceiverAdapter {
 
@@ -37,16 +37,17 @@ public class JGroupsReceiver extends ReceiverAdapter {
 	}
 	
 	private void sendPresentationMessage() {
-		// FUNKAR INTE ATT SKICKA
+		// FUNKAR ATT SKICKA
+//		TimeOutMessage msg = new TimeOutMessage(1);
 //		PresentationMessage msg = PresentationMessage.createFrontEndPresentation();
 //		StringMsg msg = new StringMsg("helo");
 //		CoordinatorMessage msg = new CoordinatorMessage(1);
 //		ElectionMessage msg = new ElectionMessage(1);
-		
-		
-		// FUNKAR ATT SKICKA
+//		TestMessage msg = new TestMessage("katt");
 //		AcknowledgeMessage msg = new AcknowledgeMessage(1, "hej", "räva");
 //		DrawObjectsMessage msg = new DrawObjectsMessage(new Object(), "helo");
+
+		PresentationMessage msg = PresentationMessage.createFrontEndPresentation();
 		sendToPrimary(msg);
 	}
 	

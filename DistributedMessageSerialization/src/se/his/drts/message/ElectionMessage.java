@@ -5,15 +5,16 @@ import java.util.UUID;
 public class ElectionMessage extends AbstractMessageTopClass {
 	
 	private static UUID uuid = UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff");
-	private Integer id;
+	private Integer pid;
+	private String destination = null;
 	
 	public ElectionMessage() {
 		super(uuid);
 	}
 	
-	public ElectionMessage(Integer id) {
+	public ElectionMessage(Integer pid) {
 		super(uuid);
-		this.id = id;
+		this.pid = pid;
 	}
 	
 	@Override
@@ -23,17 +24,17 @@ public class ElectionMessage extends AbstractMessageTopClass {
 
 	@Override
 	public Object executeInFrontEndFromRM() {
-		return id;		
+		return pid;		
 	}
 
 	@Override
 	public Object executeInFrontEndFromClient() {
-		return id;		
+		return pid;		
 	}
 
 	@Override
 	public Object executeInReplicaManager() {
-		return id;
+		return pid;
 	}
 
 	@Override

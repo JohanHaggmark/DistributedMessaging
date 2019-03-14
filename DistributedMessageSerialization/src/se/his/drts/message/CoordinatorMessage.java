@@ -6,6 +6,7 @@ public class CoordinatorMessage extends AbstractMessageTopClass {
 	
 	private static UUID uuid = UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27");
 	private Integer pid;
+	private String destination = null;
 	
 	public CoordinatorMessage(Integer pid) {
 		super(uuid);
