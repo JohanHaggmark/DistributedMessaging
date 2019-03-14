@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import se.his.drts.message.AbstractMessageTopClass;
+import se.his.drts.message.PresentationMessage;
 
 public class RMConnection {
 	private InetAddress m_serverAddress;

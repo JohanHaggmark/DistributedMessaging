@@ -7,15 +7,10 @@ public class AcknowledgeMessage extends AbstractMessageTopClass{
 	private String destination = null;
 	private static UUID uuid = UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814");
 	
-	public AcknowledgeMessage(Object id, String destination) {
+	public AcknowledgeMessage(Object id, String address, String destination) {
 		super(uuid);
 		this.id = id;
 		this.destination = destination;
-	}
-	
-	public AcknowledgeMessage(Object id) {
-		super(uuid);
-		this.id = id;
 	}
 	
 	@Override

@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +15,7 @@ import DCAD.GUI;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.LocalMessages;
 import se.his.drts.message.MessagePayload;
+import se.his.drts.message.PresentationMessage;
 
 public class Receiver implements Runnable {
 
@@ -48,6 +50,13 @@ public class Receiver implements Runnable {
 				else if (msg.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
 					gui.setObjectList((LinkedList<GObject>) msg.executeInClient());
 					Cad.logger.log("Received object");
+				}
+				// PresentationMessage
+				else if (msg.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
+					HashMap<String, String> map = new HashMap();
+					map = (HashMap<String, String>) msg.executeInClient();
+					PresentationMessage pms = PresentationMessage.createClientPresentation(map.get("Name"));
+					m_messages.addNewMessageWithAcknowledge(pms);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
