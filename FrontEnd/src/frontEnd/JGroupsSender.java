@@ -1,15 +1,19 @@
 package frontEnd;
 
+import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 
+import se.his.drts.message.AbstractMessageTopClass;
+import se.his.drts.message.MessagePayload;
+
 public class JGroupsSender implements Runnable {
 
 	JChannel m_channel;
-	LinkedBlockingQueue<byte[]> m_messages;
-	LinkedBlockingQueue<byte[]> m_resendMessages;
+	LinkedBlockingQueue<byte[]> m_messages = new LinkedBlockingQueue();
+	LinkedBlockingQueue<byte[]> m_resendMessages = new LinkedBlockingQueue();
 	private boolean m_hasPrimary = false;
 
 	public JGroupsSender(JChannel channel, LinkedBlockingQueue<byte[]> messages) {
@@ -30,6 +34,11 @@ public class JGroupsSender implements Runnable {
 						new ResendThread().start();
 					}
 					FrontEnd.logger.debugLog("Sending bytes from client" + obj);
+					FrontEnd.logger.debugLog("Trying to cast | 1 " + obj);
+					Optional<MessagePayload> mpl = MessagePayload.createMessage((byte[]) obj);
+					AbstractMessageTopClass topClass = (AbstractMessageTopClass) mpl.get();
+					FrontEnd.logger.debugLog("Trying to cast | 2 ");
+					FrontEnd.logger.debugLog("Trying to cast | 3 " + topClass.getId());
 					m_channel.send(new Message(FrontEnd.primaryRM, obj));
 				} else {
 					FrontEnd.logger.debugLog("No primary when received from client");
@@ -45,6 +54,7 @@ public class JGroupsSender implements Runnable {
 	private class ResendThread extends Thread {		
 		@Override
 		public void run() {
+			FrontEnd.logger.debugLog("JGroupsSender() - resendThread started");
 			try {
 				while(m_hasPrimary) {
 					if(!m_hasPrimary) {

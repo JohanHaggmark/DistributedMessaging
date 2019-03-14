@@ -37,9 +37,7 @@ public class Receiver implements Runnable {
 				InputStream in = rmConnection.getSocket().getInputStream();
 				DataInputStream din = new DataInputStream(in);
 				ObjectInputStream oin = new ObjectInputStream(din);
-				byte[] bytes = (byte[]) oin.readObject();
-				Optional<MessagePayload> opt = MessagePayload.createMessage(bytes);
-				AbstractMessageTopClass msg = (AbstractMessageTopClass) opt.get();
+				AbstractMessageTopClass msg = (AbstractMessageTopClass) oin.readObject();
 
 				// AcknowledgeMessage
 				if (msg.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
@@ -53,10 +51,19 @@ public class Receiver implements Runnable {
 				}
 				// PresentationMessage
 				else if (msg.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
+					Cad.logger.debugLog("Cad - Receiver --> PRE#SENTATION");
 					HashMap<String, String> map = new HashMap();
+					Cad.logger.debugLog("PRE#SENTATION 1");
 					map = (HashMap<String, String>) msg.executeInClient();
+					Cad.logger.debugLog("PRE#SENTATION 2");
 					PresentationMessage pms = PresentationMessage.createClientPresentation(map.get("Name"));
+					Cad.logger.debugLog("PRE#SENTATION 3");
+					Cad.connectionName = map.get("Name");
+					Cad.logger.debugLog("PRE#SENTATION 4");
+					Cad.hasFrontEnd = true;
+					Cad.logger.debugLog("PRE#SENTATION 5");
 					m_messages.addNewMessageWithAcknowledge(pms);
+					Cad.logger.debugLog("PRE#SENTATION 6");
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

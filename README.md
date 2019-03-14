@@ -7,4 +7,6 @@
 
 ![Alt text](./election.svg)
 
+![Alt text](./FrontEndIntern.svg)
+
 ![Alt text](./Client-FrontEnd-ReplicaManager.svg)

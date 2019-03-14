@@ -3,7 +3,8 @@ package frontEnd;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jgroups.Address;
@@ -15,8 +16,8 @@ import se.his.drts.message.LocalMessages;
 public class FrontEnd {
 	public static ProjectLogger logger;
 	public static Address primaryRM = null;
-	
-	private ArrayList<ClientConnection> m_connectedClients = new ArrayList<ClientConnection>();
+
+	private ConcurrentHashMap<String, ClientConnection> m_connectedClients = new ConcurrentHashMap();
 	private LinkedBlockingQueue m_messagesFromClients;
 	private ServerSocket m_socket;
 
@@ -38,7 +39,8 @@ public class FrontEnd {
 			Socket clientSocket;
 			try {
 				clientSocket = m_socket.accept();
-				m_connectedClients.add(new ClientConnection(clientSocket, m_messagesFromClients));
+				m_connectedClients.put(clientSocket.toString(),
+						new ClientConnection(clientSocket, m_messagesFromClients));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -48,13 +50,12 @@ public class FrontEnd {
 	private void startJGroupsConnection() {
 		try {
 			LocalMessages messages = new LocalMessages();
-			JChannel channel = new JChannel(); 	//default config?
+			JChannel channel = new JChannel(); // default config?
 			new JGroupsReceiver(channel, messages).start();
 			new Thread(new JGroupsSender(channel, m_messagesFromClients)).start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+
 	}
 }
