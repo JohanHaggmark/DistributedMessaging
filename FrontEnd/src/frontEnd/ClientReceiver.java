@@ -24,8 +24,12 @@ public class ClientReceiver implements Runnable{
 				InputStream in = m_socket.getInputStream();
 				DataInputStream din = new DataInputStream(in);
 				ObjectInputStream oin = new ObjectInputStream(din);
-				messagesFromClients.add(oin.readObject());
+				FrontEnd.logger.debugLog("ClientReceiver() - Trying to read bytes from client");	
+				byte[] bytes = (byte[]) oin.readObject();
+				FrontEnd.logger.debugLog("ClientReceiver() - Successfully read bytes from client");				
+				messagesFromClients.add(bytes);
 			} catch (IOException | ClassNotFoundException e) {
+				FrontEnd.logger.debugLog("EXCEPTION IN CLIENTRECEIVER");
 				e.printStackTrace();
 				runThread = false;
 			} 

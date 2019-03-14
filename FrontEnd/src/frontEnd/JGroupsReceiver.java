@@ -10,7 +10,7 @@ import org.jgroups.View;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.ElectionMessage;
 import se.his.drts.message.LocalMessages;
-import se.his.drts.message.PresentationMessage;
+import se.his.drts.message.StringMsg;
 
 public class JGroupsReceiver extends ReceiverAdapter {
 
@@ -37,7 +37,16 @@ public class JGroupsReceiver extends ReceiverAdapter {
 	}
 	
 	private void sendPresentationMessage() {
-		PresentationMessage msg = PresentationMessage.createFrontEndPresentation();
+		// FUNKAR INTE ATT SKICKA
+//		PresentationMessage msg = PresentationMessage.createFrontEndPresentation();
+//		StringMsg msg = new StringMsg("helo");
+//		CoordinatorMessage msg = new CoordinatorMessage(1);
+//		ElectionMessage msg = new ElectionMessage(1);
+		
+		
+		// FUNKAR ATT SKICKA
+//		AcknowledgeMessage msg = new AcknowledgeMessage(1, "hej", "räva");
+//		DrawObjectsMessage msg = new DrawObjectsMessage(new Object(), "helo");
 		sendToPrimary(msg);
 	}
 	
@@ -45,7 +54,7 @@ public class JGroupsReceiver extends ReceiverAdapter {
 		if(FrontEnd.primaryRM != null) {
 			FrontEnd.logger.debugLog("Sending to primary");
 			try {
-				m_channel.send(FrontEnd.primaryRM, msg);
+				m_channel.send(FrontEnd.primaryRM, msg.serialize());
 			} catch (Exception e) {
 				FrontEnd.logger.criticalLog("could not send message to primaryRM");
 				e.printStackTrace();

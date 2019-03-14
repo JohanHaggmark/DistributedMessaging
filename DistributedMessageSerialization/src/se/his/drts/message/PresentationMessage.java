@@ -6,7 +6,7 @@ import java.util.UUID;
 public class PresentationMessage extends AbstractMessageTopClass {
 	
 	private static UUID uuid = UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd");
-	private HashMap<String, String> map = new HashMap();
+//	private HashMap<String, String> map = new HashMap();
 	private String name;
 	private String type;
 	
@@ -29,16 +29,16 @@ public class PresentationMessage extends AbstractMessageTopClass {
 	public PresentationMessage(String type) {
 		super(uuid);
 		this.type = type;
-		map = new HashMap();
-		map.put("Type", type);
+//		map = new HashMap();
+//		map.put("Type", type);
 	}
 
 	public PresentationMessage(String type, String name) {
 		super(uuid);
 		this.type = type;
 		this.name = name;
-		map.put("Type", type);	
-		map.put("Name", name);
+//		map.put("Type", type);	
+//		map.put("Name", name);
 	}
 
 	
@@ -48,7 +48,8 @@ public class PresentationMessage extends AbstractMessageTopClass {
 
 	@Override
 	public Object executeInClient() {
-		return map;
+//		return map;
+		return type;
 	}
 
 	@Override
@@ -63,7 +64,8 @@ public class PresentationMessage extends AbstractMessageTopClass {
 
 	@Override
 	public Object executeInReplicaManager() {
-		return map;
+//		return map;
+		return type;
 	}
 
 	@Override

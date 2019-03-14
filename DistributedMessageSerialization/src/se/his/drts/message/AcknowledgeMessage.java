@@ -13,6 +13,10 @@ public class AcknowledgeMessage extends AbstractMessageTopClass{
 		this.destination = destination;
 	}
 	
+	public AcknowledgeMessage() {
+		super(uuid);
+	}
+	
 	@Override
 	public Object executeInClient() {
 		return id;
