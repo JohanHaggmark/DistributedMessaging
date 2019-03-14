@@ -37,6 +37,8 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 
 	public abstract UUID getUUID();
 	
+	public abstract String getDestination();
+	
 	public Integer getId() {
 		return this.id;
 	}

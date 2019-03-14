@@ -31,7 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author melj
  *
  */
-public class MessagePayload implements Comparable<MessagePayload> {
+public class MessagePayload implements Comparable<MessagePayload>, Serializable {
 	/**
 	 * The purpose of this class is to provide an exception that can be handled in
 	 * the application. Essentially, the application should be able to rake

@@ -4,7 +4,14 @@ import java.util.UUID;
 
 public class AcknowledgeMessage extends AbstractMessageTopClass{
 	private Object id;
+	private String destination = null;
 	private static UUID uuid = UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814");
+	
+	public AcknowledgeMessage(Object id, String destination) {
+		super(uuid);
+		this.id = id;
+		this.destination = destination;
+	}
 	
 	public AcknowledgeMessage(Object id) {
 		super(uuid);
@@ -37,5 +44,10 @@ public class AcknowledgeMessage extends AbstractMessageTopClass{
 	@Override
 	public UUID getUUID() {
 		return uuid;
+	}
+	
+	@Override
+	public String getDestination() {
+		return this.destination;
 	}
 }

@@ -1,6 +1,7 @@
 package replicaManager;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.jgroups.Address;
@@ -15,6 +16,7 @@ import se.his.drts.message.CoordinatorMessage;
 import se.his.drts.message.ElectionMessage;
 import se.his.drts.message.LocalMessage;
 import se.his.drts.message.LocalMessages;
+import se.his.drts.message.MessagePayload;
 
 public class Receiver extends ReceiverAdapter {
 
@@ -58,7 +60,9 @@ public class Receiver extends ReceiverAdapter {
 				for (Address newMember : new_RM) {
 					try {
 						JGroups.logger.debugLog("sending I am coordinator");
+						byte[] bytes = new CoordinatorMessage(JGroups.id).serialize();
 						m_channel.send(new Message(newMember, new CoordinatorMessage(JGroups.id)));
+						JGroups.logger.debugLog("123sending bytes as coordinator");						
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -74,8 +78,10 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	private void sendAcknowledge(Integer id) {
-		m_messages.addToMessageQueue(new LocalMessage(new AcknowledgeMessage(id)));
-
+		JGroups.logger.debugLog("HALL≈≈??");
+		JGroups.logger.debugLog("To String address front end " + JGroups.frontEnd);
+		JGroups.logger.debugLog("To String address front end " + JGroups.frontEnd.toString());
+		m_messages.addToMessageQueue(new LocalMessage(new AcknowledgeMessage(id, JGroups.frontEnd.toString())));
 	}
 
 	public void receive(Message msg) {
@@ -86,6 +92,7 @@ public class Receiver extends ReceiverAdapter {
 		if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
 			JGroups.logger.debugLog("AcknowledgeMessage - Receiver 84");
 			m_messages.removeAcknowledgeFromMessage(msgTopClass.getId());
+			sendAcknowledge(msgTopClass.getId());
 		}
 		// draw
 		else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
@@ -95,8 +102,8 @@ public class Receiver extends ReceiverAdapter {
 		// presentation
 		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
 			JGroups.logger.debugLog("Presentation - Receiver 92");
-			String[] names = ((String) msgTopClass.executeInReplicaManager()).split("-");
-			if (names[names.length - 1].equals("FrontEnd")) {
+			String type = (String) msgTopClass.executeInReplicaManager();
+			if (type.equals("FrontEnd")) {
 				JGroups.frontEnd = msg.src();
 			}
 			sendAcknowledge(msgTopClass.getId());
@@ -114,17 +121,19 @@ public class Receiver extends ReceiverAdapter {
 					JGroups.logger.debugLog("Receiver 115, Im not the coordinator");
 					JGroups.isCoordinator = false;
 				}
-
 			}
+			sendAcknowledge(msgTopClass.getId());
 		}
 		// CoordinatorMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
 			JGroups.logger.debugLog("Coordinator - Receiver 109");
 			JGroups.primaryRM = msg.getSrc();
 			JGroups.logger.debugLog(JGroups.primaryRM + " is the address of the current coordinator");
+			sendAcknowledge(msgTopClass.getId());
 		} else {
 			JGroups.logger.criticalLog("Else - Receiver 118:  " + msgTopClass.getUUID());
 			JGroups.logger.criticalLog("Could not find the correct type");
+			sendAcknowledge(msgTopClass.getId());
 		}
 	}
 }
