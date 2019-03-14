@@ -18,7 +18,7 @@ public class FrontEnd {
 	public static Address primaryRM = null;
 
 	private ConcurrentHashMap<String, ClientConnection> m_connectedClients = new ConcurrentHashMap();
-	private LinkedBlockingQueue m_messagesFromClients;
+	private LinkedBlockingQueue<byte[]> m_messagesFromClients;
 	private ServerSocket m_socket;
 
 	public FrontEnd(int portNumber) {

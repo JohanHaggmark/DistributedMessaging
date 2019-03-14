@@ -25,7 +25,7 @@ public class JGroupsSender implements Runnable {
 	public void run() {
 		while (true) {
 			try {
-				Object obj = m_messages.take();
+				byte[] bytes = m_messages.take();
 				// OM PRIMARY INTE FINNS SKA VI DÅ LÄGGA TILL DENNA I LBQ??
 				// KANSKE ÄR RIMLIGARE ATT CLIENT SKICKAR OM OCH HAR HAND OM EXPONENTIAL BACKOFF
 				if (FrontEnd.primaryRM != null) {
@@ -33,16 +33,16 @@ public class JGroupsSender implements Runnable {
 						m_hasPrimary = true;
 						new ResendThread().start();
 					}
-					FrontEnd.logger.debugLog("Sending bytes from client" + obj);
-					FrontEnd.logger.debugLog("Trying to cast | 1 " + obj);
-					Optional<MessagePayload> mpl = MessagePayload.createMessage((byte[]) obj);
+					FrontEnd.logger.debugLog("Sending bytes from client" + bytes);
+					FrontEnd.logger.debugLog("Trying to cast | 1 " + bytes);
+					Optional<MessagePayload> mpl = MessagePayload.createMessage(bytes);
 					AbstractMessageTopClass topClass = (AbstractMessageTopClass) mpl.get();
 					FrontEnd.logger.debugLog("Trying to cast | 2 ");
 					FrontEnd.logger.debugLog("Trying to cast | 3 " + topClass.getId());
-					m_channel.send(new Message(FrontEnd.primaryRM, obj));
+					m_channel.send(new Message(FrontEnd.primaryRM, bytes));
 				} else {
 					FrontEnd.logger.debugLog("No primary when received from client");
-					m_resendMessages.put((byte[]) obj);
+					m_resendMessages.put(bytes);
 				}
 			} catch (Exception e) {
 				FrontEnd.logger.criticalLog("Exception in JGroupsSender");

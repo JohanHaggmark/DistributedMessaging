@@ -1,6 +1,5 @@
 package frontEnd;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.jgroups.JChannel;
@@ -11,7 +10,6 @@ import org.jgroups.View;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.ElectionMessage;
 import se.his.drts.message.LocalMessages;
-import se.his.drts.message.MessagePayload;
 import se.his.drts.message.PresentationMessage;
 
 public class JGroupsReceiver extends ReceiverAdapter {

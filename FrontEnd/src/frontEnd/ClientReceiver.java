@@ -25,13 +25,10 @@ public class ClientReceiver implements Runnable{
 				DataInputStream din = new DataInputStream(in);
 				ObjectInputStream oin = new ObjectInputStream(din);
 				messagesFromClients.add(oin.readObject());
-			} catch (IOException e) {
+			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 				runThread = false;
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-				runThread = false;
-			}
+			} 
 		}
 	}
 }

@@ -34,10 +34,12 @@ public class Receiver implements Runnable {
 		boolean runThread = true;
 		while (runThread) {
 			try {
-				InputStream in = rmConnection.getSocket().getInputStream();
+				Cad.logger.debugLog("Trying to read bytes and create a Payload message");
+				InputStream in = rmConnection.getSocket().getInputStream();				
 				DataInputStream din = new DataInputStream(in);
 				ObjectInputStream oin = new ObjectInputStream(din);
 				AbstractMessageTopClass msg = (AbstractMessageTopClass) oin.readObject();
+				Cad.logger.debugLog("OMG  -  Successfully upacked abstractmessage!!!!!!!!!! " + msg.getUUID());
 
 				// AcknowledgeMessage
 				if (msg.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
@@ -65,10 +67,7 @@ public class Receiver implements Runnable {
 					m_messages.addNewMessageWithAcknowledge(pms);
 					Cad.logger.debugLog("PRE#SENTATION 6");
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
-				runThread = false;
-			} catch (ClassNotFoundException e) {
+			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 				runThread = false;
 			}
