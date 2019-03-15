@@ -24,12 +24,7 @@ public class TestMessage extends AbstractMessageTopClass {
 	}
 
 	@Override
-	public Object executeInFrontEndFromClient() {
-		return null;
-	}
-
-	@Override
-	public Object executeInFrontEndFromRM() {
+	public Object executeInFrontEnd() {
 		return null;
 	}
 
@@ -41,10 +36,5 @@ public class TestMessage extends AbstractMessageTopClass {
 	@Override
 	public UUID getUUID() {
 		return uuid;
-	}
-
-	@Override
-	public String getDestination() {
-		return null;
 	}
 }

@@ -1,5 +1,6 @@
 package replicaManager;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,8 +61,8 @@ public class Receiver extends ReceiverAdapter {
 				for (Address newMember : new_RM) {
 					try {
 						JGroups.logger.debugLog("sending I am coordinator");
-						byte[] bytes = new CoordinatorMessage(JGroups.id).serialize();
-						m_channel.send(new Message(newMember, new CoordinatorMessage(JGroups.id)));
+						byte[] bytes = new CoordinatorMessage().serialize();
+						m_channel.send(new Message(newMember, new CoordinatorMessage()));
 						JGroups.logger.debugLog("123sending bytes as coordinator");						
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -102,7 +103,7 @@ public class Receiver extends ReceiverAdapter {
 		// AcknowledgeMessage
 		if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
 			JGroups.logger.debugLog("AcknowledgeMessage - Receiver 84");
-			m_messages.removeAcknowledgeFromMessage(msgTopClass.getId());
+			m_messages.removeAcknowledgeFromMessage(msgTopClass.getMessageNumber());
 		}
 		// DrawObjectsMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
@@ -112,15 +113,12 @@ public class Receiver extends ReceiverAdapter {
 			
 			JGroups.logger.debugLog("DrawObjectsMessage - Sending ack");
 			JGroups.logger.debugLog("DrawObjectsMessage - destination: " + destination);
-			sendAcknowledge(msgTopClass.getId(), destination);
+			sendAcknowledge(msgTopClass.getMessageNumber(), destination);
 		}
 		// PresentationMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
 			JGroups.logger.debugLog("Presentation - Receiver");
-			String type = (String) msgTopClass.getDestination();
-//			String type = (String) msgTopClass.executeInReplicaManager();
-			JGroups.logger.debugLog("Presentation - type is.....");
-//			JGroups.logger.debugLog("Presentation - type is: " + type.getClass());
+			String type = msgTopClass.getType();
 			if(type == null) {
 				JGroups.logger.debugLog("Presentation null");
 			}
@@ -129,14 +127,13 @@ public class Receiver extends ReceiverAdapter {
 				JGroups.frontEnd = msg.src();
 			}
 			else if (type.equals("Client")) {
-				String destination = msgTopClass.getDestination();
-				JGroups.logger.debugLog("Added new client with name " + destination);
-				JGroups.clients.add(destination);
+				String name = msgTopClass.getName();
+				JGroups.logger.debugLog("Added new client with name " + name);
+				JGroups.clients.add(name);
 			}
 			else {
 				JGroups.logger.debugLog("Presentation - hittar fan ingen typ! :(");
 			}
-			JGroups.logger.debugLog("Presentation smet... " + type);
 		}
 		// ElectionMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {

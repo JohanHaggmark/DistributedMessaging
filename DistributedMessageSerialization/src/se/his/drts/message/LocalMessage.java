@@ -9,7 +9,7 @@ public class LocalMessage {
 
 	public LocalMessage(AbstractMessageTopClass msgTopClass) {
 		this.msgTopClass = msgTopClass;
-		this.id = msgTopClass.getId();
+		this.id = msgTopClass.getMessageNumber();
 	}
 	
 	public LocalMessage() {

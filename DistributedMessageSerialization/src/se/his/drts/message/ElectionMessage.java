@@ -5,16 +5,14 @@ import java.util.UUID;
 public class ElectionMessage extends AbstractMessageTopClass {
 	
 	private static UUID uuid = UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff");
-	private Integer pid;
-	private String destination = null;
-	
-	public ElectionMessage() {
-		super(uuid);
-	}
-	
+		
 	public ElectionMessage(Integer pid) {
 		super(uuid);
 		this.pid = pid;
+	}
+	
+	public ElectionMessage() {
+		super(uuid);
 	}
 	
 	@Override
@@ -23,13 +21,8 @@ public class ElectionMessage extends AbstractMessageTopClass {
 	}
 
 	@Override
-	public Object executeInFrontEndFromRM() {
-		return pid;		
-	}
-
-	@Override
-	public Object executeInFrontEndFromClient() {
-		return pid;		
+	public Object executeInFrontEnd() {
+		return null;		
 	}
 
 	@Override
@@ -40,10 +33,5 @@ public class ElectionMessage extends AbstractMessageTopClass {
 	@Override
 	public UUID getUUID() {
 		return uuid;
-	}
-
-	@Override
-	public String getDestination() {
-		return null;
 	}
 }
