@@ -12,3 +12,5 @@
 ![Alt text](./Client-FrontEnd-ReplicaManager.svg)
 
 ![Alt text](./ClientInternal.svg)
+
+![Alt text](./FrontendInternal.svg)
