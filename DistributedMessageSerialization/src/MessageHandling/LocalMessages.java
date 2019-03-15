@@ -24,7 +24,7 @@ public class LocalMessages {
 		m_mapOfMessages.put(msgTopClass.getackID(), msg);
 		addToMessageQueue(msg);
 	}
-	
+
 	public void addNewMessage(AbstractMessageTopClass msgTopClass) {
 		LocalMessage msg = new LocalMessage(msgTopClass, false);
 		addToMessageQueue(msg);
@@ -41,11 +41,11 @@ public class LocalMessages {
 	public void addToMessagesToResender(LocalMessage msg) {
 		m_messagesToResender.add(msg);
 	}
-	
+
 	public LinkedBlockingQueue<LocalMessage> getMessagesToResender() {
 		return m_messagesToResender;
 	}
-	
+
 	public LinkedBlockingQueue<LocalMessage> getMessageQueue() {
 		return m_messageQueue;
 	}
@@ -59,8 +59,10 @@ public class LocalMessages {
 	}
 
 	public void removeAcknowledgeFromMessage(Integer id) {
-		m_mapOfMessages.get(id.intValue()).isAcknowledged();
-		m_mapOfMessages.remove(id);
-
+		//Must check to avoid null pointer exception
+		if (m_mapOfMessages.containsKey(id.intValue())) {
+			m_mapOfMessages.get(id.intValue()).isAcknowledged();
+			m_mapOfMessages.remove(id);
+		}
 	}
 }

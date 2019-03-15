@@ -23,6 +23,7 @@ public class JGroups {
 	public static void start() {
 		logger = new ProjectLogger("ReplicaManager");		
 		try {
+			new State();
 			LocalMessages messages = new LocalMessages();
 			JChannel channel;
 			channel = new JChannel();
