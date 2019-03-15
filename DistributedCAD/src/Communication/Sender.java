@@ -21,12 +21,15 @@ public class Sender implements Runnable {
 		while (true) {
 			try {
 				LocalMessage msg = (LocalMessage) m_messages.getMessageQueue().take();
-				if (!msg.isAcknowledge && msg.getAttempt() < ATTEMPTS) {
-					Cad.logger.debugLog("SENDER - sending message: " + msg.getMsgTopClass());
-					m_RMConnection.sendMessage(msg.getMsgTopClass());
-					msg.incrementAttempt();
-					m_messages.addToRTTMessageQueue(msg);
+				if(msg.isAcknowledgeMessage()) {
+					if ((msg.isAcknowledged() == false) && msg.getAttempt() < ATTEMPTS) {
+						Cad.logger.debugLog("SENDER - sending message: " + msg.getMsgTopClass());
+						m_RMConnection.sendMessage(msg.getMsgTopClass());
+						msg.incrementAttempt();
+						m_messages.addToRTTMessageQueue(msg);
+					}
 				}
+				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

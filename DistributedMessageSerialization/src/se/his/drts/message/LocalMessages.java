@@ -16,13 +16,13 @@ public class LocalMessages {
 	}
 
 	public void addNewMessageWithAcknowledge(AbstractMessageTopClass msgTopClass) {
-		LocalMessage msg = new LocalMessage(msgTopClass);
+		LocalMessage msg = new LocalMessage(msgTopClass, true);
 		m_mapOfMessages.put(msg.getId(), msg);
 		addToMessageQueue(msg);
 	}
 	
 	public void addNewMessage(AbstractMessageTopClass msgTopClass) {
-		LocalMessage msg = new LocalMessage(msgTopClass);
+		LocalMessage msg = new LocalMessage(msgTopClass, false);
 		addToMessageQueue(msg);
 	}
 
@@ -47,7 +47,7 @@ public class LocalMessages {
 	}
 
 	public void removeAcknowledgeFromMessage(Integer id) {
-		m_mapOfMessages.get(id).setAcknowledge();
+		m_mapOfMessages.get(id).isAcknowledged();
 		m_mapOfMessages.remove(id);
 
 	}
