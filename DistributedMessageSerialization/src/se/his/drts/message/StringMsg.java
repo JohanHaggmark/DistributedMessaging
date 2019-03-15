@@ -36,13 +36,7 @@ public class StringMsg extends AbstractMessageTopClass {
 	}
 
 	@Override
-	public Object executeInFrontEndFromRM() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object executeInFrontEndFromClient() {
+	public Object executeInFrontEnd() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -50,11 +44,6 @@ public class StringMsg extends AbstractMessageTopClass {
 	@Override
 	public Object executeInReplicaManager() {
 		return new Object();
-	}
-	
-	@Override
-	public String getDestination() {
-		return null;
 	}
 
 	@Override

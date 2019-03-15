@@ -47,8 +47,7 @@ public class JGroupsReceiver extends ReceiverAdapter {
 //		AcknowledgeMessage msg = new AcknowledgeMessage(1, "hej", "räva");
 //		DrawObjectsMessage msg = new DrawObjectsMessage(new Object(), "helo");
 
-//		PresentationMessage msg = PresentationMessage.createFrontEndPresentation();
-		PresentationMessage msg = new PresentationMessage(1);
+		PresentationMessage msg = PresentationMessage.createFrontEndPresentation();
 		
 		sendToPrimary(msg);
 	}

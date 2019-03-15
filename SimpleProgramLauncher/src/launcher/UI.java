@@ -25,6 +25,7 @@ import javax.swing.border.BevelBorder;
 import Logging.ProjectLogger;
 
 public class UI extends JFrame {
+	
 	private JPanel m_replicaManagerPanel;
 	private JPanel m_frontEndPanel;
 	private JPanel m_consolePanel;
