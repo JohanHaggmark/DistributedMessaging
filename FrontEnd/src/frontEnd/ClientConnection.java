@@ -21,10 +21,8 @@ public class ClientConnection {
 	}
 
 	private void sendPresentationMessage() {
-		FrontEnd.logger.debugLog("PRE ClientConnection(), sendPresentationMessage");
 		PresentationMessage msg = PresentationMessage.createClientConnectionPresentation(m_socket.toString());
 		try {
-			FrontEnd.logger.debugLog("POST ClientConnection(), sendPresentationMessage");
 			m_messagesToClient.put(msg);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
