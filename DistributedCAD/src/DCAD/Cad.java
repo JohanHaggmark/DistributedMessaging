@@ -32,15 +32,16 @@ public class Cad {
 
 	public void sendState(LinkedList<GObject> objectList) {
 		Cad.logger.debugLog("sendState() - sending");
-		messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(objectList, connectionName));
 		if (connectionName != null) {
-			Cad.logger.debugLog("Cad() connectionName != null");
+			Cad.logger.debugLog(connectionName);
+			messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(objectList, connectionName));
 			if (!hasFrontEnd) {
 				Cad.logger.debugLog("Cad() hasFrontEnd true");
 				hasFrontEnd = true;
 				new ResendThread().start();
 			}
-		} else {
+		} 
+		else {
 			Cad.logger.debugLog("Cad() hasFrontEnd false");
 			hasFrontEnd = false;
 			try {

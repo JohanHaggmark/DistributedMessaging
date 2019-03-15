@@ -58,6 +58,7 @@ public class Receiver implements Runnable {
 					if(type.equals("ClientConnection")) {
 						Cad.hasFrontEnd = true;
 						String name = (String) msgTopClass.getName();
+						Cad.connectionName = name;
 						m_messages.addNewMessageWithAcknowledge(PresentationMessage.createClientPresentation(name));						
 					}
 					else {
