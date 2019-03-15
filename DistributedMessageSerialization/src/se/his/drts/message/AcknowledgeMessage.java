@@ -6,10 +6,11 @@ public class AcknowledgeMessage extends AbstractMessageTopClass{
 	
 	private static UUID uuid = UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814");
 	
-	public AcknowledgeMessage(Integer pid, String name) {
+	public AcknowledgeMessage(Integer ackID, String name) {
 		super(uuid);
-		this.pid = pid;
+		//this.pid = pid;
 		this.name = name;
+		this.ackID = ackID;
 	}
 	
 	public AcknowledgeMessage() {
@@ -18,7 +19,7 @@ public class AcknowledgeMessage extends AbstractMessageTopClass{
 	
 	@Override
 	public Object executeInClient() {
-		return null;
+		return ackID;
 	}
 
 	@Override
@@ -30,7 +31,7 @@ public class AcknowledgeMessage extends AbstractMessageTopClass{
 	@Override
 	public Object executeInReplicaManager() {
 		// TODO Auto-generated method stub
-		return null;
+		return ackID;
 	}
 	
 	@Override

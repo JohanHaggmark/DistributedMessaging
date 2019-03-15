@@ -15,9 +15,8 @@ import se.his.drts.message.DrawObjectsMessage;
 
 public class Cad {
 	public static ProjectLogger logger = new ProjectLogger("CAD");
-	public static String connectionName = null;
+	
 	public static LinkedBlockingQueue<LinkedList<GObject>> resendQueue = new LinkedBlockingQueue();
-	public static boolean hasFrontEnd;
 	private GUI gui;
 	private RMConnection rmConnection;
 	private LocalMessages messages;
@@ -31,46 +30,10 @@ public class Cad {
 	}
 
 	public void sendState(LinkedList<GObject> objectList) {
-		Cad.logger.debugLog("sendState() - sending");
-		if (connectionName != null) {
-			Cad.logger.debugLog(connectionName);
-			messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(objectList, connectionName));
-			if (!hasFrontEnd) {
-				Cad.logger.debugLog("Cad() hasFrontEnd true");
-				hasFrontEnd = true;
-				new ResendThread().start();
-			}
-		} 
-		else {
-			Cad.logger.debugLog("Cad() hasFrontEnd false");
-			hasFrontEnd = false;
-			try {
-				resendQueue.put(objectList);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		Cad.logger.debugLog("sendState() - adding to message queue");
+		messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(objectList, RMConnection.connectionName));
 	}
 
-	private class ResendThread extends Thread {
-		@Override
-		public void run() {
-			Cad.logger.debugLog("Cad() - resendThread started");
-			try {
-				while (hasFrontEnd) {
-					if (!hasFrontEnd) {
-						Cad.logger.criticalLog("HAS NO FRONTEND BUT THREAD IS RUNNING ANYWAY");
-					}
-					LinkedList<GObject> objectList = new LinkedList();
-					sendState(objectList = resendQueue.take());
-					if (!hasFrontEnd) {
-						Cad.logger.criticalLog("HAS NO FRONTEND BUT THREAD IS RUNNING ANYWAY");
-					}
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+	
 
 }

@@ -13,6 +13,7 @@ import DCAD.Cad;
 import DCAD.GObject;
 import DCAD.GUI;
 import MessageHandling.LocalMessages;
+import MessageHandling.Resender;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.MessagePayload;
 import se.his.drts.message.PresentationMessage;
@@ -39,14 +40,18 @@ public class Receiver implements Runnable {
 			DataInputStream din = new DataInputStream(in);
 			ObjectInputStream oin;
 			oin = new ObjectInputStream(din);
-			
+
 			while (runThread) {
 				AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) oin.readObject();
 				Cad.logger.debugLog("Received UUID: " + msgTopClass.getUUID());
 
 				// AcknowledgeMessage
 				if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
-					m_messages.removeAcknowledgeFromMessage((Integer) msgTopClass.executeInClient());
+					Cad.logger.debugLog("AckID: " + msgTopClass.getackID());
+					for(Integer key : m_messages.getMapOfMessages().keySet()) {
+						Cad.logger.debugLog("AckID in map: " + key);
+					}
+					m_messages.removeAcknowledgeFromMessage((Integer) msgTopClass.getackID());
 				}
 				// DrawObjectsMessage
 				else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
@@ -56,23 +61,32 @@ public class Receiver implements Runnable {
 				else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
 					String type = (String) msgTopClass.getType();
 					if (type.equals("ClientConnection")) {
-						Cad.hasFrontEnd = true;
+						rmConnection.hasFrontEnd = true;
 						String name = (String) msgTopClass.getName();
-						Cad.connectionName = name;
+						rmConnection.connectionName = name;
 						m_messages.addNewMessageWithAcknowledge(PresentationMessage.createClientPresentation(name));
-					} else {
-						Cad.logger.debugLog("Cad should not be receiving PresentationMessages from other than ClientConnection");
+						startResender();
+					} 
+					else {
+						Cad.logger.debugLog(
+								"Cad should not be receiving PresentationMessages from other than ClientConnection");
 					}
-				}
-				else {
+				} else {
 					Cad.logger.debugLog("UNKNOWN UUID: " + msgTopClass.getUUID());
 				}
 			}
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
-			Cad.hasFrontEnd = false;
+			RMConnection.hasFrontEnd = false;
+			RMConnection.connectionName = null;
 		}
 
-		
+	}
+
+	private void startResender() {
+		new Thread(new Resender(
+				m_messages.getMessagesToResender(),
+				m_messages.getMessageQueue(),
+				RMConnection.hasFrontEnd)).start();
 	}
 }
