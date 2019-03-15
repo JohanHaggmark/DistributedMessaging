@@ -32,43 +32,46 @@ public class Receiver implements Runnable {
 	@Override
 	public void run() {
 		boolean runThread = true;
-		while (runThread) {
-			try {
-				Cad.logger.debugLog("Trying to read bytes and create a Payload message");
-				InputStream in = rmConnection.getSocket().getInputStream();				
-				DataInputStream din = new DataInputStream(in);
-				ObjectInputStream oin = new ObjectInputStream(din);
+
+		try {
+			InputStream in;
+			in = rmConnection.getSocket().getInputStream();
+			DataInputStream din = new DataInputStream(in);
+			ObjectInputStream oin;
+			oin = new ObjectInputStream(din);
+			
+			while (runThread) {
 				AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) oin.readObject();
-				Cad.logger.debugLog("OMG  -  Successfully upacked abstractmessage!!!!!!!!!! " + msgTopClass.getUUID());
+				Cad.logger.debugLog("Received UUID: " + msgTopClass.getUUID());
 
 				// AcknowledgeMessage
 				if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
 					m_messages.removeAcknowledgeFromMessage((Integer) msgTopClass.executeInClient());
-					Cad.logger.debugLog("Received acknowledge");
 				}
 				// DrawObjectsMessage
 				else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
 					gui.setObjectList((LinkedList<GObject>) msgTopClass.executeInClient());
-					Cad.logger.log("Received object");
 				}
 				// PresentationMessage
 				else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
-					Cad.logger.debugLog("Cad - Receiver --> PRESENTATION");
 					String type = (String) msgTopClass.getType();
-					if(type.equals("ClientConnection")) {
+					if (type.equals("ClientConnection")) {
 						Cad.hasFrontEnd = true;
 						String name = (String) msgTopClass.getName();
 						Cad.connectionName = name;
-						m_messages.addNewMessageWithAcknowledge(PresentationMessage.createClientPresentation(name));						
-					}
-					else {
+						m_messages.addNewMessageWithAcknowledge(PresentationMessage.createClientPresentation(name));
+					} else {
 						Cad.logger.debugLog("Cad should not be receiving PresentationMessages from other than ClientConnection");
 					}
 				}
-			} catch (IOException | ClassNotFoundException e) {
-				e.printStackTrace();
-				runThread = false;
+				else {
+					Cad.logger.debugLog("UNKNOWN UUID: " + msgTopClass.getUUID());
+				}
 			}
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
 		}
+
+		
 	}
 }
