@@ -40,7 +40,8 @@ public class Cad {
 				hasFrontEnd = true;
 				new ResendThread().start();
 			}
-		} else {
+		} 
+		else {
 			Cad.logger.debugLog("Cad() hasFrontEnd false");
 			hasFrontEnd = false;
 			try {

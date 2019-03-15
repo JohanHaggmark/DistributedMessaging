@@ -33,9 +33,9 @@ public class Receiver implements Runnable {
 	public void run() {
 		boolean runThread = true;
 		while (runThread) {
-			try {
+			try {	
+				InputStream in = rmConnection.getSocket().getInputStream();	
 				Cad.logger.debugLog("Trying to read bytes and create a Payload message");
-				InputStream in = rmConnection.getSocket().getInputStream();				
 				DataInputStream din = new DataInputStream(in);
 				ObjectInputStream oin = new ObjectInputStream(din);
 				AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) oin.readObject();
@@ -54,11 +54,10 @@ public class Receiver implements Runnable {
 				// PresentationMessage
 				else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
 					Cad.logger.debugLog("Cad - Receiver --> PRESENTATION");
-					String type = (String) msgTopClass.getType();
-					if(type.equals("ClientConnection")) {
+					if(msgTopClass.getType().equals("ClientConnection")) {
 						Cad.hasFrontEnd = true;
-						String name = (String) msgTopClass.getName();
-						m_messages.addNewMessageWithAcknowledge(PresentationMessage.createClientPresentation(name));						
+						Cad.logger.debugLog("HasFrontEnd = " + Cad.hasFrontEnd);
+						m_messages.addNewMessageWithAcknowledge(PresentationMessage.createClientPresentation(msgTopClass.getName()));						
 					}
 					else {
 						Cad.logger.debugLog("Cad should not be receiving PresentationMessages from other than ClientConnection");
