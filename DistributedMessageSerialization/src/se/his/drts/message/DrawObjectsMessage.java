@@ -1,12 +1,9 @@
 package se.his.drts.message;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class DrawObjectsMessage extends AbstractMessageTopClass {
-	private Object infoMap;
+	
 	private Object GObjectList;
 	private String destination = null;
 	private String address;
@@ -17,22 +14,12 @@ public class DrawObjectsMessage extends AbstractMessageTopClass {
 		this.GObjectList = objectList;
 		this.destination = destination;
 		this.address = address;
-		
-		Map<String, Object> map = new HashMap();
-		map.put("Address", address);
-		map.put("GObjectList", GObjectList);
-		infoMap = map;
 	}
 	
 	public DrawObjectsMessage(Object objectList, String address) {
 		super(uuid);
 		this.GObjectList = objectList;
 		this.address = address;
-		
-		ArrayList<Object> list = new ArrayList<>();
-		list.add(address);
-		list.add(objectList);
-		infoMap = list;
 	}
 
 	public DrawObjectsMessage() {
@@ -60,7 +47,7 @@ public class DrawObjectsMessage extends AbstractMessageTopClass {
 	public Object executeInReplicaManager() {
 		// spara det ritade state
 		// skicka ut meddelandet till FrontEnd
-		return infoMap;
+		return GObjectList;
 	}
 	
 	@Override

@@ -1,5 +1,6 @@
 package replicaManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -84,7 +85,12 @@ public class Receiver extends ReceiverAdapter {
 		JGroups.logger.debugLog("HALL≈≈??");
 		JGroups.logger.debugLog("To String address front end " + JGroups.frontEnd);
 		JGroups.logger.debugLog("To String address front end " + JGroups.frontEnd.toString());
-		m_messages.addToMessageQueue(new LocalMessage(new AcknowledgeMessage(id, address, JGroups.frontEnd.toString())));
+//		m_messages.addToMessageQueue(new LocalMessage(new AcknowledgeMessage(id, address, JGroups.frontEnd.toString())));
+		try {
+			m_channel.send(new Message(JGroups.frontEnd, new AcknowledgeMessage(id, address, JGroups.frontEnd.toString())));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void receive(Message msg) {
@@ -104,19 +110,27 @@ public class Receiver extends ReceiverAdapter {
 		// DrawObjectsMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
 			JGroups.logger.debugLog("DrawObjectsMessage - Receiver 88");
-			HashMap<String, Object> map = (HashMap) msgTopClass.executeInReplicaManager();
-			sendAcknowledge(msgTopClass.getId(), (String) map.get("Address"));
+			Object GObjectList = msgTopClass.executeInReplicaManager();
+			String destination = msgTopClass.getDestination();			
+			
+			JGroups.logger.debugLog("DrawObjectsMessage - Sending ack");
+			JGroups.logger.debugLog("DrawObjectsMessage - destination: " + destination);
+			sendAcknowledge(msgTopClass.getId(), destination);
 		}
 		// PresentationMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
 			JGroups.logger.debugLog("Presentation - Receiver");
-			HashMap<String, String> map = (HashMap) msgTopClass.executeInReplicaManager();
-			if (map.get("Type").equals("FrontEnd")) {
+			String type = (String) msgTopClass.executeInReplicaManager();
+			JGroups.logger.debugLog("Presentation - type is.....");
+			JGroups.logger.debugLog("Presentation - type is: " + type.getClass());
+			if (type.equals("FrontEnd")) {
+				JGroups.logger.debugLog("Presentation --> Receiver --> found the front end");
 				JGroups.frontEnd = msg.src();
 			}
-			else if (map.get("Type").equals("Client")) {
-				JGroups.logger.debugLog("Added new client with name " + map.get("Name"));
-				JGroups.clients.add(map.get("Name"));
+			else if (type.equals("Client")) {
+				String destination = msgTopClass.getDestination();
+				JGroups.logger.debugLog("Added new client with name " + destination);
+				JGroups.clients.add(destination);
 			}
 		}
 		// ElectionMessage
