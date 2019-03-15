@@ -11,6 +11,7 @@ import org.jgroups.JChannel;
 
 import Logging.ProjectLogger;
 import MessageHandling.LocalMessages;
+import TestingControllability.ShutdownChannel;
 
 public class FrontEnd {
 	public static ProjectLogger logger;
@@ -20,13 +21,13 @@ public class FrontEnd {
 	private LinkedBlockingQueue<byte[]> m_messagesFromClients;
 	private ServerSocket m_socket;
 
-	public FrontEnd(int portNumber) {
+	public FrontEnd() {		
 		logger = new ProjectLogger("FrontEnd");
 		m_messagesFromClients = new LinkedBlockingQueue<byte[]>();
 		startJGroupsConnection();
-
+		
 		try {
-			m_socket = new ServerSocket(portNumber);
+			m_socket = new ServerSocket(25000);
 			listenForClientConnections();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -38,8 +39,7 @@ public class FrontEnd {
 			Socket clientSocket;
 			try {
 				clientSocket = m_socket.accept();
-				m_connectedClients.put(clientSocket.toString(),
-						new ClientConnection(clientSocket, m_messagesFromClients));
+				m_connectedClients.put(clientSocket.toString(), new ClientConnection(clientSocket, m_messagesFromClients));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
