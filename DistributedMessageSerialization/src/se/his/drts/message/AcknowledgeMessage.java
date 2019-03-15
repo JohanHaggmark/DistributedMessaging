@@ -6,10 +6,9 @@ public class AcknowledgeMessage extends AbstractMessageTopClass{
 	
 	private static UUID uuid = UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814");
 	
-	public AcknowledgeMessage(Integer pid, String name, String destination) {
+	public AcknowledgeMessage(Integer ackID, String destination) {
 		super(uuid);
-		this.pid = pid;
-		this.name = name;
+		this.ackID = ackID;
 		this.destination = destination;
 	}
 	

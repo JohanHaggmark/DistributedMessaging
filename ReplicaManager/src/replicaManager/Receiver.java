@@ -79,17 +79,17 @@ public class Receiver extends ReceiverAdapter {
 		m_oldView = new_view;
 	}
 
-	private void sendAcknowledge(Integer id, String address) {
-		JGroups.logger.debugLog("HALL≈≈??");
-		JGroups.logger.debugLog("To String address front end " + JGroups.frontEnd);
-		JGroups.logger.debugLog("To String address front end " + JGroups.frontEnd.toString());
+//	private void sendAcknowledge(Integer id, String address) {
+//		JGroups.logger.debugLog("HALL≈≈??");
+//		JGroups.logger.debugLog("To String address front end " + JGroups.frontEnd);
+//		JGroups.logger.debugLog("To String address front end " + JGroups.frontEnd.toString());
 //		m_messages.addToMessageQueue(new LocalMessage(new AcknowledgeMessage(id, address, JGroups.frontEnd.toString())));
-		try {
-			m_channel.send(new Message(JGroups.frontEnd, new AcknowledgeMessage(id, address, JGroups.frontEnd.toString())));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//		try {
+//			m_channel.send(new Message(JGroups.frontEnd, new AcknowledgeMessage(id, address, JGroups.frontEnd.toString())));
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public void receive(Message msg) {
 		byte[] bytes = msg.getBuffer();
@@ -113,7 +113,7 @@ public class Receiver extends ReceiverAdapter {
 			
 			JGroups.logger.debugLog("DrawObjectsMessage - Sending ack");
 			JGroups.logger.debugLog("DrawObjectsMessage - destination: " + destination);
-			sendAcknowledge(msgTopClass.getMessageNumber(), destination);
+			m_messages.addNewMessage(new AcknowledgeMessage(msgTopClass.getMessageNumber(), msgTopClass.getName()));
 		}
 		// PresentationMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
@@ -127,6 +127,8 @@ public class Receiver extends ReceiverAdapter {
 				JGroups.frontEnd = msg.src();
 			}
 			else if (type.equals("Client")) {
+				//send an acknowledge message for this message
+				m_messages.addNewMessage(new AcknowledgeMessage(msgTopClass.getMessageNumber(), msgTopClass.getName()));
 				String name = msgTopClass.getName();
 				JGroups.logger.debugLog("Added new client with name " + name);
 				JGroups.clients.add(name);
