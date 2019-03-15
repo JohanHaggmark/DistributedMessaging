@@ -75,7 +75,8 @@ public class ProjectLogger {
 	}
 	
 	public void debugLog(String message) {
-		debugLogger.info(date + ":   " + message + "\n");		
+		String line = new Exception().getStackTrace()[1].toString();
+		debugLogger.info(line + "\n" + date + ":   " + message + "\n");		
 	}
 	
 	public void criticalLog(String message) {	
