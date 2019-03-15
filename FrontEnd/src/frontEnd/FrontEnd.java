@@ -10,7 +10,7 @@ import org.jgroups.Address;
 import org.jgroups.JChannel;
 
 import Logging.ProjectLogger;
-import se.his.drts.message.LocalMessages;
+import MessageHandling.LocalMessages;
 
 public class FrontEnd {
 	public static ProjectLogger logger;

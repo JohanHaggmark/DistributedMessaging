@@ -5,9 +5,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 
+import MessageHandling.LocalMessage;
+import MessageHandling.LocalMessages;
 import se.his.drts.message.AbstractMessageTopClass;
-import se.his.drts.message.LocalMessage;
-import se.his.drts.message.LocalMessages;
 
 public class Sender implements Runnable {
 

@@ -1,7 +1,9 @@
-package se.his.drts.message;
+package MessageHandling;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import se.his.drts.message.AbstractMessageTopClass;
 
 //Class purpose is to enable threads to communicate and pass messages with each other
 public class LocalMessages {

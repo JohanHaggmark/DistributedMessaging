@@ -1,10 +1,10 @@
 package DCAD;
 
 import Communication.RMConnection;
-import Communication.RTTMessageRepeater;
 import Communication.Receiver;
 import Communication.Sender;
-import se.his.drts.message.LocalMessages;
+import MessageHandling.LocalMessages;
+import MessageHandling.RTTMessageRepeater;
 
 public class MainDCAD {
 	private static GUI gui = new GUI(750, 600);

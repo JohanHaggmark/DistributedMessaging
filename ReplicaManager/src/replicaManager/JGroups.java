@@ -7,8 +7,9 @@ import org.jgroups.Address;
 import org.jgroups.JChannel;
 
 import Logging.ProjectLogger;
+import MessageHandling.LocalMessages;
+import MessageHandling.RTTMessageRepeater;
 import se.his.drts.message.AbstractMessageTopClass;
-import se.his.drts.message.LocalMessages;
 
 public class JGroups {
 	public static Address primaryRM = null;

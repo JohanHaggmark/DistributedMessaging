@@ -1,4 +1,6 @@
-package se.his.drts.message;
+package MessageHandling;
+
+import se.his.drts.message.AbstractMessageTopClass;
 
 public class LocalMessage {
 

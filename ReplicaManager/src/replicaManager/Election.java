@@ -5,9 +5,9 @@ import java.util.UUID;
 import org.jgroups.Address;
 import org.jgroups.JChannel;
 
+import MessageHandling.LocalMessages;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.CoordinatorMessage;
-import se.his.drts.message.LocalMessages;
 
 public class Election implements Runnable {
 	private Address m_address;

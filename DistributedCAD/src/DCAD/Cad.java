@@ -10,8 +10,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import Communication.RMConnection;
 import Logging.ProjectLogger;
+import MessageHandling.LocalMessages;
 import se.his.drts.message.DrawObjectsMessage;
-import se.his.drts.message.LocalMessages;
 
 public class Cad {
 	public static ProjectLogger logger = new ProjectLogger("CAD");
