@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="C:/java/jackson-databind-2.9.8.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/DistributedMessageSerialization"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Logging"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/TestingControllability"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
