@@ -11,4 +11,4 @@
 
 ![Alt text](./Client-FrontEnd-ReplicaManager.svg)
 
-![Alt text](./FrontendInternal.svg)
+![Alt text](./InternalStructures.svg)
