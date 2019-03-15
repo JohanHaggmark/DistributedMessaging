@@ -16,7 +16,6 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 	protected String name;
 	protected Integer pid;
 	protected String type;
-	protected String destination;
 	protected Object GObjectList;
 	
 	public AbstractMessageTopClass() {
@@ -47,10 +46,6 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 	
 	public String getType() {
 		return type;
-	}
-	
-	public String getDestination() {
-		return destination;
 	}
 	
 	public Integer getMessageNumber() {

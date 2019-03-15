@@ -6,13 +6,6 @@ public class DrawObjectsMessage extends AbstractMessageTopClass {
 	
 	private static UUID uuid = UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03");
 	
-	public DrawObjectsMessage(Object objectList, String name, String destination) {
-		super(uuid);
-		this.GObjectList = objectList;
-		this.destination = destination;
-		this.name = name;
-	}
-	
 	public DrawObjectsMessage(Object objectList, String name) {
 		super(uuid);
 		this.GObjectList = objectList;

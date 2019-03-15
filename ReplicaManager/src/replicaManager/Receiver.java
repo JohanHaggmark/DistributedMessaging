@@ -85,7 +85,7 @@ public class Receiver extends ReceiverAdapter {
 		JGroups.logger.debugLog("To String address front end " + JGroups.frontEnd.toString());
 //		m_messages.addToMessageQueue(new LocalMessage(new AcknowledgeMessage(id, address, JGroups.frontEnd.toString())));
 		try {
-			m_channel.send(new Message(JGroups.frontEnd, new AcknowledgeMessage(id, address, JGroups.frontEnd.toString())));
+			m_channel.send(new Message(JGroups.frontEnd, new AcknowledgeMessage(id, address)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -109,7 +109,7 @@ public class Receiver extends ReceiverAdapter {
 		else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
 			JGroups.logger.debugLog("DrawObjectsMessage - Receiver 88");
 			Object GObjectList = msgTopClass.executeInReplicaManager();
-			String destination = msgTopClass.getDestination();			
+			String destination = msgTopClass.getName();			
 			
 			JGroups.logger.debugLog("DrawObjectsMessage - Sending ack");
 			JGroups.logger.debugLog("DrawObjectsMessage - destination: " + destination);
