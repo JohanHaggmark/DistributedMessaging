@@ -1,8 +1,6 @@
-package Communication;
+package MessageHandling;
 
 import java.util.concurrent.LinkedBlockingQueue;
-
-import se.his.drts.message.LocalMessage;
 
 
 public class RTTMessageRepeater implements Runnable {
@@ -12,8 +10,14 @@ public class RTTMessageRepeater implements Runnable {
 	// https://wondernetwork.com/pings, average ping from sweden to common places in
 	// the world
 	//måste göras om för nytt vettigt värde
-	private final int averageRTT = 117;
+	private int averageRTT = 117;
 	
+	public RTTMessageRepeater(LinkedBlockingQueue m_RTTMessageQueue, LinkedBlockingQueue m_messageQueue, int rTT) {
+		this.m_RTTMessageQueue = m_RTTMessageQueue;
+		this.m_messageQueue = m_messageQueue;
+		averageRTT = rTT;
+	}
+
 	public RTTMessageRepeater(LinkedBlockingQueue m_RTTMessageQueue, LinkedBlockingQueue m_messageQueue) {
 		this.m_RTTMessageQueue = m_RTTMessageQueue;
 		this.m_messageQueue = m_messageQueue;

@@ -10,11 +10,11 @@ import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
 import org.jgroups.View;
 
+import MessageHandling.LocalMessages;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.AcknowledgeMessage;
 import se.his.drts.message.CoordinatorMessage;
 import se.his.drts.message.ElectionMessage;
-import se.his.drts.message.LocalMessages;
 import se.his.drts.message.MessagePayload;
 
 public class Receiver extends ReceiverAdapter {
@@ -60,8 +60,8 @@ public class Receiver extends ReceiverAdapter {
 				for (Address newMember : new_RM) {
 					try {
 						JGroups.logger.debugLog("sending I am coordinator");
-						byte[] bytes = new CoordinatorMessage().serialize();
-						m_channel.send(new Message(newMember, new CoordinatorMessage()));
+						//m_channel.send(new Message(newMember, new CoordinatorMessage()));
+						m_messages.addNewMessage(new CoordinatorMessage());
 						JGroups.logger.debugLog("123sending bytes as coordinator");						
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -93,15 +93,9 @@ public class Receiver extends ReceiverAdapter {
 		}
 		// DrawObjectsMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
-			Object GObjectList = msgTopClass.executeInReplicaManager();
-			String name = msgTopClass.getName();			
-			
-			JGroups.logger.debugLog("DrawObjectsMessage - Sending ack to " + name);
-			try {
-				m_channel.send(new Message(JGroups.frontEnd, new AcknowledgeMessage(10000, name)));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			State.addDrawObjectsRequest(msgTopClass.executeInReplicaManager());			
+			JGroups.logger.debugLog("DrawObjectsMessage - Sending ack to " + msgTopClass.getName());
+			m_messages.addNewMessage(new AcknowledgeMessage(msgTopClass.getackID(), msgTopClass.getName()));
 		}
 		// PresentationMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
@@ -113,9 +107,8 @@ public class Receiver extends ReceiverAdapter {
 				JGroups.frontEnd = msg.src();
 			}
 			else if (type.equals("Client")) {
-				String name = msgTopClass.getName();
-				JGroups.logger.debugLog("Added new client with name " + name);
-				JGroups.clients.add(name);
+				JGroups.logger.debugLog("Added new client with name " + msgTopClass.getName());
+				JGroups.clients.add(msgTopClass.getName());
 			}
 			else {
 				JGroups.logger.debugLog("Presentation - hittar fan ingen typ! :(");

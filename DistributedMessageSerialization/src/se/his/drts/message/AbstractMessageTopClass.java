@@ -22,11 +22,13 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 	public AbstractMessageTopClass() {
 		super(AbstractMessageTopClass.uuid);
 		this.messageNumber = messageID;
+		this.ackID = new Integer(messageNumber.intValue());
 	}
 
 	protected AbstractMessageTopClass(UUID uuid) {
 		super(uuid);
 		this.messageNumber = messageID;
+		this.ackID = new Integer(messageNumber.intValue());
 		if (uuid.toString().equals("54f642d7-eaf6-4d62-ad2d-316e4b821c03") ||
 				uuid.toString().equals("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd")) {
 			messageID++;
@@ -58,5 +60,8 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 		return ackID;
 	}
 	
+	public void changeName(String name) {
+		this.name = name;
+	}
 
 }

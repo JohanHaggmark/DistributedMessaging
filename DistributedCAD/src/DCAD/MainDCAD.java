@@ -1,10 +1,10 @@
 package DCAD;
 
 import Communication.RMConnection;
-import Communication.RTTMessageRepeater;
 import Communication.Receiver;
 import Communication.Sender;
-import se.his.drts.message.LocalMessages;
+import MessageHandling.LocalMessages;
+import MessageHandling.RTTMessageRepeater;
 
 public class MainDCAD {
 	private static GUI gui = new GUI(750, 600);
@@ -18,6 +18,6 @@ public class MainDCAD {
 		new Cad(rmConnection, gui, messages);	
 		new Thread(new Receiver(rmConnection, gui, messages)).start();
         new Thread(new Sender(rmConnection, messages)).start();
-        new Thread(new RTTMessageRepeater(messages.getMessageQueue(), messages.getRTTMessageQueue())).start();
+        new Thread(new RTTMessageRepeater(messages.getRTTMessageQueue(), messages.getMessageQueue())).start();
     }
 }
