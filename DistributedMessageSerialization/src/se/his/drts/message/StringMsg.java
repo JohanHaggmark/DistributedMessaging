@@ -7,7 +7,13 @@ public class StringMsg extends AbstractMessageTopClass {
 
 	private static UUID uuid = UUID.fromString("9dbc5c87-9bf2-477a-8437-a2f617f0bad8");
 	private String name;
+	private String destination = null;
 	
+	public StringMsg(Object id, String address, String destination) {
+		super(uuid);
+//		this.is = id;
+//		this.destination = destination;
+	}
 	
 	public StringMsg() {
 		super(uuid);
@@ -17,10 +23,10 @@ public class StringMsg extends AbstractMessageTopClass {
 		super(uuid);
 		this.name = name;
 	}
-
-	public String getName() {
-		return this.name;
-	}
+//
+//	public String getName() {
+//		return this.name;
+//	}
 
 	@Override
 	public Object executeInClient() {
@@ -45,38 +51,14 @@ public class StringMsg extends AbstractMessageTopClass {
 	public Object executeInReplicaManager() {
 		return new Object();
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		String objName = ((StringMsg)obj).getName();
-		return super.equals(obj) && this.name.compareTo(objName)==0;
-	}
-	/* (non-Javadoc)
-	 * @see se.his.drts.message.Message#compareTo(se.his.drts.message.Message)
-	 */
-	@Override
-	public int compareTo(MessagePayload arg0) {
-		final int n = super.compareTo(arg0);
-		if (n!=0) {
-			return n;
-		}
-		return this.name.compareTo(((StringMsg)arg0).getName());
-	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "TestMessage [name=" + name + ", getUuid()=" + getUuid() + "]";
-	}
-	
-	@Override
-	public UUID getUUID() {
-		return uuid;
-	}
 	
 	@Override
 	public String getDestination() {
 		return null;
+	}
+
+	@Override
+	public UUID getUUID() {
+		return uuid;
 	}
 }

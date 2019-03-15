@@ -26,7 +26,9 @@ public class Sender implements Runnable {
 	public void run() {
 		while (true) {
 			try {
+				JGroups.logger.debugLog("Sender trying to send");
 				LocalMessage msg = (LocalMessage) m_messages.getMessageQueue().take();
+				JGroups.logger.debugLog("Sender found a message in m_messages");
 				if (!msg.isAcknowledge && msg.getAttempt() < ATTEMPTS) {
 					JGroups.logger.debugLog("Sending - Sender 32");
 					m_channel.send(new Message(null, msg.getMsgTopClass()));
@@ -35,9 +37,6 @@ public class Sender implements Runnable {
 						m_messages.addToRTTMessageQueue(msg);
 					}
 				}
-			} catch (InterruptedException e1) {
-				JGroups.logger.debugLog("IE e1");
-				e1.printStackTrace();
 			} catch (Exception e) {
 				JGroups.logger.debugLog("exception e");
 				e.printStackTrace();

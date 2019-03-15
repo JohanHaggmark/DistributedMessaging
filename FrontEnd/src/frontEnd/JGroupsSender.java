@@ -1,19 +1,15 @@
 package frontEnd;
 
-import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 
-import se.his.drts.message.AbstractMessageTopClass;
-import se.his.drts.message.MessagePayload;
-
 public class JGroupsSender implements Runnable {
 
-	JChannel m_channel;
-	LinkedBlockingQueue<byte[]> m_messages = new LinkedBlockingQueue();
-	LinkedBlockingQueue<byte[]> m_resendMessages = new LinkedBlockingQueue();
+	private JChannel m_channel;
+	private LinkedBlockingQueue<byte[]> m_messages = new LinkedBlockingQueue();
+	private LinkedBlockingQueue<byte[]> m_resendMessages = new LinkedBlockingQueue();
 	private boolean m_hasPrimary = false;
 
 	public JGroupsSender(JChannel channel, LinkedBlockingQueue<byte[]> messages) {
@@ -25,7 +21,7 @@ public class JGroupsSender implements Runnable {
 	public void run() {
 		while (true) {
 			try {
-				Object obj = m_messages.take();
+				byte[] bytes = m_messages.take();
 				// OM PRIMARY INTE FINNS SKA VI DÅ LÄGGA TILL DENNA I LBQ??
 				// KANSKE ÄR RIMLIGARE ATT CLIENT SKICKAR OM OCH HAR HAND OM EXPONENTIAL BACKOFF
 				if (FrontEnd.primaryRM != null) {
@@ -33,19 +29,19 @@ public class JGroupsSender implements Runnable {
 						m_hasPrimary = true;
 						new ResendThread().start();
 					}
-					FrontEnd.logger.debugLog("Sending bytes from client" + obj);
-					FrontEnd.logger.debugLog("Trying to cast | 1 " + obj);
-					Optional<MessagePayload> mpl = MessagePayload.createMessage((byte[]) obj);
-					AbstractMessageTopClass topClass = (AbstractMessageTopClass) mpl.get();
-					FrontEnd.logger.debugLog("Trying to cast | 2 ");
-					FrontEnd.logger.debugLog("Trying to cast | 3 " + topClass.getId());
-					m_channel.send(new Message(FrontEnd.primaryRM, obj));
+					FrontEnd.logger.debugLog("JGroupsSender() - Sending bytes from client" + bytes);
+//					FrontEnd.logger.debugLog("Trying to cast | 1 " + bytes);
+//					Optional<MessagePayload> mpl = MessagePayload.createMessage(bytes);
+//					AbstractMessageTopClass topClass = (AbstractMessageTopClass) mpl.get();
+//					FrontEnd.logger.debugLog("Trying to cast | 2 ");
+//					FrontEnd.logger.debugLog("Trying to cast | 3 " + topClass.getId());
+					m_channel.send(new Message(FrontEnd.primaryRM, bytes));
 				} else {
-					FrontEnd.logger.debugLog("No primary when received from client");
-					m_resendMessages.put((byte[]) obj);
+					FrontEnd.logger.debugLog("JGroupsSender() - No primary when received from client");
+					m_resendMessages.put(bytes);
 				}
 			} catch (Exception e) {
-				FrontEnd.logger.criticalLog("Exception in JGroupsSender");
+				FrontEnd.logger.criticalLog("JGroupsSender() - Exception in JGroupsSender");
 				e.printStackTrace();
 			}
 		}
@@ -58,11 +54,11 @@ public class JGroupsSender implements Runnable {
 			try {
 				while(m_hasPrimary) {
 					if(!m_hasPrimary) {
-						FrontEnd.logger.criticalLog("HAS NO PRIMARY BUT THREAD IS RUNNING ANYWAY");
+						FrontEnd.logger.criticalLog("JGroupsSender() - HAS NO PRIMARY BUT THREAD IS RUNNING ANYWAY");
 					}
 					m_messages.put(m_resendMessages.take());
 					if(!m_hasPrimary) {
-						FrontEnd.logger.criticalLog("HAS NO PRIMARY BUT THREAD IS RUNNING ANYWAY");
+						FrontEnd.logger.criticalLog("JGroupsSender() - HAS NO PRIMARY BUT THREAD IS RUNNING ANYWAY");
 					}
 				}
 			} catch (InterruptedException e) {

@@ -1,6 +1,5 @@
 package frontEnd;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.jgroups.JChannel;
@@ -11,7 +10,6 @@ import org.jgroups.View;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.ElectionMessage;
 import se.his.drts.message.LocalMessages;
-import se.his.drts.message.MessagePayload;
 import se.his.drts.message.PresentationMessage;
 
 public class JGroupsReceiver extends ReceiverAdapter {
@@ -39,6 +37,16 @@ public class JGroupsReceiver extends ReceiverAdapter {
 	}
 	
 	private void sendPresentationMessage() {
+		// FUNKAR ATT SKICKA
+//		TimeOutMessage msg = new TimeOutMessage(1);
+//		PresentationMessage msg = PresentationMessage.createFrontEndPresentation();
+//		StringMsg msg = new StringMsg("helo");
+//		CoordinatorMessage msg = new CoordinatorMessage(1);
+//		ElectionMessage msg = new ElectionMessage(1);
+//		TestMessage msg = new TestMessage("katt");
+//		AcknowledgeMessage msg = new AcknowledgeMessage(1, "hej", "räva");
+//		DrawObjectsMessage msg = new DrawObjectsMessage(new Object(), "helo");
+
 		PresentationMessage msg = PresentationMessage.createFrontEndPresentation();
 		sendToPrimary(msg);
 	}
@@ -47,7 +55,7 @@ public class JGroupsReceiver extends ReceiverAdapter {
 		if(FrontEnd.primaryRM != null) {
 			FrontEnd.logger.debugLog("Sending to primary");
 			try {
-				m_channel.send(FrontEnd.primaryRM, msg);
+				m_channel.send(FrontEnd.primaryRM, msg.serialize());
 			} catch (Exception e) {
 				FrontEnd.logger.criticalLog("could not send message to primaryRM");
 				e.printStackTrace();
@@ -79,6 +87,7 @@ public class JGroupsReceiver extends ReceiverAdapter {
 		// PresentationMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
 			FrontEnd.logger.debugLog("Received PresentationMessage");
+			FrontEnd.logger.debugLog("SOMETHING IS WRONG IF FRONT END RECEIVES PRESENTATION MESSAGES YOU KNOW...");
 		}
 		// ElectionMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {
