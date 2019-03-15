@@ -18,6 +18,6 @@ public class MainDCAD {
 		new Cad(rmConnection, gui, messages);	
 		new Thread(new Receiver(rmConnection, gui, messages)).start();
         new Thread(new Sender(rmConnection, messages)).start();
-        new Thread(new RTTMessageRepeater(messages.getMessageQueue(), messages.getRTTMessageQueue())).start();
+        new Thread(new RTTMessageRepeater(messages.getRTTMessageQueue(), messages.getMessageQueue())).start();
     }
 }

@@ -65,7 +65,9 @@ public class Receiver implements Runnable {
 						String name = (String) msgTopClass.getName();
 						rmConnection.connectionName = name;
 						m_messages.addNewMessageWithAcknowledge(PresentationMessage.createClientPresentation(name));
+						Cad.logger.debugLog("Starting Resender");
 						startResender();
+						
 					} 
 					else {
 						Cad.logger.debugLog(
@@ -88,5 +90,6 @@ public class Receiver implements Runnable {
 				m_messages.getMessagesToResender(),
 				m_messages.getMessageQueue(),
 				RMConnection.hasFrontEnd)).start();
+		Cad.logger.debugLog("Started Resender successfully ");
 	}
 }
