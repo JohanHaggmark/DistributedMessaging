@@ -21,20 +21,28 @@ public class Sender implements Runnable {
 		while (true) {
 			try {
 				LocalMessage msg = (LocalMessage) m_messages.getMessageQueue().take();
-				if (msg.isAcknowledgeMessage()) {
-					if ((msg.isAcknowledged() == false) && msg.getAttempt() < ATTEMPTS) {
-						Cad.logger.debugLog("SENDER - sending message: " + msg.getMsgTopClass());
-						m_RMConnection.sendMessage(msg.getMsgTopClass());
-						msg.incrementAttempt();
-						m_messages.addToRTTMessageQueue(msg);
-					}
+				Cad.logger.debugLog("took a message from messageQueue ");
+				if (RMConnection.hasFrontEnd && RMConnection.connectionName != null) {
+					msg.getMsgTopClass().changeName(RMConnection.connectionName); //Make sure msg has the latest connectionName
+					m_RMConnection.sendMessage(msg.getMsgTopClass());
+					tryAddToRTT(msg);
 				} 
 				else {
-					m_RMConnection.sendMessage(msg.getMsgTopClass());
+					//When the connection to the FrontEnd is down. All messages is temporary stored in a queue
+					m_messages.addToMessagesToResender(msg);
 				}
-
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+			}
+		}
+	}
+
+	private void tryAddToRTT(LocalMessage msg) {
+		if (msg.isAcknowledgeMessage()) {
+			if ((msg.isAcknowledged() == false) && msg.getAttempt() < ATTEMPTS) {
+				Cad.logger.debugLog("SENDER - sending message: " + msg.getMsgTopClass());
+				msg.incrementAttempt();
+				m_messages.addToRTTMessageQueue(msg);
 			}
 		}
 	}

@@ -14,6 +14,10 @@ public class RMConnection {
 	private InetAddress m_serverAddress;
 	private int m_serverPort;
 	private Socket m_socket = null;
+	
+	public static String connectionName = null;
+	public static boolean hasFrontEnd;
+	
 
 	public RMConnection(String address, int port) {
 		try {
@@ -21,7 +25,7 @@ public class RMConnection {
 			m_serverPort = port;
 			m_socket = new Socket(address, port);
 		} catch (IOException e) {
-			Cad.connectionName = null;
+			connectionName = null;
 			e.printStackTrace();
 		}
 	}

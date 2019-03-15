@@ -98,7 +98,7 @@ public class Receiver extends ReceiverAdapter {
 			
 			JGroups.logger.debugLog("DrawObjectsMessage - Sending ack to " + name);
 			try {
-				m_channel.send(new Message(JGroups.frontEnd, new AcknowledgeMessage(10000, name)));
+				m_channel.send(new Message(JGroups.frontEnd, new AcknowledgeMessage(msgTopClass.getackID(), name)));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

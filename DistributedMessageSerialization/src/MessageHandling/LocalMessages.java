@@ -7,19 +7,21 @@ import se.his.drts.message.AbstractMessageTopClass;
 
 //Class purpose is to enable threads to communicate and pass messages with each other
 public class LocalMessages {
-	private LinkedBlockingQueue m_messageQueue;
-	private LinkedBlockingQueue m_RTTMessageQueue;
+	private LinkedBlockingQueue<LocalMessage> m_messageQueue;
+	private LinkedBlockingQueue<LocalMessage> m_RTTMessageQueue;
+	private LinkedBlockingQueue<LocalMessage> m_messagesToResender;
 	private ConcurrentHashMap<Integer, LocalMessage> m_mapOfMessages;
 
 	public LocalMessages() {
 		m_messageQueue = new LinkedBlockingQueue<LocalMessage>();
 		m_RTTMessageQueue = new LinkedBlockingQueue<LocalMessage>();
+		m_messagesToResender = new LinkedBlockingQueue<LocalMessage>();
 		m_mapOfMessages = new ConcurrentHashMap<Integer, LocalMessage>();
 	}
 
 	public void addNewMessageWithAcknowledge(AbstractMessageTopClass msgTopClass) {
 		LocalMessage msg = new LocalMessage(msgTopClass, true);
-		m_mapOfMessages.put(msg.getId(), msg);
+		m_mapOfMessages.put(msgTopClass.getackID(), msg);
 		addToMessageQueue(msg);
 	}
 	
@@ -36,11 +38,19 @@ public class LocalMessages {
 		m_RTTMessageQueue.add(msg);
 	}
 
-	public LinkedBlockingQueue getMessageQueue() {
+	public void addToMessagesToResender(LocalMessage msg) {
+		m_messagesToResender.add(msg);
+	}
+	
+	public LinkedBlockingQueue<LocalMessage> getMessagesToResender() {
+		return m_messagesToResender;
+	}
+	
+	public LinkedBlockingQueue<LocalMessage> getMessageQueue() {
 		return m_messageQueue;
 	}
 
-	public LinkedBlockingQueue getRTTMessageQueue() {
+	public LinkedBlockingQueue<LocalMessage> getRTTMessageQueue() {
 		return m_RTTMessageQueue;
 	}
 
@@ -49,7 +59,7 @@ public class LocalMessages {
 	}
 
 	public void removeAcknowledgeFromMessage(Integer id) {
-		m_mapOfMessages.get(id).isAcknowledged();
+		m_mapOfMessages.get(id.intValue()).isAcknowledged();
 		m_mapOfMessages.remove(id);
 
 	}
