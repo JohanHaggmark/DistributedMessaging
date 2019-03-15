@@ -1,7 +1,5 @@
 package replicaManager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,7 +14,6 @@ import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.AcknowledgeMessage;
 import se.his.drts.message.CoordinatorMessage;
 import se.his.drts.message.ElectionMessage;
-import se.his.drts.message.LocalMessage;
 import se.his.drts.message.LocalMessages;
 import se.his.drts.message.MessagePayload;
 
@@ -120,9 +117,13 @@ public class Receiver extends ReceiverAdapter {
 		// PresentationMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
 			JGroups.logger.debugLog("Presentation - Receiver");
-			String type = (String) msgTopClass.executeInReplicaManager();
+			String type = (String) msgTopClass.getDestination();
+//			String type = (String) msgTopClass.executeInReplicaManager();
 			JGroups.logger.debugLog("Presentation - type is.....");
-			JGroups.logger.debugLog("Presentation - type is: " + type.getClass());
+//			JGroups.logger.debugLog("Presentation - type is: " + type.getClass());
+			if(type == null) {
+				JGroups.logger.debugLog("Presentation null");
+			}
 			if (type.equals("FrontEnd")) {
 				JGroups.logger.debugLog("Presentation --> Receiver --> found the front end");
 				JGroups.frontEnd = msg.src();
@@ -132,6 +133,10 @@ public class Receiver extends ReceiverAdapter {
 				JGroups.logger.debugLog("Added new client with name " + destination);
 				JGroups.clients.add(destination);
 			}
+			else {
+				JGroups.logger.debugLog("Presentation - hittar fan ingen typ! :(");
+			}
+			JGroups.logger.debugLog("Presentation smet... " + type);
 		}
 		// ElectionMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {

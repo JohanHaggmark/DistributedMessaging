@@ -1,7 +1,6 @@
 package launcher;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
@@ -24,7 +23,6 @@ import javax.swing.JTextArea;
 import javax.swing.border.BevelBorder;
 
 import Logging.ProjectLogger;
-import replicaManager.JGroups;
 
 public class UI extends JFrame {
 	private JPanel m_replicaManagerPanel;
@@ -36,8 +34,6 @@ public class UI extends JFrame {
 
 	private JTextArea m_textArea;
 	private BufferedReader br;
-
-	private static volatile UI single_instance = null;
 
 	private String m_rmFileName = ProjectLogger.getDebugFileName("ReplicaManager");
 	private String m_feFileName = ProjectLogger.getDebugFileName("FrontEnd");
@@ -52,24 +48,8 @@ public class UI extends JFrame {
 	private boolean m_logTextChanged = false;
 
 	public static void main(String[] args) {
-		getInstance();
+		new UI();
 		argis = args;
-	}
-
-	public static UI getInstance() {
-		if (single_instance == null) { // if there is no instance available... create new one
-			synchronized (UI.class) {
-				if (single_instance == null) {
-					single_instance = new UI();
-					JGroups.logger.debugLog("UI identifier: " + String.valueOf(single_instance.hashCode()));
-				}
-			}
-		}
-		return single_instance;
-	}
-
-	protected static UI readResolve() {
-		return single_instance;
 	}
 
 	public UI() {

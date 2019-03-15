@@ -47,7 +47,9 @@ public class JGroupsReceiver extends ReceiverAdapter {
 //		AcknowledgeMessage msg = new AcknowledgeMessage(1, "hej", "räva");
 //		DrawObjectsMessage msg = new DrawObjectsMessage(new Object(), "helo");
 
-		PresentationMessage msg = PresentationMessage.createFrontEndPresentation();
+//		PresentationMessage msg = PresentationMessage.createFrontEndPresentation();
+		PresentationMessage msg = new PresentationMessage(1);
+		
 		sendToPrimary(msg);
 	}
 	
@@ -98,6 +100,8 @@ public class JGroupsReceiver extends ReceiverAdapter {
 		else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
 			FrontEnd.logger.debugLog("Received CoordinatorMessage");
 			FrontEnd.primaryRM = msg.getSrc();
+			FrontEnd.logger.debugLog(msgTopClass.getDestination() + " destination");
+			FrontEnd.logger.debugLog("HAVE I GOTTEN THIS FAR??");;
 		} 
 		else {
 			FrontEnd.logger.debugLog("Could not find the correct type");
