@@ -27,7 +27,7 @@ public class Sender implements Runnable {
 		while (true) {
 			try {
 				LocalMessage msg = (LocalMessage) m_messages.getMessageQueue().take();
-				JGroups.logger.debugLog("Sender trying to send to: " + msg.getMsgTopClass().getDestination());
+				JGroups.logger.debugLog("Sender trying to send to: " + msg.getMsgTopClass().getName());
 				JGroups.logger.debugLog("Sender found a message in m_messages");
 				if (!msg.isAcknowledge && msg.getAttempt() < ATTEMPTS) {
 					JGroups.logger.debugLog("Sending - Sender 32");
