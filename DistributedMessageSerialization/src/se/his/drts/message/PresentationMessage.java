@@ -5,8 +5,9 @@ import java.util.UUID;
 public class PresentationMessage extends AbstractMessageTopClass {
 	
 	private static UUID uuid = UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd");
-	private String name;
-	private String type;
+//	private String name;
+//	private String type;
+	private String string;
 	private String destination = null;
 	
 	public static PresentationMessage createClientPresentation(String name) {
@@ -18,32 +19,33 @@ public class PresentationMessage extends AbstractMessageTopClass {
 	}
 
 	public static PresentationMessage createFrontEndPresentation() {
-		return new PresentationMessage("FrontEnd");
+		return new PresentationMessage("FrontEnd", 1);
 	}
 	
 	public PresentationMessage() {
 		super(uuid);
 	}
 
-	public PresentationMessage(String type) {
+	public PresentationMessage(String type, Integer fuck) {
 		super(uuid);
-		this.type = type;
+//		this.type = type;
+		this.string = "Göran";
 	}
 
 	public PresentationMessage(String type, String name) {
 		super(uuid);
-		this.type = type;
-		this.name = name;
+//		this.type = type;
+		string = "Göran";
 	}
-
 	
-	public String getName() {
-		return name;
+	public PresentationMessage(Integer fisk) {
+		super(uuid);
+		string = "niklas";
 	}
 
 	@Override
 	public Object executeInClient() {
-		return type;
+		return null;
 	}
 
 	@Override
@@ -58,7 +60,7 @@ public class PresentationMessage extends AbstractMessageTopClass {
 
 	@Override
 	public Object executeInReplicaManager() {		
-		return type;
+		return null;
 	}
 
 	@Override
@@ -68,6 +70,6 @@ public class PresentationMessage extends AbstractMessageTopClass {
 
 	@Override
 	public String getDestination() {
-		return name;
+		return string;
 	}
 }
