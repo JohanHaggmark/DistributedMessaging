@@ -1,8 +1,8 @@
 package Communication;
 
 import DCAD.Cad;
-import se.his.drts.message.LocalMessage;
-import se.his.drts.message.LocalMessages;
+import MessageHandling.LocalMessage;
+import MessageHandling.LocalMessages;
 
 public class Sender implements Runnable {
 
@@ -21,15 +21,18 @@ public class Sender implements Runnable {
 		while (true) {
 			try {
 				LocalMessage msg = (LocalMessage) m_messages.getMessageQueue().take();
-				if(msg.isAcknowledgeMessage()) {
+				if (msg.isAcknowledgeMessage()) {
 					if ((msg.isAcknowledged() == false) && msg.getAttempt() < ATTEMPTS) {
 						Cad.logger.debugLog("SENDER - sending message: " + msg.getMsgTopClass());
 						m_RMConnection.sendMessage(msg.getMsgTopClass());
 						msg.incrementAttempt();
 						m_messages.addToRTTMessageQueue(msg);
 					}
+				} 
+				else {
+					m_RMConnection.sendMessage(msg.getMsgTopClass());
 				}
-				
+
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

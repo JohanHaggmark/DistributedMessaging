@@ -10,11 +10,11 @@ import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
 import org.jgroups.View;
 
+import MessageHandling.LocalMessages;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.AcknowledgeMessage;
 import se.his.drts.message.CoordinatorMessage;
 import se.his.drts.message.ElectionMessage;
-import se.his.drts.message.LocalMessages;
 import se.his.drts.message.MessagePayload;
 
 public class Receiver extends ReceiverAdapter {

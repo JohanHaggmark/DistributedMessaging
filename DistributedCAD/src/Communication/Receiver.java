@@ -12,8 +12,8 @@ import java.util.UUID;
 import DCAD.Cad;
 import DCAD.GObject;
 import DCAD.GUI;
+import MessageHandling.LocalMessages;
 import se.his.drts.message.AbstractMessageTopClass;
-import se.his.drts.message.LocalMessages;
 import se.his.drts.message.MessagePayload;
 import se.his.drts.message.PresentationMessage;
 
@@ -70,6 +70,7 @@ public class Receiver implements Runnable {
 			}
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
+			Cad.hasFrontEnd = false;
 		}
 
 		
