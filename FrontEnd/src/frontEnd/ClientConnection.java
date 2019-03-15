@@ -28,9 +28,8 @@ public class ClientConnection {
 			e.printStackTrace();
 		}
 	}
-
-	public LinkedBlockingQueue getLBQ() {
-		return m_messagesToClient;
+	
+	public void addMessageToClient(AbstractMessageTopClass msgTopClass) {
+		m_messagesToClient.add(msgTopClass);
 	}
-
 }

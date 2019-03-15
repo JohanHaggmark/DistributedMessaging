@@ -16,7 +16,7 @@ public class FrontEnd {
 	public static ProjectLogger logger;
 	public static Address primaryRM = null;
 
-	private ConcurrentHashMap<String, ClientConnection> m_connectedClients = new ConcurrentHashMap();
+	public static ConcurrentHashMap<String, ClientConnection> m_connectedClients = new ConcurrentHashMap();
 	private LinkedBlockingQueue<byte[]> m_messagesFromClients;
 	private ServerSocket m_socket;
 
