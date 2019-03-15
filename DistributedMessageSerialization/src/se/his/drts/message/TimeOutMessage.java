@@ -24,13 +24,7 @@ public class TimeOutMessage extends AbstractMessageTopClass{
 	}
 
 	@Override
-	public Object executeInFrontEndFromRM() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object executeInFrontEndFromClient() {
+	public Object executeInFrontEnd() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -44,10 +38,4 @@ public class TimeOutMessage extends AbstractMessageTopClass{
 	public UUID getUUID() {
 		return uuid;
 	}
-	
-	@Override
-	public String getDestination() {
-		return null;
-	}
-
 }
