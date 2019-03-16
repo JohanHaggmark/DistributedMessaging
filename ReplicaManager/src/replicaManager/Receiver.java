@@ -70,6 +70,7 @@ public class Receiver extends ReceiverAdapter {
 			} else {
 				for (Address newMember : new_RM) {
 					try {
+						JGroups.logger.debugLog("sending I am the coordinator!");
 						m_channel.send(new Message(newMember, new CoordinatorMessage()));
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -78,6 +79,7 @@ public class Receiver extends ReceiverAdapter {
 			}
 		} else if (new_view.size() == 1) {
 			// sets the first replica manager to the coordinator:
+			JGroups.logger.debugLog("I am the coordinator!");
 			JGroups.isCoordinator = true;
 			JGroups.primaryRM = m_channel.getAddress();
 		}
@@ -115,6 +117,7 @@ public class Receiver extends ReceiverAdapter {
 			}
 			if (type.equals("FrontEnd")) {
 				JGroups.frontEnd = msg.src();
+				JGroups.logger.debugLog("received from FrontEnd");
 				startResender();
 			} else if (type.equals("Client")) {
 				JGroups.logger.debugLog("Added new client with name " + msgTopClass.getName());

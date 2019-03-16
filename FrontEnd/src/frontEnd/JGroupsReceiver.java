@@ -30,6 +30,7 @@ public class JGroupsReceiver extends ReceiverAdapter {
 		m_channel.setReceiver(this);
 		m_channel.connect("ChatCluster");
 		setId();
+		
 	}
 
 	private void setId() {
@@ -72,14 +73,15 @@ public class JGroupsReceiver extends ReceiverAdapter {
 		}
 		// CoordinatorMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
-			FrontEnd.logger.debugLog("Received CoordinatorMessage");
 			FrontEnd.primaryRM = msg.getSrc();
+			FrontEnd.logger.debugLog("Received CoordinatorMessage, will send presentation to primary:" + FrontEnd.primaryRM);
 			try {
-				m_channel.send(new Message(FrontEnd.primaryRM, PresentationMessage.createFrontEndPresentation()));
+				//PresentationMessage msg1 = PresentationMessage.createFrontEndPresentation();
+				m_channel.send(new Message(FrontEnd.primaryRM, PresentationMessage.createFrontEndPresentation().serialize()));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			FrontEnd.logger.debugLog(msgTopClass.getName() + " destination");
+			FrontEnd.logger.debugLog(msg.getSrc() + " destination");
 		} else {
 			FrontEnd.logger.debugLog("Could not find the correct type");
 		}
