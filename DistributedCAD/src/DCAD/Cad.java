@@ -29,8 +29,13 @@ public class Cad {
 		gui.addToListener();
 	}
 
-	public void sendState(LinkedList<GObject> objectList) {
+	public void sendState(State state) {
 		Cad.logger.debugLog("sendState() - adding to message queue");
-		messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(objectList, RMConnection.connectionName));
+		try {
+			Object object = Class.forName(State.class.getName()).cast(state);
+			messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(object, RMConnection.connectionName));
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 }

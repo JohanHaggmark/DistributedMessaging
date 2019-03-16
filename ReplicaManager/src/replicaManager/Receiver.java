@@ -20,6 +20,7 @@ import org.jgroups.util.Util;
 import Communication.RMConnection;
 import DCAD.Cad;
 import DCAD.GObject;
+import DCAD.State;
 import MessageHandling.LocalMessages;
 import MessageHandling.Resender;
 import se.his.drts.message.AbstractMessageTopClass;
@@ -34,12 +35,12 @@ public class Receiver extends ReceiverAdapter {
 	private JChannel m_channel;
 	private LocalMessages m_messages;
 	private View m_oldView;
-	private State state;
+	private replicaManager.State state;
 
 	public Receiver(JChannel channel, LocalMessages messages) {
 		this.m_channel = channel;
 		this.m_messages = messages;
-		state = new State();
+		state = new replicaManager.State();
 	}
 
 	public void start() throws Exception {
@@ -90,6 +91,7 @@ public class Receiver extends ReceiverAdapter {
 		JGroups.logger.debugLog("RECEIVE");
 		byte[] bytes = msg.getBuffer();
 
+		//Unpacking msg
 		Optional<MessagePayload> mpl = MessagePayload.createMessage(bytes);
 		AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) mpl.get();
 
@@ -104,10 +106,13 @@ public class Receiver extends ReceiverAdapter {
 			m_messages.addNewMessage(new AcknowledgeMessage(msgTopClass.getackID(),msgTopClass.getName()));
 			
 			JGroups.logger.debugLog("DrawObjectsMessage - Sending ack to " + msgTopClass.getName());
-			state.updateState((LinkedList<GObject>)msgTopClass.executeInReplicaManager(), msgTopClass.getName());
+			//state.updateState((LinkedList<GObject>)msgTopClass.executeInReplicaManager(), msgTopClass.getName());
 			JGroups.logger.debugLog("DrawObjectsMessage - Updated states ");
 			//State is updated. Now send the new state to clients:		
-			m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(state.getList(), msgTopClass.getName()));
+			//m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(state.getList(), msgTopClass.getName()));
+			State state = State.class.cast(msgTopClass.executeInReplicaManager());
+			JGroups.logger.debugLog(state.getObjectList().toString());
+			m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(msgTopClass.executeInReplicaManager(), msgTopClass.getName()));
 		}
 		// PresentationMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {

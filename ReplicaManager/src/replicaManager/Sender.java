@@ -34,6 +34,7 @@ public class Sender implements Runnable {
 				LocalMessage msg = (LocalMessage) m_messages.getMessageQueue().take();
 				if (JGroups.frontEnd != null) { // Check if frontEnd exsists
 					JGroups.logger.debugLog("Sender trying to send to:  " + msg.getMsgTopClass().getName());
+					JGroups.logger.debugLog("message:  " + msg.getMsgTopClass().getUUID());
 					m_channel.send(new Message(JGroups.frontEnd, msg.getMsgTopClass()));
 					tryAddToRTT(msg); // Check if message should be acknowledged
 				} else {

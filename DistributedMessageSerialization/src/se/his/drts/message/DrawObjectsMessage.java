@@ -6,9 +6,9 @@ public class DrawObjectsMessage extends AbstractMessageTopClass {
 	
 	private static UUID uuid = UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03");
 	
-	public DrawObjectsMessage(Object objectList, String name) {
+	public DrawObjectsMessage(Object state, String name) {
 		super(uuid);
-		this.GObjectList = objectList;
+		this.state = state;
 		this.name = name;
 	}
 
@@ -18,7 +18,7 @@ public class DrawObjectsMessage extends AbstractMessageTopClass {
 	
 	@Override
 	public Object executeInClient() {
-		return GObjectList;
+		return this.state;
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class DrawObjectsMessage extends AbstractMessageTopClass {
 	public Object executeInReplicaManager() {
 		// spara det ritade state
 		// skicka ut meddelandet till FrontEnd
-		return GObjectList;
+		return this.state;
 	}
 	
 	@Override

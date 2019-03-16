@@ -21,7 +21,8 @@ public class State {
 	
 	public void updateState(LinkedList<GObject> state, String name) {
 		
-		
+		this.objectList.clear();
+		this.objectList.addAll(state);
 		//temporary. Dont know how to sync shit yet
 		
 	}

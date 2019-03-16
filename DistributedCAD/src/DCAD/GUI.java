@@ -36,8 +36,7 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 	private GObject template = new GObject(Shape.OVAL, Color.RED, 363, 65, 25, 25);
 	private GObject current = null;
 
-	private LinkedList<GObject> objectList = new LinkedList<GObject>();
-	
+	private State state = new State(new LinkedList<GObject>());
 	private Cad m_cad;
 
 	
@@ -131,17 +130,17 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 	public void mouseClicked(MouseEvent e) {
 		// User clicks the right mouse button:
 		// undo an operation by removing the most recently added object.
-		if (e.getButton() == MouseEvent.BUTTON3 && objectList.size() > 0) {
-			objectList.removeLast();
-			m_cad.sendState(objectList);
+		if (e.getButton() == MouseEvent.BUTTON3 && state.getObjectList().size() > 0) {
+			state.getObjectList().removeLast();
+			m_cad.sendState(state);
 		}
 		repaint();
 	}
 
 	public void mouseReleased(MouseEvent e) {
 		if (current != null) {
-			objectList.addLast(current);
-			m_cad.sendState(objectList);
+			state.getObjectList().addLast(current);
+			m_cad.sendState(state);
 			current = null;
 		}
 		repaint();
@@ -190,7 +189,7 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 
 		template.draw(g);
 
-		for (ListIterator<GObject> itr = objectList.listIterator(); itr.hasNext();) {
+		for (ListIterator<GObject> itr = state.getObjectList().listIterator(); itr.hasNext();) {
 			itr.next().draw(g);
 		}
 
@@ -204,8 +203,8 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 		update(g);
 	}
 	
-	public void setObjectList(LinkedList<GObject> objectList) {
-		this.objectList = objectList;
+	public void setState(State state) {
+		this.state = state;
 		repaint();
 	}
 }
