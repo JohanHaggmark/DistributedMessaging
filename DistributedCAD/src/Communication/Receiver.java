@@ -82,7 +82,6 @@ public class Receiver implements Runnable {
 			RMConnection.hasFrontEnd = false;
 			RMConnection.connectionName = null;
 		}
-
 	}
 
 	private void startResender() {

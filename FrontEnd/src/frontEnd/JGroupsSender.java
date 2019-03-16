@@ -22,23 +22,11 @@ public class JGroupsSender implements Runnable {
 		while (true) {
 			try {
 				byte[] bytes = m_messages.take();
-				// OM PRIMARY INTE FINNS SKA VI DÅ LÄGGA TILL DENNA I LBQ??
-				// KANSKE ÄR RIMLIGARE ATT CLIENT SKICKAR OM OCH HAR HAND OM EXPONENTIAL BACKOFF
+				// Cad har EXPONENTIAL BACKOFF
+				//Front End lagrar en meddelanden som inte går att skicka
 				if (FrontEnd.primaryRM != null) {
-					if(!m_hasPrimary) {
-						m_hasPrimary = true;
-						new ResendThread().start();
-					}
 					FrontEnd.logger.debugLog("JGroupsSender() - Sending bytes from client" + bytes);
-//					FrontEnd.logger.debugLog("Trying to cast | 1 " + bytes);
-//					Optional<MessagePayload> mpl = MessagePayload.createMessage(bytes);
-//					AbstractMessageTopClass topClass = (AbstractMessageTopClass) mpl.get();
-//					FrontEnd.logger.debugLog("Trying to cast | 2 ");
-//					FrontEnd.logger.debugLog("Trying to cast | 3 " + topClass.getId());
 					m_channel.send(new Message(FrontEnd.primaryRM, bytes));
-				} else {
-					FrontEnd.logger.debugLog("JGroupsSender() - No primary when received from client");
-					m_resendMessages.put(bytes);
 				}
 			} catch (Exception e) {
 				FrontEnd.logger.criticalLog("JGroupsSender() - Exception in JGroupsSender");
@@ -47,23 +35,4 @@ public class JGroupsSender implements Runnable {
 		}
 	}
 
-	private class ResendThread extends Thread {		
-		@Override
-		public void run() {
-			FrontEnd.logger.debugLog("JGroupsSender() - resendThread started");
-			try {
-				while(m_hasPrimary) {
-					if(!m_hasPrimary) {
-						FrontEnd.logger.criticalLog("JGroupsSender() - HAS NO PRIMARY BUT THREAD IS RUNNING ANYWAY");
-					}
-					m_messages.put(m_resendMessages.take());
-					if(!m_hasPrimary) {
-						FrontEnd.logger.criticalLog("JGroupsSender() - HAS NO PRIMARY BUT THREAD IS RUNNING ANYWAY");
-					}
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 }
