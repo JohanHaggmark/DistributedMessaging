@@ -259,10 +259,10 @@ public class UI extends JFrame {
 		Thread rmThread = new Thread() {
 			@Override
 			public void run() {
-//				System.out.println("Start Replica Manager");
-//				String[] arg = new String[1];
-//				arg[0] = "25000";
-//				ProcessMonitor.startReplicaManager(arg);
+			System.out.println("Start Replica Manager");
+				String[] arg = new String[1];
+				arg[0] = "25000";
+				ProcessMonitor.startReplicaManager(arg);
 				
 				
 				
@@ -277,7 +277,7 @@ public class UI extends JFrame {
 //									+ "\t\t\"argument\": [\"C:/java/exe/Cad.exe\"],\n"
 //									+ "\t\t\"argument\": [\"C:/java/exe/UI.exe\"],\n"
 //									+ "\t\t\"argument\": [\"C:/java/exe/ReplicaManager.exe\"],\n"
-									+ "\t\t\"argument\": [\"C:/java/exe/ReplicaManagerShutdownOnDraw.exe\"],\n"
+//									+ "\t\t\"argument\": [\"C:/java/exe/ReplicaManagerShutdownOnDraw.exe\"],\n"
 									+ "\t\t\"relaunch\": true,\n"
 									+ "\t\t\"noOfRetries\": 10,\n"
 									+ "\t\t\"deadReckoningOfStartedTimeInMilliSeconds\": 1000"
@@ -300,7 +300,7 @@ public class UI extends JFrame {
 				
 				
 //				ProcessMonitor monitor;
-////				String[] arg = {"C:/Windows/notepad.exe"};
+//				String[] arg = {"C:/Windows/notepad.exe"};
 //				String[] arg = {"C:/java/exe/launch4j.exe"};
 //				try {
 //					monitor = ProcessMonitor.createMonitor(arg);

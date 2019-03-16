@@ -28,7 +28,6 @@ public class Sender implements Runnable {
 					tryAddToRTT(msg);
 				} 
 				else {
-					//When the connection to the FrontEnd is down. All messages is temporary stored in a queue
 					m_messages.addToMessagesToResender(msg);
 				}
 			} catch (InterruptedException e) {
@@ -43,6 +42,9 @@ public class Sender implements Runnable {
 				Cad.logger.debugLog("SENDER - sending message: " + msg.getMsgTopClass());
 				msg.incrementAttempt();
 				m_messages.addToRTTMessageQueue(msg);
+			} else if(ATTEMPTS <= msg.getAttempt()){
+				//the message should be removed from the map
+				m_messages.removeAcknowledgeFromMessage(msg.getId());
 			}
 		}
 	}

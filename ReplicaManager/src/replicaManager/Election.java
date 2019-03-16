@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.jgroups.Address;
 import org.jgroups.JChannel;
+import org.jgroups.Message;
 
 import MessageHandling.LocalMessages;
 import se.his.drts.message.AbstractMessageTopClass;
@@ -11,10 +12,12 @@ import se.his.drts.message.CoordinatorMessage;
 
 public class Election implements Runnable {
 	private Address m_address;
+	private JChannel m_channel;
 	private LocalMessages m_messages;
 	private long m_timeStamp;
 
 	public Election(JChannel channel, LocalMessages messages) {
+		this.m_channel = channel;
 		this.m_messages = messages;
 		this.m_address = channel.getAddress();
 	}
@@ -44,8 +47,11 @@ public class Election implements Runnable {
 	private void startElection(AbstractMessageTopClass msgTopClass) {
 		m_timeStamp = System.currentTimeMillis();
 		new Thread(new TimeOuter(m_timeStamp)).start();
-		//JGroups.isCoordinator = true;
-		m_messages.addNewMessage(msgTopClass);
+		try {
+			m_channel.send(new Message(null, msgTopClass));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
 	}
 
 	private void endElection() {
@@ -53,6 +59,11 @@ public class Election implements Runnable {
 			JGroups.primaryRM = this.m_address;
 			JGroups.logger.debugLog("Election Sending Coordinator message with: " + JGroups.id);
 			m_messages.addNewMessage(new CoordinatorMessage());
+			try {
+				m_channel.send(new Message(null, new CoordinatorMessage()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}	
 		} else {
 			JGroups.logger.debugLog(JGroups.primaryRM + " is the new coordinator");
 		}

@@ -33,7 +33,4 @@ public class Cad {
 		Cad.logger.debugLog("sendState() - adding to message queue");
 		messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(objectList, RMConnection.connectionName));
 	}
-
-	
-
 }
