@@ -40,14 +40,12 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	public void viewAccepted(View new_view) {
-		JGroups.logger.debugLog("Receiver 42 " + m_channel.getAddress() + " ");
 		if (!new_view.containsMember(JGroups.frontEnd)) {
 			// Exponential backoff tills FrontEnd är uppe igen
 			JGroups.frontEnd = null;
 		}
 		// Election happens when primary left:
 		if (JGroups.primaryRM != null && !new_view.containsMember(JGroups.primaryRM) && new_view.size() > 1) {
-			JGroups.logger.debugLog("sending election");
 			JGroups.isCoordinator = true;
 			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
 			// Only the primary sends out to new replica managers about the coordinator
@@ -59,10 +57,7 @@ public class Receiver extends ReceiverAdapter {
 			} else {
 				for (Address newMember : new_RM) {
 					try {
-						JGroups.logger.debugLog("sending I am coordinator");
-						//m_channel.send(new Message(newMember, new CoordinatorMessage()));
-						m_messages.addNewMessage(new CoordinatorMessage());
-						JGroups.logger.debugLog("123sending bytes as coordinator");						
+						m_messages.addNewMessage(new CoordinatorMessage());				
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -71,7 +66,6 @@ public class Receiver extends ReceiverAdapter {
 		} 
 		else if (new_view.size() == 1) {
 			// sets the first replica manager to the coordinator:
-			JGroups.logger.debugLog("set myself to coordinator");
 			JGroups.isCoordinator = true;
 			JGroups.primaryRM = m_channel.getAddress();
 		}

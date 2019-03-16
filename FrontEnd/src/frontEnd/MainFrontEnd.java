@@ -1,14 +1,12 @@
 package frontEnd;
+
+import TestingControllability.ShutdownChannel;
+
 public class MainFrontEnd {
 
 	public static void main(String[] args) {
-
-		if (args.length < 1) {
-			System.err.println("Usage: java Server portnumber");
-			System.exit(-1);
-		}
-		new FrontEnd(Integer.parseInt(args[0]));
-
+		ShutdownChannel.startShutdownChannel(27000);
+		new FrontEnd();
 	}
-
+	
 }
