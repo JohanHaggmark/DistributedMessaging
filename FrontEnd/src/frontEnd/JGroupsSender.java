@@ -8,12 +8,12 @@ import org.jgroups.Message;
 public class JGroupsSender implements Runnable {
 
 	private JChannel m_channel;
-	private LinkedBlockingQueue<byte[]> m_messages = new LinkedBlockingQueue();
+	private LinkedBlockingQueue<byte[]> m_messagesFromClients;
 	private LinkedBlockingQueue<byte[]> m_resendMessages = new LinkedBlockingQueue();
 	private boolean m_hasPrimary = false;
 
-	public JGroupsSender(JChannel channel, LinkedBlockingQueue<byte[]> messages) {
-		this.m_messages = messages;
+	public JGroupsSender(JChannel channel, LinkedBlockingQueue<byte[]> m_messagesFromClients) {
+		this.m_messagesFromClients = m_messagesFromClients;
 		this.m_channel = channel;
 	}
 
@@ -21,7 +21,7 @@ public class JGroupsSender implements Runnable {
 	public void run() {
 		while (true) {
 			try {
-				byte[] bytes = m_messages.take();
+				byte[] bytes = m_messagesFromClients.take();
 				// Cad har EXPONENTIAL BACKOFF
 				//Front End lagrar en meddelanden som inte går att skicka
 				if (FrontEnd.primaryRM != null) {

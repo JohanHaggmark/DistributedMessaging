@@ -61,7 +61,7 @@ public class Receiver implements Runnable {
 				}
 				// DrawObjectsMessage
 				else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
-					gui.setState(State.class.cast(msgTopClass.executeInClient()));
+					gui.setState((State) msgTopClass.executeInClient());
 				}
 				// PresentationMessage
 				else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {

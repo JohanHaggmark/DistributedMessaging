@@ -32,6 +32,6 @@ public class Cad {
 
 	public void sendState(State state) {
 		Cad.logger.debugLog("sendState() - adding to message queue");
-		messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(SerializeObject.getBytes((Object)state), RMConnection.connectionName));
+		messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(state, RMConnection.connectionName));
 	}
 }
