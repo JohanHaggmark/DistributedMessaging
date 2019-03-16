@@ -12,6 +12,7 @@ import java.util.UUID;
 import DCAD.Cad;
 import DCAD.GObject;
 import DCAD.GUI;
+import DCAD.State;
 import MessageHandling.LocalMessages;
 import MessageHandling.Resender;
 import se.his.drts.message.AbstractMessageTopClass;
@@ -42,7 +43,12 @@ public class Receiver implements Runnable {
 			oin = new ObjectInputStream(din);
 
 			while (runThread) {
-				AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) oin.readObject();
+				
+				//Unpacking msg
+				Optional<MessagePayload> mpl = MessagePayload.createMessage((byte[]) oin.readObject());
+				AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) mpl.get();
+				
+				//AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) oin.readObject();
 				Cad.logger.debugLog("Received UUID: " + msgTopClass.getUUID());
 
 				// AcknowledgeMessage
@@ -55,7 +61,7 @@ public class Receiver implements Runnable {
 				}
 				// DrawObjectsMessage
 				else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
-					gui.setObjectList((LinkedList<GObject>) msgTopClass.executeInClient());
+					gui.setState((State) msgTopClass.executeInClient());
 				}
 				// PresentationMessage
 				else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {

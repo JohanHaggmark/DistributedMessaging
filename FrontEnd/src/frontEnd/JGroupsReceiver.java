@@ -1,6 +1,7 @@
 package frontEnd;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,6 +13,7 @@ import org.jgroups.View;
 import MessageHandling.LocalMessages;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.ElectionMessage;
+import se.his.drts.message.MessagePayload;
 import se.his.drts.message.PresentationMessage;
 
 public class JGroupsReceiver extends ReceiverAdapter {
@@ -89,9 +91,10 @@ public class JGroupsReceiver extends ReceiverAdapter {
 
 	private void addMessageToClientsExceptOne(AbstractMessageTopClass msgTopClass) {
 		for (Map.Entry<String, ClientConnection> entry : FrontEnd.m_connectedClients.entrySet()) {
-			if(entry.getKey() != msgTopClass.getName()) { //Dont send the state back to the source, only update other clients
+			//if(entry.getKey() != msgTopClass.getName()) { //Dont send the state back to the source, only update other clients
 				entry.getValue().addMessageToClient(msgTopClass);
-			}
+				FrontEnd.logger.debugLog("sending drawobjects to Client: " + entry.getKey());
+			//}
 		}
 	}
 }
