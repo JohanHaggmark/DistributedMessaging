@@ -11,6 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import Communication.RMConnection;
 import Logging.ProjectLogger;
 import MessageHandling.LocalMessages;
+import MessageHandling.SerializeObject;
 import se.his.drts.message.DrawObjectsMessage;
 
 public class Cad {
@@ -31,11 +32,6 @@ public class Cad {
 
 	public void sendState(State state) {
 		Cad.logger.debugLog("sendState() - adding to message queue");
-		try {
-			Object object = Class.forName(State.class.getName()).cast(state);
-			messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(object, RMConnection.connectionName));
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+		messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(SerializeObject.getBytes((Object)state), RMConnection.connectionName));
 	}
 }

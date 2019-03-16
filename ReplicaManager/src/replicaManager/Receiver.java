@@ -23,6 +23,7 @@ import DCAD.GObject;
 import DCAD.State;
 import MessageHandling.LocalMessages;
 import MessageHandling.Resender;
+import MessageHandling.SerializeObject;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.AcknowledgeMessage;
 import se.his.drts.message.CoordinatorMessage;
@@ -110,7 +111,7 @@ public class Receiver extends ReceiverAdapter {
 			JGroups.logger.debugLog("DrawObjectsMessage - Updated states ");
 			//State is updated. Now send the new state to clients:		
 			//m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(state.getList(), msgTopClass.getName()));
-			State state = State.class.cast(msgTopClass.executeInReplicaManager());
+			State state = (State)SerializeObject.getObject((byte[])msgTopClass.executeInReplicaManager());
 			JGroups.logger.debugLog(state.getObjectList().toString());
 			m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(msgTopClass.executeInReplicaManager(), msgTopClass.getName()));
 		}
