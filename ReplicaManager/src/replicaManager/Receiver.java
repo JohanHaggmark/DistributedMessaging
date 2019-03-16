@@ -104,7 +104,7 @@ public class Receiver extends ReceiverAdapter {
 			JGroups.logger.debugLog("DrawObjectsMessage - Sending ack to " + msgTopClass.getName());
 			state.updateState((LinkedList<GObject>)msgTopClass.executeInReplicaManager(), msgTopClass.getName());
 			JGroups.logger.debugLog("DrawObjectsMessage - Updated states ");
-			//State is updated. Now send the new state to clients:
+			//State is updated. Now send the new state to clients:		
 			m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(state.getList(), msgTopClass.getName()));
 		}
 		// PresentationMessage
@@ -146,8 +146,9 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	private void getState() {
+		//Will get the state if there is a primary
 		if (JGroups.primaryRM != null && JGroups.isCoordinator == false) {
-			try {
+			try {			
 				m_channel.getState(JGroups.primaryRM, 1000);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -157,6 +158,7 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	public void getState(OutputStream output) throws Exception {
+		JGroups.logger.debugLog("JGroups getState(OutputStream output)");
 		synchronized (state.getList()) {
 			Util.objectToStream(state.getList(), new DataOutputStream(output));
 		}
