@@ -26,7 +26,7 @@ public class State {
 	}
 
 	public void setState(LinkedList<String> list) {
-		//objectList.clear();
+		objectList.clear();
 		objectList.addAll(list);
 	}
 	

@@ -8,7 +8,7 @@ public class Sender implements Runnable {
 
 	LocalMessages m_messages;
 	RMConnection m_RMConnection;
-	private final int ATTEMPTS = 2;
+	private final int ATTEMPTS = 10;
 
 	public Sender(RMConnection rmConnection, LocalMessages messages) {
 		this.m_RMConnection = rmConnection;

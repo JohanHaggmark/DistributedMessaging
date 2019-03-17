@@ -58,7 +58,6 @@ public class Election implements Runnable {
 		if (JGroups.isCoordinator) {
 			JGroups.primaryRM = this.m_address;
 			JGroups.logger.debugLog("Election Sending Coordinator message with: " + JGroups.id);
-			m_messages.addNewMessage(new CoordinatorMessage());
 			try {
 				m_channel.send(new Message(null, new CoordinatorMessage()));
 			} catch (Exception e) {
