@@ -25,6 +25,7 @@ import javax.swing.JFrame;
 import MessageHandling.GObject;
 import MessageHandling.GObjectFactory;
 import MessageHandling.Shape;
+import TestingControllability.SemaphoreChannel;
 
 public class GUI extends JFrame implements WindowListener, ActionListener, MouseListener, MouseMotionListener {
 	JButton ovalButton = new JButton("Oval");
@@ -39,6 +40,7 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 	JButton pinkButton = new JButton("Pink");
 
 	private GObject template = new GObject(Shape.OVAL, Color.RED, 363, 65, 25, 25);
+	private GObject testObject = new GObject(Shape.OVAL, Color.GREEN, 363, 200, 100, 50); 
 	private GObject current = null;
 
 	private HashMap<String, GObject> mapOfObjects = new HashMap<String, GObject>();
@@ -46,7 +48,10 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 	private Cad m_cad;
 
 	
-	public GUI(int xpos, int ypos) {		
+	public GUI(int xpos, int ypos) {	
+		this.waitForDrawMessage();
+		this.waitForRemoveMessage();
+		
 		setSize(xpos, ypos);
 		setTitle("FTCAD");
 
@@ -226,5 +231,50 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 			mapOfObjects.remove(string);
 		}
 		repaint();
+	}
+	
+	private void waitForDrawMessage() {
+		new Thread() {
+			@Override
+			public void run() {
+				while (true) {
+					SemaphoreChannel removeChannel = SemaphoreChannel.createSemaphoreChannel(26001);
+					System.out.println("1 - Waiting for action message  " + System.currentTimeMillis());
+					removeChannel.waitForActionMessage();
+					System.out.println("1 - Received action message  " + System.currentTimeMillis());		
+					simulateDraw();
+				}
+			}
+		}.start();
+	}
+	
+	private void waitForRemoveMessage() {
+		new Thread() {
+			@Override
+			public void run() {
+				while (true) {
+					SemaphoreChannel removeChannel = SemaphoreChannel.createSemaphoreChannel(26002);
+					System.out.println("2 - Waiting for action message  " + System.currentTimeMillis());
+					removeChannel.waitForActionMessage();
+					System.out.println("2 - Received action message  " + System.currentTimeMillis());
+					simulateRightClick();
+				}
+			}
+		}.start();
+	}
+	
+	private void simulateDraw() {
+		String stringObject = GObjectFactory.getStringOfObject(testObject);
+		stringGObjects.addLast(stringObject);
+		mapOfObjects.put(stringObject, testObject);
+		m_cad.sendAdd(stringObject);
+		repaint();
+	}
+	
+	private void simulateRightClick() {
+		m_cad.sendRemove(stringGObjects.getLast());
+		mapOfObjects.remove(stringGObjects.getLast());
+		stringGObjects.removeLast();	
+		repaint();	
 	}
 }
