@@ -18,4 +18,8 @@ public class State implements Serializable {
 	public void set(LinkedList<GObject> objectList) {
 		this.objectList = objectList;
 	}
+
+	public void setObjectList(LinkedList<GObject> objectList) {
+		this.objectList = objectList;
+	}
 }

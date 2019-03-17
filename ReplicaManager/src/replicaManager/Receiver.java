@@ -105,16 +105,16 @@ public class Receiver extends ReceiverAdapter {
 		// DrawObjectsMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
 			m_messages.addNewMessage(new AcknowledgeMessage(msgTopClass.getackID(),msgTopClass.getName()));
-			
 			JGroups.logger.debugLog("DrawObjectsMessage - Sending ack to " + msgTopClass.getName());
+			DrawObjectsMessage drawMsg = (DrawObjectsMessage)msgTopClass;
 			//state.updateState((LinkedList<GObject>)msgTopClass.executeInReplicaManager(), msgTopClass.getName());
 			JGroups.logger.debugLog("DrawObjectsMessage - Updated states ");
 			//State is updated. Now send the new state to clients:		
 			//m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(state.getList(), msgTopClass.getName()));
-			State state = (State) msgTopClass.executeInReplicaManager();
-			System.out.println("state list size:" + state.getObjectList().size());
+			DCAD.State state = (DCAD.State) drawMsg.getM_state();
+			System.out.println("state list size:");
 			JGroups.logger.debugLog("was able to cast to State");
-			m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage((String)msgTopClass.executeInReplicaManager(), msgTopClass.getName()));
+			m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage((String) drawMsg.executeInReplicaManager(),  drawMsg.getName()));
 		}
 		// PresentationMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
