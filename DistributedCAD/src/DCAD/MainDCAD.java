@@ -14,7 +14,7 @@ public class MainDCAD {
 
 	//starts applications threads here:
 	public static void main(String[] args)  {
-		ShutdownChannel.startShutdownChannel(26000);
+		//ShutdownChannel.startShutdownChannel(26000);
 		
     	rmConnection = new RMConnection("127.0.0.1", 25000);
     	messages = new LocalMessages();
