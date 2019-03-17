@@ -3,32 +3,39 @@ package replicaManager;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import MessageHandling.GObject;
-import se.his.drts.message.AbstractMessageTopClass;
+import se.his.drts.message.DrawObjectsMessage;
 
 public class State {
 
-	private final HashMap<String, String> objectMap;
+	private final LinkedList<String> objectList;
 
 	public State() {
-		objectMap = new HashMap<String, String>();
+		objectList = new LinkedList<String>();
+	}
+	
+	public void addObject(String object) {
+		objectList.addLast(object);
 	}
 
 	public void removeObject(String object) {
-		objectMap.remove(object);
+		objectList.remove(object);
 	}
 
-	public HashMap<String, String> getObjectMap() {
-		return objectMap;
+	public LinkedList<String> getObjectList() {
+		return objectList;
 	}
 
-	public void setState(HashMap<String, String> map) {
-		this.objectMap.clear();
-		objectMap.putAll(map);
+	public void setState(LinkedList<String> list) {
+		//objectList.clear();
+		objectList.addAll(list);
 	}
-
-	public static void addDrawObjectsRequest(Object object) {
-		// LinkedList<GObject> objectList = (LinkedList<GObject>) object;
+	
+	public DrawObjectsMessage getStateMessage(String name) {
+		HashMap<String, String> objects = new HashMap();
+		for(String string : objectList) {
+			objects.put(string, "add");
+		}
+		return new DrawObjectsMessage(objects, name);
 	}
 
 }

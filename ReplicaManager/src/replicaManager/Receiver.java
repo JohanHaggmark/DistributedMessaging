@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,12 +32,12 @@ public class Receiver extends ReceiverAdapter {
 	private JChannel m_channel;
 	private LocalMessages m_messages;
 	private View m_oldView;
-	private replicaManager.State state;
+	private State state;
 
 	public Receiver(JChannel channel, LocalMessages messages) {
 		this.m_channel = channel;
 		this.m_messages = messages;
-		state = new replicaManager.State();
+		state = new State();
 	}
 
 	public void start() throws Exception {
@@ -60,7 +61,8 @@ public class Receiver extends ReceiverAdapter {
 			JGroups.isCoordinator = true;
 			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
 			// Only the primary sends out to new replica managers about the coordinator
-		} else if (m_channel.getAddress().equals(JGroups.primaryRM)) {
+		} 
+		else if (m_channel.getAddress().equals(JGroups.primaryRM)) {
 			List<Address> new_RM = View.newMembers(m_oldView, new_view);
 			if (new_RM.isEmpty()) {
 				JGroups.logger.debugLog("Member left");
@@ -74,12 +76,17 @@ public class Receiver extends ReceiverAdapter {
 					}
 				}
 			}
-		} else if (new_view.size() == 1) {
+		} 
+		else if (new_view.size() == 1) {
 			// sets the first replica manager to the coordinator:
 			JGroups.logger.debugLog("I am the coordinator!");
 			JGroups.isCoordinator = true;
 			JGroups.primaryRM = m_channel.getAddress();
 		} 
+		else if (new_view.size() > 1 && JGroups.primaryRM == null) {
+			JGroups.isCoordinator = true;
+			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
+		}
 		m_oldView = new_view;
 	}
 
@@ -109,11 +116,11 @@ public class Receiver extends ReceiverAdapter {
 			String key = map.keySet().iterator().next();
 			JGroups.logger.debugLog("key of map: " + key);
 			if(map.get(key).equals("add")) {
-				state.getObjectMap().put(key, "add");
+				state.addObject(key);
 				JGroups.logger.debugLog("sending the drawobject");
 				m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(msgTopClass.getObject(),  msgTopClass.getName()));
 			} else { //remove object
-				state.removeObject(map.keySet().iterator().next());
+				state.removeObject(key);
 				JGroups.logger.debugLog("sending the drawobject");
 				m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(msgTopClass.getObject(),  msgTopClass.getName()));
 			}
@@ -124,21 +131,20 @@ public class Receiver extends ReceiverAdapter {
 			if (type == null) {
 				JGroups.logger.debugLog("Presentation null");
 			}
-			if (type.equals("FrontEnd")) {
+			else if (type.equals("FrontEnd")) {
 				JGroups.frontEnd = msg.src();
 				JGroups.logger.debugLog("received from FrontEnd");
-				if (m_oldView.size() == 2) {
-					// sets the replica manager to the coordinator:
-					JGroups.logger.debugLog("I am the coordinator!");
-					JGroups.isCoordinator = true;
-					JGroups.primaryRM = m_channel.getAddress();
-				}
-				startResender();
-			} else if (type.equals("Client")) {
+				
+				startResender();					
+			} 
+			else if (type.equals("Client")) {
 				JGroups.logger.debugLog("Added new client with name " + msgTopClass.getName());
 				JGroups.clients.add(msgTopClass.getName());
-			} else {
-				JGroups.logger.debugLog("Presentation - hittar fan ingen typ! :(");
+				
+				m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
+			} 
+			else {
+				JGroups.logger.debugLog("Presentation - hittar inte rätt typ! :(");
 			}
 		}
 		// ElectionMessage
@@ -177,16 +183,16 @@ public class Receiver extends ReceiverAdapter {
 
 	public void getState(OutputStream output) throws Exception {
 		JGroups.logger.debugLog("JGroups getState(OutputStream output)");
-		synchronized (state.getObjectMap()) {
-			Util.objectToStream(state.getObjectMap(), new DataOutputStream(output));
+		synchronized (state.getObjectList()) {
+			Util.objectToStream(state.getObjectList(), new DataOutputStream(output));
 		}
 	}
 
 	public void setState(InputStream input) throws Exception {
-		HashMap<String,String> map;
-		map = (HashMap<String,String>) Util.objectFromStream(new DataInputStream(input));
+		LinkedList<String> list;
+		list = (LinkedList<String>) Util.objectFromStream(new DataInputStream(input));
 		synchronized (state) {
-			state.setState(map);
+			state.setState(list);
 		}
 	}
 	
