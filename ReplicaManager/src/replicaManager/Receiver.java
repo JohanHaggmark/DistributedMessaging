@@ -52,6 +52,7 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	public void viewAccepted(View new_view) {
+		JGroups.logger.debugLog("View Changed! with size:" + new_view.size() + " primary is: " + JGroups.primaryRM);
 		if (!new_view.containsMember(JGroups.frontEnd)) {
 			// Exponential backoff tills FrontEnd är uppe igen
 			JGroups.frontEnd = null;
@@ -59,6 +60,7 @@ public class Receiver extends ReceiverAdapter {
 		// Election happens when primary left:
 		if (JGroups.primaryRM != null && !new_view.containsMember(JGroups.primaryRM) && new_view.size() > 1) {
 			JGroups.isCoordinator = true;
+			JGroups.logger.debugLog("starting new Election!");
 			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
 			// Only the primary sends out to new replica managers about the coordinator
 		} 
@@ -70,7 +72,7 @@ public class Receiver extends ReceiverAdapter {
 				for (Address newMember : new_RM) {
 					try {
 						JGroups.logger.debugLog("sending I am the coordinator!");
-						m_channel.send(new Message(newMember, new CoordinatorMessage()));
+						m_channel.send(new Message(newMember, new CoordinatorMessage().serialize()));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -83,10 +85,10 @@ public class Receiver extends ReceiverAdapter {
 			JGroups.isCoordinator = true;
 			JGroups.primaryRM = m_channel.getAddress();
 		} 
-		else if (new_view.size() > 1 && JGroups.primaryRM == null) {
-			JGroups.isCoordinator = true;
-			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
-		}
+//		else if (new_view.size() > 1 && JGroups.primaryRM == null) {
+//			JGroups.isCoordinator = true;
+//			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
+//		}
 		m_oldView = new_view;
 	}
 
@@ -173,7 +175,7 @@ public class Receiver extends ReceiverAdapter {
 		//Will get the state if there is a primary
 		if (JGroups.primaryRM != null && JGroups.isCoordinator == false) {
 			try {			
-				m_channel.getState(JGroups.primaryRM, 1000);
+				m_channel.getState(JGroups.primaryRM, 100000);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

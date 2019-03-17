@@ -215,19 +215,15 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 	
 	public void addGObjects(LinkedList<String> objects) {
 		for(String string : objects) {
-			stringGObjects.addLast(string);
+			//stringGObjects.addLast(string);
 			mapOfObjects.put(string, GObjectFactory.createGObjectByString(string));
 		}
 		repaint();
 	}
 	
 	public void removeGObjects(LinkedList<String> objects) {
-		for(String string : objects) {
-			if(stringGObjects.contains(string)) {
-				stringGObjects.remove(string);
-				mapOfObjects.remove(string);
-			}
-			
+		for(String string : objects) {		
+			mapOfObjects.remove(string);
 		}
 		repaint();
 	}
