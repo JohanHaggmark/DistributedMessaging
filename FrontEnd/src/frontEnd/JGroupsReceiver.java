@@ -2,6 +2,7 @@ package frontEnd;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.jgroups.Address;
@@ -12,6 +13,7 @@ import org.jgroups.View;
 
 import MessageHandling.LocalMessages;
 import se.his.drts.message.AbstractMessageTopClass;
+import se.his.drts.message.MessagePayload;
 import se.his.drts.message.PresentationMessage;
 
 public class JGroupsReceiver extends ReceiverAdapter {
@@ -49,8 +51,13 @@ public class JGroupsReceiver extends ReceiverAdapter {
 	}
 
 	public void receive(Message msg) {
-		FrontEnd.logger.debugLog("receive - jgroupsreceiver 62 " + msg.getObject());
-		AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) msg.getObject();
+		
+		byte[] bytes = msg.getBuffer();
+
+		//Unpacking msg
+		Optional<MessagePayload> mpl = MessagePayload.createMessage(bytes);
+		AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) mpl.get();
+		
 		// AcknowledgeMessage
 		if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
 			FrontEnd.logger.debugLog("Received AcknowledgeMessage");
