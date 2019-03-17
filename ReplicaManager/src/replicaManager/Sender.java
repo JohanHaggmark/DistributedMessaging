@@ -51,7 +51,7 @@ public class Sender implements Runnable {
 	private void tryAddToRTT(LocalMessage msg) {
 		if (msg.isAcknowledgeMessage()) {
 			if ((msg.isAcknowledged() == false) && msg.getAttempt() < ATTEMPTS) {
-				Cad.logger.debugLog("SENDER - sending message: " + msg.getMsgTopClass());
+				JGroups.logger.debugLog("SENDER - sending message: " + msg.getMsgTopClass());
 				msg.incrementAttempt();
 				m_messages.addToRTTMessageQueue(msg);
 			} else if (ATTEMPTS <= msg.getAttempt()) {
