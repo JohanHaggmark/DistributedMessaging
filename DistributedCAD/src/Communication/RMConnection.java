@@ -5,27 +5,26 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.concurrent.Semaphore;
 
-import DCAD.Cad;
+import DCAD.MainDCAD;
 import se.his.drts.message.AbstractMessageTopClass;
-import se.his.drts.message.PresentationMessage;
 
-public class RMConnection {
+public class RMConnection implements Runnable {
 	private InetAddress m_serverAddress;
 	private int m_serverPort;
 	private Socket m_socket = null;
-	
+	private Semaphore m_connected = new Semaphore(1);
+	private int m_timeOut = 8;
 	public static String connectionName = null;
 	public static boolean hasFrontEnd;
-	
 
 	public RMConnection(String address, int port) {
 		try {
-			m_serverAddress = InetAddress.getByName(address);
-			m_serverPort = port;
-			m_socket = new Socket(address, port);
-		} catch (IOException e) {
-			connectionName = null;
+			this.m_serverAddress = InetAddress.getByName(address);
+			this.m_serverPort = port;
+		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
 	}
@@ -42,5 +41,28 @@ public class RMConnection {
 
 	public Socket getSocket() {
 		return m_socket;
+	}
+
+	@Override
+	public void run() {
+		while (true) {
+			try {
+				m_connected.acquire();
+				m_socket = new Socket(m_serverAddress, m_serverPort);
+				MainDCAD.resetConnection();
+				m_timeOut = 8;
+			} catch (IOException | InterruptedException e) {
+				connectionName = null;
+				System.out.println("Waiting for... " + m_timeOut + " milliseconds");
+				try {
+					Thread.sleep(m_timeOut);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				m_timeOut *= 2;
+				m_connected.release();
+				e.printStackTrace();
+			}
+		}
 	}
 }
