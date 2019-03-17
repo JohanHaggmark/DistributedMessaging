@@ -48,7 +48,7 @@ public class Election implements Runnable {
 		m_timeStamp = System.currentTimeMillis();
 		new Thread(new TimeOuter(m_timeStamp)).start();
 		try {
-			m_channel.send(new Message(null, msgTopClass));
+			m_channel.send(new Message(null, msgTopClass.serialize()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}	
@@ -59,7 +59,7 @@ public class Election implements Runnable {
 			JGroups.primaryRM = this.m_address;
 			JGroups.logger.debugLog("Election Sending Coordinator message with: " + JGroups.id);
 			try {
-				m_channel.send(new Message(null, new CoordinatorMessage()));
+				m_channel.send(new Message(null, new CoordinatorMessage().serialize()));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}	
