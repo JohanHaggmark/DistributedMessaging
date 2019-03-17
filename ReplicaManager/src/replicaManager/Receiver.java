@@ -34,6 +34,7 @@ public class Receiver extends ReceiverAdapter {
 	private View m_oldView;
 	private State state;
 
+	private int counter = 0;
 	public Receiver(JChannel channel, LocalMessages messages) {
 		this.m_channel = channel;
 		this.m_messages = messages;
@@ -93,14 +94,15 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	public void receive(Message msg) {
-		JGroups.logger.debugLog("RECEIVE");
+		counter++;
+		JGroups.logger.debugLog(counter + " RECEIVE");
 		byte[] bytes = msg.getBuffer();
 
 		//Unpacking msg
 		Optional<MessagePayload> mpl = MessagePayload.createMessage(bytes);
 		AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) mpl.get();
 
-		JGroups.logger.debugLog("UUID: " + msgTopClass.getUUID());
+		JGroups.logger.debugLog(counter + "UUID: " + msgTopClass.getUUID());
 
 		// AcknowledgeMessage
 		if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
@@ -109,21 +111,17 @@ public class Receiver extends ReceiverAdapter {
 		// DrawObjectsMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
 			m_messages.addNewMessage(new AcknowledgeMessage(msgTopClass.getackID(),msgTopClass.getName()));
-			JGroups.logger.debugLog("DrawObjectsMessage - Sending ack to " + msgTopClass.getName());
-			//state.updateState((LinkedList<GObject>)msgTopClass.executeInReplicaManager(), msgTopClass.getName());
-			JGroups.logger.debugLog("DrawObjectsMessage - Updated states ");
-			//State is updated. Now send the new state to clients:		
-			//m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(state.getList(), msgTopClass.getName()));
+			JGroups.logger.debugLog(counter + "DrawObjectsMessage - Sending ack to " + msgTopClass.getName());
 			HashMap<String,String> map = msgTopClass.getObject();
 			String key = map.keySet().iterator().next();
-			JGroups.logger.debugLog("key of map: " + key);
+			JGroups.logger.debugLog(counter + "key of map: " + key);
 			if(map.get(key).equals("add")) {
 				state.addObject(key);
-				JGroups.logger.debugLog("sending the drawobject");
+				JGroups.logger.debugLog(counter + "sending the drawobject");
 				m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(msgTopClass.getObject(),  msgTopClass.getName()));
 			} else { //remove object
 				state.removeObject(key);
-				JGroups.logger.debugLog("sending the drawobject");
+				JGroups.logger.debugLog(counter + "sending the drawobject");
 				m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(msgTopClass.getObject(),  msgTopClass.getName()));
 			}
 		}
@@ -131,29 +129,30 @@ public class Receiver extends ReceiverAdapter {
 		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
 			String type = (String)msgTopClass.executeInReplicaManager();
 			if (type == null) {
-				JGroups.logger.debugLog("Presentation null");
+				JGroups.logger.debugLog(counter+"Presentation null");
 			}
 			else if (type.equals("FrontEnd")) {
 				JGroups.frontEnd = msg.src();
-				JGroups.logger.debugLog("received from FrontEnd");
+				JGroups.logger.debugLog(counter + "received from FrontEnd");
 				
 				startResender();					
 			} 
 			else if (type.equals("Client")) {
-				JGroups.logger.debugLog("Added new client with name " + msgTopClass.getName());
+				JGroups.logger.debugLog(counter + "Added new client with name " + msgTopClass.getName());
 				JGroups.clients.add(msgTopClass.getName());
 				
 				m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
 			} 
 			else {
-				JGroups.logger.debugLog("Presentation - hittar inte rätt typ! :(");
+				JGroups.logger.debugLog(counter + "Presentation - hittar inte rätt typ! :(");
 			}
 		}
 		// ElectionMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {
 			Integer id = (Integer) msgTopClass.executeInReplicaManager();
+			JGroups.logger.debugLog(counter + " election. my id: " + JGroups.id + " msg.id: " + id);
 			if (!JGroups.id.equals(id)) {
-				if (JGroups.id > id) {
+				if (JGroups.id > id) {			
 					JGroups.isCoordinator = true;
 					JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
 				} else {
@@ -165,17 +164,18 @@ public class Receiver extends ReceiverAdapter {
 		else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
 			JGroups.primaryRM = msg.getSrc();
 			getState();
-			JGroups.logger.debugLog(JGroups.primaryRM + " is the address of the current coordinator");
+			JGroups.logger.debugLog(counter + " " +  JGroups.primaryRM + " is the address of the current coordinator");
 		} else {
-			JGroups.logger.criticalLog("UNKNOWN UUID: " + msgTopClass.getUUID());
+			JGroups.logger.criticalLog(counter + "UNKNOWN UUID: " + msgTopClass.getUUID());
 		}
 	}
 
 	private void getState() {
 		//Will get the state if there is a primary
-		if (JGroups.primaryRM != null && JGroups.isCoordinator == false) {
+		if (JGroups.primaryRM != null && !JGroups.primaryRM.equals(m_channel.getAddress())) {
 			try {			
-				m_channel.getState(JGroups.primaryRM, 100000);
+				JGroups.logger.debugLog(counter + " Trying to get state");
+				m_channel.getState(JGroups.primaryRM, 10000);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -184,7 +184,7 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	public void getState(OutputStream output) throws Exception {
-		JGroups.logger.debugLog("JGroups getState(OutputStream output)");
+		JGroups.logger.debugLog(counter + "JGroups getState(OutputStream output)");
 		synchronized (state.getObjectList()) {
 			Util.objectToStream(state.getObjectList(), new DataOutputStream(output));
 		}
@@ -192,6 +192,7 @@ public class Receiver extends ReceiverAdapter {
 
 	public void setState(InputStream input) throws Exception {
 		LinkedList<String> list;
+		JGroups.logger.debugLog(counter + " set the state");
 		list = (LinkedList<String>) Util.objectFromStream(new DataInputStream(input));
 		synchronized (state) {
 			state.setState(list);
