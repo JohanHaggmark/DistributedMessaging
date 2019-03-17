@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,12 +32,12 @@ public class Receiver extends ReceiverAdapter {
 	private JChannel m_channel;
 	private LocalMessages m_messages;
 	private View m_oldView;
-	private replicaManager.State state;
+	private State state;
 
 	public Receiver(JChannel channel, LocalMessages messages) {
 		this.m_channel = channel;
 		this.m_messages = messages;
-		state = new replicaManager.State();
+		state = new State();
 	}
 
 	public void start() throws Exception {
@@ -109,11 +110,11 @@ public class Receiver extends ReceiverAdapter {
 			String key = map.keySet().iterator().next();
 			JGroups.logger.debugLog("key of map: " + key);
 			if(map.get(key).equals("add")) {
-				state.getObjectMap().put(key, "add");
+				state.addObject(key);
 				JGroups.logger.debugLog("sending the drawobject");
 				m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(msgTopClass.getObject(),  msgTopClass.getName()));
 			} else { //remove object
-				state.removeObject(map.keySet().iterator().next());
+				state.removeObject(key);
 				JGroups.logger.debugLog("sending the drawobject");
 				m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(msgTopClass.getObject(),  msgTopClass.getName()));
 			}
@@ -137,6 +138,8 @@ public class Receiver extends ReceiverAdapter {
 			} else if (type.equals("Client")) {
 				JGroups.logger.debugLog("Added new client with name " + msgTopClass.getName());
 				JGroups.clients.add(msgTopClass.getName());
+				
+				m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
 			} else {
 				JGroups.logger.debugLog("Presentation - hittar fan ingen typ! :(");
 			}
@@ -177,16 +180,16 @@ public class Receiver extends ReceiverAdapter {
 
 	public void getState(OutputStream output) throws Exception {
 		JGroups.logger.debugLog("JGroups getState(OutputStream output)");
-		synchronized (state.getObjectMap()) {
-			Util.objectToStream(state.getObjectMap(), new DataOutputStream(output));
+		synchronized (state.getObjectList()) {
+			Util.objectToStream(state.getObjectList(), new DataOutputStream(output));
 		}
 	}
 
 	public void setState(InputStream input) throws Exception {
-		HashMap<String,String> map;
-		map = (HashMap<String,String>) Util.objectFromStream(new DataInputStream(input));
+		LinkedList<String> list;
+		list = (LinkedList<String>) Util.objectFromStream(new DataInputStream(input));
 		synchronized (state) {
-			state.setState(map);
+			state.setState(list);
 		}
 	}
 	

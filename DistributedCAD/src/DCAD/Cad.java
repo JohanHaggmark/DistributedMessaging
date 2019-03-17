@@ -32,11 +32,11 @@ public class Cad {
 		gui.addToListener();
 	}
 
-
 	public void sendRemove(String stringGObject) {
 		HashMap<String, String> map = new HashMap<String, String>();
 		map.put(stringGObject, "remove");
-		messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(map, RMConnection.connectionName));	}
+		messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(map, RMConnection.connectionName));
+	}
 
 	public void sendAdd(String stringGObject) {
 		HashMap<String, String> map = new HashMap<String, String>();
