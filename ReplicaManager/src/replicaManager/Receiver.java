@@ -35,6 +35,7 @@ public class Receiver extends ReceiverAdapter {
 	private State state;
 
 	private int counter = 0;
+
 	public Receiver(JChannel channel, LocalMessages messages) {
 		this.m_channel = channel;
 		this.m_messages = messages;
@@ -64,8 +65,7 @@ public class Receiver extends ReceiverAdapter {
 			JGroups.logger.debugLog("starting new Election!");
 			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
 			// Only the primary sends out to new replica managers about the coordinator
-		} 
-		else if (m_channel.getAddress().equals(JGroups.primaryRM)) {
+		} else if (m_channel.getAddress().equals(JGroups.primaryRM)) {
 			List<Address> new_RM = View.newMembers(m_oldView, new_view);
 			if (new_RM.isEmpty()) {
 				JGroups.logger.debugLog("Member left");
@@ -79,13 +79,13 @@ public class Receiver extends ReceiverAdapter {
 					}
 				}
 			}
-		} 
-		else if (new_view.size() == 1) {
+		} else if ((new_view.size() == 1 || new_view.size() == 2) && JGroups.primaryRM == null) {
 			// sets the first replica manager to the coordinator:
-			JGroups.logger.debugLog("I am the coordinator!");
+			JGroups.logger.debugLog("starting election!");
 			JGroups.isCoordinator = true;
-			JGroups.primaryRM = m_channel.getAddress();
-		} 
+			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
+			// JGroups.primaryRM = m_channel.getAddress();
+		}
 //		else if (new_view.size() > 1 && JGroups.primaryRM == null) {
 //			JGroups.isCoordinator = true;
 //			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
@@ -94,86 +94,87 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	public void receive(Message msg) {
-		counter++;
-		JGroups.logger.debugLog(counter + " RECEIVE");
-		byte[] bytes = msg.getBuffer();
+		if (!msg.getSrc().equals(m_channel.getAddress())) {
+			counter++;
+			JGroups.logger.debugLog(counter + " RECEIVE");
+			byte[] bytes = msg.getBuffer();
 
-		//Unpacking msg
-		Optional<MessagePayload> mpl = MessagePayload.createMessage(bytes);
-		AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) mpl.get();
+			// Unpacking msg
+			Optional<MessagePayload> mpl = MessagePayload.createMessage(bytes);
+			AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) mpl.get();
 
-		JGroups.logger.debugLog(counter + "UUID: " + msgTopClass.getUUID());
+			JGroups.logger.debugLog(counter + "UUID: " + msgTopClass.getUUID());
 
-		// AcknowledgeMessage
-		if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
-			m_messages.removeAcknowledgeFromMessage(msgTopClass.getMessageNumber());
-		}
-		// DrawObjectsMessage
-		else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
-			m_messages.addNewMessage(new AcknowledgeMessage(msgTopClass.getackID(),msgTopClass.getName()));
-			JGroups.logger.debugLog(counter + "DrawObjectsMessage - Sending ack to " + msgTopClass.getName());
-			HashMap<String,String> map = msgTopClass.getObject();
-			String key = map.keySet().iterator().next();
-			JGroups.logger.debugLog(counter + "key of map: " + key);
-			if(map.get(key).equals("add")) {
-				state.addObject(key);
-				JGroups.logger.debugLog(counter + "sending the drawobject");
-				m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(msgTopClass.getObject(),  msgTopClass.getName()));
-			} else { //remove object
-				state.removeObject(key);
-				JGroups.logger.debugLog(counter + "sending the drawobject");
-				m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(msgTopClass.getObject(),  msgTopClass.getName()));
+			// AcknowledgeMessage
+			if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
+				m_messages.removeAcknowledgeFromMessage(msgTopClass.getMessageNumber());
 			}
-		}
-		// PresentationMessage
-		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
-			String type = (String)msgTopClass.executeInReplicaManager();
-			if (type == null) {
-				JGroups.logger.debugLog(counter+"Presentation null");
-			}
-			else if (type.equals("FrontEnd")) {
-				JGroups.frontEnd = msg.src();
-				JGroups.logger.debugLog(counter + "received from FrontEnd");
-				
-				startResender();					
-			} 
-			else if (type.equals("Client")) {
-				JGroups.logger.debugLog(counter + "Added new client with name " + msgTopClass.getName());
-				JGroups.clients.add(msgTopClass.getName());
-				
-				m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
-			} 
-			else {
-				JGroups.logger.debugLog(counter + "Presentation - hittar inte rätt typ! :(");
-			}
-		}
-		// ElectionMessage
-		else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {
-			Integer id = (Integer) msgTopClass.executeInReplicaManager();
-			JGroups.logger.debugLog(counter + " election. my id: " + JGroups.id + " msg.id: " + id);
-			if (!JGroups.id.equals(id)) {
-				if (JGroups.id > id) {			
-					JGroups.isCoordinator = true;
-					JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
-				} else {
-					JGroups.isCoordinator = false;
+			// DrawObjectsMessage
+			else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
+				m_messages.addNewMessage(new AcknowledgeMessage(msgTopClass.getackID(), msgTopClass.getName()));
+				JGroups.logger.debugLog(counter + "DrawObjectsMessage - Sending ack to " + msgTopClass.getName());
+				HashMap<String, String> map = msgTopClass.getObject();
+				String key = map.keySet().iterator().next();
+				JGroups.logger.debugLog(counter + "key of map: " + key);
+				if (map.get(key).equals("add")) {
+					state.addObject(key);
+					JGroups.logger.debugLog(counter + "sending the drawobject");
+					m_messages.addNewMessageWithAcknowledge(
+							new DrawObjectsMessage(msgTopClass.getObject(), msgTopClass.getName()));
+				} else { // remove object
+					state.removeObject(key);
+					JGroups.logger.debugLog(counter + "sending the drawobject");
+					m_messages.addNewMessageWithAcknowledge(
+							new DrawObjectsMessage(msgTopClass.getObject(), msgTopClass.getName()));
 				}
 			}
-		}
-		// CoordinatorMessage
-		else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
-			JGroups.primaryRM = msg.getSrc();
-			getState();
-			JGroups.logger.debugLog(counter + " " +  JGroups.primaryRM + " is the address of the current coordinator");
-		} else {
-			JGroups.logger.criticalLog(counter + "UNKNOWN UUID: " + msgTopClass.getUUID());
+			// PresentationMessage
+			else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
+				String type = (String) msgTopClass.executeInReplicaManager();
+				if (type == null) {
+					JGroups.logger.debugLog(counter + "Presentation null");
+				} else if (type.equals("FrontEnd")) {
+					JGroups.frontEnd = msg.src();
+					JGroups.logger.debugLog(counter + "received from FrontEnd");
+					startResender();
+				} else if (type.equals("Client")) {
+					JGroups.logger.debugLog(counter + "Added new client with name " + msgTopClass.getName());
+					JGroups.clients.add(msgTopClass.getName());
+
+					m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
+				} else {
+					JGroups.logger.debugLog(counter + "Presentation - hittar inte rätt typ! :(");
+				}
+			}
+			// ElectionMessage
+			else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {
+				Integer id = (Integer) msgTopClass.getPid();
+				JGroups.logger.debugLog(counter + " election. my id: " + JGroups.id + " msg.id: " + id);
+				if (!JGroups.id.equals(id)) {
+					if (JGroups.id > id) {
+						JGroups.isCoordinator = true;
+						JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
+					} else {
+						JGroups.isCoordinator = false;
+					}
+				}
+			}
+			// CoordinatorMessage
+			else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
+				JGroups.primaryRM = msg.getSrc();
+				getState();
+				JGroups.logger
+						.debugLog(counter + " " + JGroups.primaryRM + " is the address of the current coordinator");
+			} else {
+				JGroups.logger.criticalLog(counter + "UNKNOWN UUID: " + msgTopClass.getUUID());
+			}
 		}
 	}
 
 	private void getState() {
-		//Will get the state if there is a primary
+		// Will get the state if there is a primary
 		if (JGroups.primaryRM != null && !JGroups.primaryRM.equals(m_channel.getAddress())) {
-			try {			
+			try {
 				JGroups.logger.debugLog(counter + " Trying to get state");
 				m_channel.getState(JGroups.primaryRM, 10000);
 			} catch (Exception e) {
@@ -198,12 +199,10 @@ public class Receiver extends ReceiverAdapter {
 			state.setState(list);
 		}
 	}
-	
+
 	private void startResender() {
-		new Thread(new Resender(
-				m_messages.getMessagesToResender(),
-				m_messages.getMessageQueue(),
-				RMConnection.hasFrontEnd)).start();
+		new Thread(new Resender(m_messages.getMessagesToResender(), m_messages.getMessageQueue(),
+				m_messages)).start();
 		JGroups.logger.debugLog("Started Resender successfully ");
 	}
 }
