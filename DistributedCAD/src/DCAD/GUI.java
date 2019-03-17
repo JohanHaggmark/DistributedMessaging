@@ -21,6 +21,9 @@ import java.util.ListIterator;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import MessageHandling.GObject;
+import MessageHandling.Shape;
+
 public class GUI extends JFrame implements WindowListener, ActionListener, MouseListener, MouseMotionListener {
 	JButton ovalButton = new JButton("Oval");
 	JButton rectangleButton = new JButton("Rect");
@@ -131,8 +134,9 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 		// User clicks the right mouse button:
 		// undo an operation by removing the most recently added object.
 		if (e.getButton() == MouseEvent.BUTTON3 && state.getObjectList().size() > 0) {
+			m_cad.sendRemove(state.getObjectList().getLast());
 			state.getObjectList().removeLast();
-			m_cad.sendState(state);
+			
 		}
 		repaint();
 	}
@@ -140,7 +144,7 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 	public void mouseReleased(MouseEvent e) {
 		if (current != null) {
 			state.getObjectList().addLast(current);
-			m_cad.sendState(state);
+			m_cad.sendAdd(current);
 			current = null;
 		}
 		repaint();

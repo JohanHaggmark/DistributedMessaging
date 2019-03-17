@@ -19,8 +19,8 @@ import org.jgroups.util.Util;
 
 import Communication.RMConnection;
 import DCAD.Cad;
-import DCAD.GObject;
 import DCAD.State;
+import MessageHandling.GObject;
 import MessageHandling.LocalMessages;
 import MessageHandling.Resender;
 import MessageHandling.SerializeObject;

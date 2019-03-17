@@ -10,9 +10,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import DCAD.Cad;
-import DCAD.GObject;
 import DCAD.GUI;
 import DCAD.State;
+import MessageHandling.GObject;
 import MessageHandling.LocalMessages;
 import MessageHandling.Resender;
 import se.his.drts.message.AbstractMessageTopClass;

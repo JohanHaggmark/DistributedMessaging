@@ -3,6 +3,8 @@ package DCAD;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import MessageHandling.GObject;
+
 public class State implements Serializable {
 
 	LinkedList<GObject> objectList;

@@ -3,14 +3,14 @@
  * @author brom
  */
 
-package DCAD;
+package MessageHandling;
 
 import java.io.Serializable;
 
-final class Shape implements Serializable{
+public final class Shape {
     private String type;
 
-    private Shape(String type) {
+    Shape(String type) {
 	this.type = type;
     }
 

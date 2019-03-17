@@ -3,18 +3,19 @@
  * @author brom
  */
 
-package DCAD;
+package MessageHandling;
 
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.io.Serializable;
 
+
 /**
  *
  * @author brom
  */
-public class GObject implements Serializable{
+public class GObject {
     private Shape s;
     private Color c;
     private int x,y,width,height;

@@ -10,6 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import Communication.RMConnection;
 import Logging.ProjectLogger;
+import MessageHandling.GObject;
 import MessageHandling.LocalMessages;
 import MessageHandling.SerializeObject;
 import se.his.drts.message.DrawObjectsMessage;
@@ -33,5 +34,13 @@ public class Cad {
 	public void sendState(State state) {
 		Cad.logger.debugLog("sendState() - adding to message queue");
 		messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(state, RMConnection.connectionName));
+	}
+	
+	public void sendRemove(GObject object) {
+		
+	}
+	
+	public void sendAdd(GObject object) {
+		
 	}
 }

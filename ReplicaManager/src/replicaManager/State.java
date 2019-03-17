@@ -3,7 +3,7 @@ package replicaManager;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import DCAD.GObject;
+import MessageHandling.GObject;
 import se.his.drts.message.AbstractMessageTopClass;
 
 
