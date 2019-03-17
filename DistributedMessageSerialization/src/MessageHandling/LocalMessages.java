@@ -11,6 +11,8 @@ public class LocalMessages {
 	private LinkedBlockingQueue<LocalMessage> m_RTTMessageQueue;
 	private LinkedBlockingQueue<LocalMessage> m_messagesToResender;
 	private ConcurrentHashMap<Integer, LocalMessage> m_mapOfMessages;
+	
+	private boolean senderHasConnection = false;
 
 	public LocalMessages() {
 		m_messageQueue = new LinkedBlockingQueue<LocalMessage>();
@@ -64,5 +66,13 @@ public class LocalMessages {
 			m_mapOfMessages.get(id.intValue()).isAcknowledged();
 			m_mapOfMessages.remove(id);
 		}
+	}
+	
+	public boolean isSenderHasConnection() {
+		return senderHasConnection;
+	}
+
+	public void setSenderHasConnection(boolean senderHasConnection) {
+		this.senderHasConnection = senderHasConnection;
 	}
 }

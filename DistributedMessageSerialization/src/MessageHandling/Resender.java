@@ -8,9 +8,10 @@ public class Resender implements Runnable{
 
 	boolean senderHasConnection;
 	boolean runThread = true;
+	private LocalMessages m_messages;
 
 	public Resender(LinkedBlockingQueue m_messagesToResender, LinkedBlockingQueue m_messageQueue,
-			boolean senderHasConnection) {
+			LocalMessages messages) {
 		this.m_messagesToResender = m_messagesToResender;
 		this.m_messagesToSender = m_messageQueue;
 		this.senderHasConnection = senderHasConnection;
@@ -22,7 +23,9 @@ public class Resender implements Runnable{
 			LocalMessage msg;
 			try {
 				msg = m_messagesToResender.take();
-				if (senderHasConnection) {
+				System.out.println("took msg, I am the resender");
+				if (m_messages.isSenderHasConnection()) {
+					System.out.println("gives msg to sender! I am resender");
 					m_messagesToSender.add(msg);
 				} else {
 					this.m_messagesToResender.add(msg);

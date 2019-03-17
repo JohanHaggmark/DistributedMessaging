@@ -68,4 +68,8 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 	public HashMap<String, String> getObject() {
 		return this.object;
 	}
+	
+	public Integer getPid() {
+		return pid;
+	}
 }
