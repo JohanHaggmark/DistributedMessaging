@@ -27,7 +27,7 @@ import javax.swing.border.BevelBorder;
 import Logging.ProjectLogger;
 
 public class UI extends JFrame {
-	
+
 	private JPanel m_replicaManagerPanel;
 	private JPanel m_frontEndPanel;
 	private JPanel m_consolePanel;
@@ -144,7 +144,7 @@ public class UI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				startReplicaManager();
 				rmConsoleButton.setSelected(true);
-				
+
 				m_startReplicaManagerButton.setEnabled(false);
 				m_startFrontEndButton.setEnabled(false);
 			}
@@ -169,7 +169,7 @@ public class UI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				startFrontEnd();
 				fmConsoleButton.setSelected(true);
-				
+
 				m_startReplicaManagerButton.setEnabled(false);
 				m_startFrontEndButton.setEnabled(false);
 			}
@@ -259,48 +259,42 @@ public class UI extends JFrame {
 		Thread rmThread = new Thread() {
 			@Override
 			public void run() {
-//				System.out.println("Start Replica Manager");
-//				String[] arg = new String[1];
-//				arg[0] = "25000";
-//				ProcessMonitor.startReplicaManager(arg);
-				
-				
-				
-				
-				try {
-					File correctFile1;
-					correctFile1 = File.createTempFile("correctFile", "json");
-					String correctFile1Text = 
-							"[\n" 		
-									+ "\t{\n"
-//									+ "\t\t\"argument\": [\"C:/windows/notepad.exe\"],\n"
-//									+ "\t\t\"argument\": [\"C:/java/exe/Cad.exe\"],\n"
-//									+ "\t\t\"argument\": [\"C:/java/exe/UI.exe\"],\n"
-//									+ "\t\t\"argument\": [\"C:/java/exe/ReplicaManager.exe\"],\n"
-									+ "\t\t\"argument\": [\"C:/java/exe/ReplicaManagerShutdownOnDraw.exe\"],\n"
-									+ "\t\t\"relaunch\": true,\n"
-									+ "\t\t\"noOfRetries\": 10,\n"
-									+ "\t\t\"deadReckoningOfStartedTimeInMilliSeconds\": 1000"
-									+"\t}\n"
-									+"]\n";
-					PrintWriter out1 = new PrintWriter(correctFile1);
-					out1.print(correctFile1Text);
-					out1.close();
-					System.out.print(correctFile1Text);
-					
-					
-					ProcessMonitor[] monitoredProcessArray = ProcessMonitor.createMonitor(correctFile1);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				
-				
-				
-				
-				
-				
+				System.out.println("Start Replica Manager");
+				String[] arg = new String[1];
+				arg[0] = "25000";
+				ProcessMonitor.startReplicaManager(arg);
+
+//				try {
+//					File correctFile1;
+//					correctFile1 = File.createTempFile("correctFile", "json");
+//					String correctFile1Text = 
+//							"[\n" 		
+//									+ "\t{\n"
+////									+ "\t\t\"argument\": [\"C:/windows/notepad.exe\"],\n"
+////									+ "\t\t\"argument\": [\"C:/java/exe/Cad.exe\"],\n"
+////									+ "\t\t\"argument\": [\"C:/java/exe/UI.exe\"],\n"
+////									+ "\t\t\"argument\": [\"C:/java/exe/ReplicaManager.exe\"],\n"
+////									+ "\t\t\"argument\": [\"C:/java/exe/ReplicaManagerShutdownOnDraw.exe\"],\n"
+//									+ "\t\t\"relaunch\": true,\n"
+//									+ "\t\t\"noOfRetries\": 10,\n"
+//									+ "\t\t\"deadReckoningOfStartedTimeInMilliSeconds\": 1000"
+//									+"\t}\n"
+//									+"]\n";
+//					PrintWriter out1 = new PrintWriter(correctFile1);
+//					out1.print(correctFile1Text);
+//					out1.close();
+//					System.out.print(correctFile1Text);
+//					
+//					
+//					ProcessMonitor[] monitoredProcessArray = ProcessMonitor.createMonitor(correctFile1);
+//				} catch (IOException e1) {
+//					e1.printStackTrace();
+//				}
+//				
+//				
+
 //				ProcessMonitor monitor;
-////				String[] arg = {"C:/Windows/notepad.exe"};
+//				String[] arg = {"C:/Windows/notepad.exe"};
 //				String[] arg = {"C:/java/exe/launch4j.exe"};
 //				try {
 //					monitor = ProcessMonitor.createMonitor(arg);
@@ -320,43 +314,37 @@ public class UI extends JFrame {
 		Thread feThread = new Thread() {
 			@Override
 			public void run() {
-//				System.out.println("Start Front End");
-//				String[] arg = new String[1];
-//				arg[0] = "25000";
-//				ProcessMonitor.startFrontEnd(arg);
-				
-				
-				
-				
+				System.out.println("Start Front End");
+				String[] arg = new String[1];
+				arg[0] = "25000";
+				ProcessMonitor.startFrontEnd(arg);
 
-				try {
-					File correctFile1;
-					correctFile1 = File.createTempFile("correctFile", "json");
-					String correctFile1Text = 
-							"[\n" 		
-									+ "\t{\n"
-//									+ "\t\t\"argument\": [\"C:/windows/notepad.exe\"],\n"
-//									+ "\t\t\"argument\": [\"C:/java/exe/Cad.exe\"],\n"
-//									+ "\t\t\"argument\": [\"C:/java/exe/UI.exe\"],\n"
-									+ "\t\t\"argument\": [\"C:/java/exe/FrontEnd.exe\"],\n"
-									+ "\t\t\"relaunch\": true,\n"
-									+ "\t\t\"noOfRetries\": 10,\n"
-									+ "\t\t\"deadReckoningOfStartedTimeInMilliSeconds\": 1000"
-									+"\t}\n"
-									+"]\n";
-					PrintWriter out1 = new PrintWriter(correctFile1);
-					out1.print(correctFile1Text);
-					out1.close();
-					System.out.print(correctFile1Text);
-					
-					
-					ProcessMonitor[] monitoredProcessArray = ProcessMonitor.createMonitor(correctFile1);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				
-				
-				
+//				try {
+//					File correctFile1;
+//					correctFile1 = File.createTempFile("correctFile", "json");
+//					String correctFile1Text = 
+//							"[\n" 		
+//									+ "\t{\n"
+////									+ "\t\t\"argument\": [\"C:/windows/notepad.exe\"],\n"
+////									+ "\t\t\"argument\": [\"C:/java/exe/Cad.exe\"],\n"
+////									+ "\t\t\"argument\": [\"C:/java/exe/UI.exe\"],\n"
+//									+ "\t\t\"argument\": [\"C:/java/exe/FrontEnd.exe\"],\n"
+//									+ "\t\t\"relaunch\": true,\n"
+//									+ "\t\t\"noOfRetries\": 10,\n"
+//									+ "\t\t\"deadReckoningOfStartedTimeInMilliSeconds\": 1000"
+//									+"\t}\n"
+//									+"]\n";
+//					PrintWriter out1 = new PrintWriter(correctFile1);
+//					out1.print(correctFile1Text);
+//					out1.close();
+//					System.out.print(correctFile1Text);
+//					
+//					
+//					ProcessMonitor[] monitoredProcessArray = ProcessMonitor.createMonitor(correctFile1);
+//				} catch (IOException e1) {
+//					e1.printStackTrace();
+//				}
+
 			}
 		};
 		feThread.start();

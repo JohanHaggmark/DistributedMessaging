@@ -8,12 +8,13 @@ package DCAD;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 
 /**
  *
  * @author brom
  */
-public class GObject {
+public class GObject implements Serializable{
     private Shape s;
     private Color c;
     private int x,y,width,height;

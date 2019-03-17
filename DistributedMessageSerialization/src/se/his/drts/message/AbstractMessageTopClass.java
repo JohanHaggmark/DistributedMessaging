@@ -18,6 +18,7 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 	protected Integer pid;
 	protected String type;
 	protected Object GObjectList;
+	protected Object state;
 	
 	public AbstractMessageTopClass() {
 		super(AbstractMessageTopClass.uuid);
@@ -63,5 +64,6 @@ public abstract class AbstractMessageTopClass extends MessagePayload {
 	public void changeName(String name) {
 		this.name = name;
 	}
+	
 
 }
