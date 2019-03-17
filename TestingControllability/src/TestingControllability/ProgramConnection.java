@@ -35,7 +35,7 @@ public class ProgramConnection implements Runnable {
 		}
 	}
 
-	public void sendShutdownMessage() {
+	public void sendActionMessage() {
 		try {
 			byte[] bytes = "gg".getBytes();
 			m_clientSocket.getOutputStream().write(bytes);
