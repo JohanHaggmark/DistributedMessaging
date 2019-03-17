@@ -16,6 +16,7 @@ import MessageHandling.GObjectFactory;
 import MessageHandling.LocalMessages;
 import MessageHandling.Resender;
 import se.his.drts.message.AbstractMessageTopClass;
+import se.his.drts.message.AcknowledgeMessage;
 import se.his.drts.message.MessagePayload;
 import se.his.drts.message.PresentationMessage;
 
@@ -65,17 +66,17 @@ public class Receiver implements Runnable {
 					// gui.setState((State) msgTopClass.executeInClient());
 					//System.out.println(msgTopClass.getObject().get("shape") + msgTopClass.getObject().get("color")
 					//		+ msgTopClass.getObject().get("x"));
-
+					m_messages.addNewMessage(new AcknowledgeMessage(msgTopClass.getackID(), msgTopClass.getName()));
 					gui.addGObjects(GObjectFactory.addObjects(msgTopClass.getObject()));
 					gui.removeGObjects(GObjectFactory.removeObjects(msgTopClass.getObject()));
 				}
 				// PresentationMessage
 				else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
 					String type = (String) msgTopClass.getType();
-					if (type.equals("ClientConnection")) {
-						m_messages.setSenderHasConnection(true);
+					if (type.equals("ClientConnection")) {	
 						String name = (String) msgTopClass.getName();
-						rmConnection.connectionName = name;
+						RMConnection.connectionName = name;
+						m_messages.setSenderHasConnection(true);
 						m_messages.addNewMessageWithAcknowledge(PresentationMessage.createClientPresentation(name));
 						Cad.logger.debugLog("Starting Resender");	
 						startResender();

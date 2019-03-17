@@ -38,6 +38,7 @@ public class Sender implements Runnable {
 			e.printStackTrace();
 			m_messages.setSenderHasConnection(false);
 			RMConnection.connectionName = null;
+			m_RMConnection.releaseSem();
 			Cad.logger.debugLog("Sender got exception");
 		}
 

@@ -21,38 +21,38 @@ public class LocalMessages {
 		m_mapOfMessages = new ConcurrentHashMap<Integer, LocalMessage>();
 	}
 
-	public void addNewMessageWithAcknowledge(AbstractMessageTopClass msgTopClass) {
+	public synchronized void addNewMessageWithAcknowledge(AbstractMessageTopClass msgTopClass) {
 		LocalMessage msg = new LocalMessage(msgTopClass, true);
 		m_mapOfMessages.put(msgTopClass.getackID(), msg);
 		addToMessageQueue(msg);
 	}
 
-	public void addNewMessage(AbstractMessageTopClass msgTopClass) {
+	public synchronized void addNewMessage(AbstractMessageTopClass msgTopClass) {
 		LocalMessage msg = new LocalMessage(msgTopClass, false);
 		addToMessageQueue(msg);
 	}
 
-	public void addToMessageQueue(LocalMessage msg) {
+	public synchronized void addToMessageQueue(LocalMessage msg) {
 		m_messageQueue.add(msg);
 	}
 
-	public void addToRTTMessageQueue(LocalMessage msg) {
+	public synchronized void addToRTTMessageQueue(LocalMessage msg) {
 		m_RTTMessageQueue.add(msg);
 	}
 
-	public void addToMessagesToResender(LocalMessage msg) {
+	public synchronized void addToMessagesToResender(LocalMessage msg) {
 		m_messagesToResender.add(msg);
 	}
 
-	public LinkedBlockingQueue<LocalMessage> getMessagesToResender() {
+	public synchronized LinkedBlockingQueue<LocalMessage> getMessagesToResender() {
 		return m_messagesToResender;
 	}
 
-	public LinkedBlockingQueue<LocalMessage> getMessageQueue() {
+	public synchronized LinkedBlockingQueue<LocalMessage> getMessageQueue() {
 		return m_messageQueue;
 	}
 
-	public LinkedBlockingQueue<LocalMessage> getRTTMessageQueue() {
+	public synchronized LinkedBlockingQueue<LocalMessage> getRTTMessageQueue() {
 		return m_RTTMessageQueue;
 	}
 
