@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,12 +17,8 @@ import org.jgroups.View;
 import org.jgroups.util.Util;
 
 import Communication.RMConnection;
-import DCAD.Cad;
-import DCAD.State;
-import MessageHandling.GObject;
 import MessageHandling.LocalMessages;
 import MessageHandling.Resender;
-import MessageHandling.SerializeObject;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.AcknowledgeMessage;
 import se.his.drts.message.CoordinatorMessage;
@@ -84,7 +79,7 @@ public class Receiver extends ReceiverAdapter {
 			JGroups.logger.debugLog("I am the coordinator!");
 			JGroups.isCoordinator = true;
 			JGroups.primaryRM = m_channel.getAddress();
-		}
+		} 
 		m_oldView = new_view;
 	}
 
@@ -111,9 +106,17 @@ public class Receiver extends ReceiverAdapter {
 			//State is updated. Now send the new state to clients:		
 			//m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(state.getList(), msgTopClass.getName()));
 			HashMap<String,String> map = msgTopClass.getObject();
-			System.out.println("map test value: " + map.get("shape"));
-			JGroups.logger.debugLog("was able to cast to State");
-			//m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage((String) drawMsg.executeInReplicaManager(),  drawMsg.getName()));
+			String key = map.keySet().iterator().next();
+			JGroups.logger.debugLog("key of map: " + key);
+			if(map.get(key).equals("add")) {
+				state.getObjectMap().put(key, "add");
+				JGroups.logger.debugLog("sending the drawobject");
+				m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(msgTopClass.getObject(),  msgTopClass.getName()));
+			} else { //remove object
+				state.removeObject(map.keySet().iterator().next());
+				JGroups.logger.debugLog("sending the drawobject");
+				m_messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(msgTopClass.getObject(),  msgTopClass.getName()));
+			}
 		}
 		// PresentationMessage
 		else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
@@ -124,6 +127,12 @@ public class Receiver extends ReceiverAdapter {
 			if (type.equals("FrontEnd")) {
 				JGroups.frontEnd = msg.src();
 				JGroups.logger.debugLog("received from FrontEnd");
+				if (m_oldView.size() == 2) {
+					// sets the replica manager to the coordinator:
+					JGroups.logger.debugLog("I am the coordinator!");
+					JGroups.isCoordinator = true;
+					JGroups.primaryRM = m_channel.getAddress();
+				}
 				startResender();
 			} else if (type.equals("Client")) {
 				JGroups.logger.debugLog("Added new client with name " + msgTopClass.getName());
@@ -168,16 +177,16 @@ public class Receiver extends ReceiverAdapter {
 
 	public void getState(OutputStream output) throws Exception {
 		JGroups.logger.debugLog("JGroups getState(OutputStream output)");
-		synchronized (state.getList()) {
-			Util.objectToStream(state.getList(), new DataOutputStream(output));
+		synchronized (state.getObjectMap()) {
+			Util.objectToStream(state.getObjectMap(), new DataOutputStream(output));
 		}
 	}
 
 	public void setState(InputStream input) throws Exception {
-		LinkedList<GObject> list;
-		list = (LinkedList<GObject>) Util.objectFromStream(new DataInputStream(input));
+		HashMap<String,String> map;
+		map = (HashMap<String,String>) Util.objectFromStream(new DataInputStream(input));
 		synchronized (state) {
-			state.setState(list);
+			state.setState(map);
 		}
 	}
 	

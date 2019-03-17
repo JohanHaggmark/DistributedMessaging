@@ -16,12 +16,14 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import MessageHandling.GObject;
+import MessageHandling.GObjectFactory;
 import MessageHandling.Shape;
 
 public class GUI extends JFrame implements WindowListener, ActionListener, MouseListener, MouseMotionListener {
@@ -39,7 +41,8 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 	private GObject template = new GObject(Shape.OVAL, Color.RED, 363, 65, 25, 25);
 	private GObject current = null;
 
-	private State state = new State(new LinkedList<GObject>());
+	private HashMap<String, GObject> mapOfObjects = new HashMap<String, GObject>();
+	private LinkedList<String> stringGObjects = new LinkedList<String>();
 	private Cad m_cad;
 
 	
@@ -133,18 +136,20 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 	public void mouseClicked(MouseEvent e) {
 		// User clicks the right mouse button:
 		// undo an operation by removing the most recently added object.
-		if (e.getButton() == MouseEvent.BUTTON3 && state.getObjectList().size() > 0) {
-			m_cad.sendRemove(state.getObjectList().getLast());
-			state.getObjectList().removeLast();
-			
+		if (e.getButton() == MouseEvent.BUTTON3 && stringGObjects.size() > 0) {		
+			m_cad.sendRemove(stringGObjects.getLast());
+			mapOfObjects.remove(stringGObjects.getLast());
+			stringGObjects.removeLast();
 		}
 		repaint();
 	}
 
 	public void mouseReleased(MouseEvent e) {
 		if (current != null) {
-			state.getObjectList().addLast(current);
-			m_cad.sendAdd(current);
+			String stringObject = GObjectFactory.getStringOfObject(current);
+			stringGObjects.addLast(stringObject);
+			mapOfObjects.put(stringObject, current);
+			m_cad.sendAdd(stringObject);
 			current = null;
 		}
 		repaint();
@@ -193,8 +198,8 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 
 		template.draw(g);
 
-		for (ListIterator<GObject> itr = state.getObjectList().listIterator(); itr.hasNext();) {
-			itr.next().draw(g);
+		for(GObject object : mapOfObjects.values()) {
+			object.draw(g);
 		}
 
 		if (current != null) {
@@ -207,8 +212,23 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 		update(g);
 	}
 	
-	public void setState(State state) {
-		this.state = state;
+	
+	public void addGObjects(LinkedList<String> objects) {
+		for(String string : objects) {
+			stringGObjects.addLast(string);
+			mapOfObjects.put(string, GObjectFactory.createGObjectByString(string));
+		}
+		repaint();
+	}
+	
+	public void removeGObjects(LinkedList<String> objects) {
+		for(String string : objects) {
+			if(stringGObjects.contains(string)) {
+				stringGObjects.remove(string);
+				mapOfObjects.remove(string);
+			}
+			
+		}
 		repaint();
 	}
 }

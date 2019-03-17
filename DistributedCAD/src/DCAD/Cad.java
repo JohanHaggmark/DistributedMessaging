@@ -12,12 +12,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import Communication.RMConnection;
 import Logging.ProjectLogger;
 import MessageHandling.GObject;
+import MessageHandling.GObjectFactory;
 import MessageHandling.LocalMessages;
 import se.his.drts.message.DrawObjectsMessage;
 
 public class Cad {
 	public static ProjectLogger logger = new ProjectLogger("CAD");
-	
+
 	public static LinkedBlockingQueue<LinkedList<GObject>> resendQueue = new LinkedBlockingQueue();
 	private GUI gui;
 	private RMConnection rmConnection;
@@ -31,19 +32,15 @@ public class Cad {
 		gui.addToListener();
 	}
 
-	public void sendState(State state) {
-		Cad.logger.debugLog("sendState() - adding to message queue");
-	//	messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(state, RMConnection.connectionName));
-	}
-	
-	public void sendRemove(GObject object) {
-		HashMap<String,String> map = new HashMap<String,String>();
-		map.put("shape", "test");
-		
+
+	public void sendRemove(String stringGObject) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put(stringGObject, "remove");
+		messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(map, RMConnection.connectionName));	}
+
+	public void sendAdd(String stringGObject) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put(stringGObject, "add");
 		messages.addNewMessageWithAcknowledge(new DrawObjectsMessage(map, RMConnection.connectionName));
-	}
-	
-	public void sendAdd(GObject object) {
-		
 	}
 }
