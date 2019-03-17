@@ -18,22 +18,29 @@ public class Sender implements Runnable {
 
 	@Override
 	public void run() {
-		while (true) {
-			try {
+
+		try {
+			while (true) {
 				LocalMessage msg = (LocalMessage) m_messages.getMessageQueue().take();
 				Cad.logger.debugLog("took a message from messageQueue ");
-				if (RMConnection.hasFrontEnd && RMConnection.connectionName != null) {
-					msg.getMsgTopClass().changeName(RMConnection.connectionName); //Make sure msg has the latest connectionName
+				if (m_messages.isSenderHasConnection()  && RMConnection.connectionName != null) {
+					msg.getMsgTopClass().changeName(RMConnection.connectionName); // Make sure msg has the latest
+																					// connectionName
 					m_RMConnection.sendMessage(msg.getMsgTopClass());
 					tryAddToRTT(msg);
-				} 
-				else {
+				} else {
+					m_messages.setSenderHasConnection(false);
+					Cad.logger.debugLog("fronend: " + m_messages.isSenderHasConnection() + "  RMConnection: " + RMConnection.connectionName);
 					m_messages.addToMessagesToResender(msg);
 				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			m_messages.setSenderHasConnection(false);
+			RMConnection.connectionName = null;
+			Cad.logger.debugLog("Sender got exception");
 		}
+
 	}
 
 	private void tryAddToRTT(LocalMessage msg) {
@@ -42,8 +49,8 @@ public class Sender implements Runnable {
 				Cad.logger.debugLog("SENDER - sending message: " + msg.getMsgTopClass());
 				msg.incrementAttempt();
 				m_messages.addToRTTMessageQueue(msg);
-			} else if(ATTEMPTS <= msg.getAttempt()){
-				//the message should be removed from the map
+			} else if (ATTEMPTS <= msg.getAttempt()) {
+				// the message should be removed from the map
 				m_messages.removeAcknowledgeFromMessage(msg.getId());
 			}
 		}

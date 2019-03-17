@@ -18,7 +18,6 @@ public class RMConnection implements Runnable {
 	private Semaphore m_connected = new Semaphore(1);
 	private int m_timeOut = 8;
 	public static String connectionName = null;
-	public static boolean hasFrontEnd;
 
 	public RMConnection(String address, int port) {
 		try {
@@ -64,5 +63,8 @@ public class RMConnection implements Runnable {
 				e.printStackTrace();
 			}
 		}
+	}
+	public void releaseSem() {
+		m_connected.release();
 	}
 }

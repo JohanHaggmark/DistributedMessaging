@@ -73,11 +73,11 @@ public class Receiver implements Runnable {
 				else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
 					String type = (String) msgTopClass.getType();
 					if (type.equals("ClientConnection")) {
-						rmConnection.hasFrontEnd = true;
+						m_messages.setSenderHasConnection(true);
 						String name = (String) msgTopClass.getName();
 						rmConnection.connectionName = name;
 						m_messages.addNewMessageWithAcknowledge(PresentationMessage.createClientPresentation(name));
-						Cad.logger.debugLog("Starting Resender");
+						Cad.logger.debugLog("Starting Resender");	
 						startResender();
 
 					} else {
@@ -89,15 +89,17 @@ public class Receiver implements Runnable {
 				}
 			}
 		} catch (IOException | ClassNotFoundException e) {
+			Cad.logger.debugLog("Exception on receiver " ); 
 			e.printStackTrace();
-			RMConnection.hasFrontEnd = false;
+			m_messages.setSenderHasConnection(false);
 			RMConnection.connectionName = null;
+			rmConnection.releaseSem();
 		}
 	}
 
 	private void startResender() {
 		new Thread(new Resender(m_messages.getMessagesToResender(), m_messages.getMessageQueue(),
-				RMConnection.hasFrontEnd)).start();
+				m_messages)).start();
 		Cad.logger.debugLog("Started Resender successfully ");
 	}
 }
