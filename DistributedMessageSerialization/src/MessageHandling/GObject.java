@@ -3,18 +3,19 @@
  * @author brom
  */
 
-package DCAD;
+package MessageHandling;
 
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.io.Serializable;
 
+
 /**
  *
  * @author brom
  */
-public class GObject implements Serializable{
+public class GObject {
     private Shape s;
     private Color c;
     private int x,y,width,height;
@@ -25,6 +26,10 @@ public class GObject implements Serializable{
     public GObject(Shape s, Color c, int x, int y, int width, int height) {
 	this.s = s; this.c = c; this.x = x; this.y = y;
 	this.width = width; this.height = height;
+    }
+    
+    public GObject() {
+    	
     }
 
     public void setShape(Shape s) {this.s = s;}
@@ -71,4 +76,44 @@ public class GObject implements Serializable{
 	    g.fillOval(drawX, drawY, drawWidth, drawHeight);
 	}
     }
+
+	public Shape getS() {
+		return s;
+	}
+
+	public void setS(Shape s) {
+		this.s = s;
+	}
+
+	public Color getC() {
+		return c;
+	}
+
+	public void setC(Color c) {
+		this.c = c;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
 }

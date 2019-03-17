@@ -10,9 +10,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import DCAD.Cad;
-import DCAD.GObject;
 import DCAD.GUI;
-import DCAD.State;
+import MessageHandling.GObject;
+import MessageHandling.GObjectFactory;
 import MessageHandling.LocalMessages;
 import MessageHandling.Resender;
 import se.his.drts.message.AbstractMessageTopClass;
@@ -43,25 +43,31 @@ public class Receiver implements Runnable {
 			oin = new ObjectInputStream(din);
 
 			while (runThread) {
-				
-				//Unpacking msg
+
+				// Unpacking msg
 				Optional<MessagePayload> mpl = MessagePayload.createMessage((byte[]) oin.readObject());
 				AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) mpl.get();
-				
-				//AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) oin.readObject();
+
+				// AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass)
+				// oin.readObject();
 				Cad.logger.debugLog("Received UUID: " + msgTopClass.getUUID());
 
 				// AcknowledgeMessage
 				if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
 					Cad.logger.debugLog("AckID: " + msgTopClass.getackID());
-					for(Integer key : m_messages.getMapOfMessages().keySet()) {
+					for (Integer key : m_messages.getMapOfMessages().keySet()) {
 						Cad.logger.debugLog("AckID in map: " + key);
 					}
 					m_messages.removeAcknowledgeFromMessage((Integer) msgTopClass.getackID());
 				}
 				// DrawObjectsMessage
 				else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
-					gui.setState((State) msgTopClass.executeInClient());
+					// gui.setState((State) msgTopClass.executeInClient());
+					//System.out.println(msgTopClass.getObject().get("shape") + msgTopClass.getObject().get("color")
+					//		+ msgTopClass.getObject().get("x"));
+
+					gui.addGObjects(GObjectFactory.addObjects(msgTopClass.getObject()));
+					gui.removeGObjects(GObjectFactory.removeObjects(msgTopClass.getObject()));
 				}
 				// PresentationMessage
 				else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
@@ -73,9 +79,8 @@ public class Receiver implements Runnable {
 						m_messages.addNewMessageWithAcknowledge(PresentationMessage.createClientPresentation(name));
 						Cad.logger.debugLog("Starting Resender");
 						startResender();
-						
-					} 
-					else {
+
+					} else {
 						Cad.logger.debugLog(
 								"Cad should not be receiving PresentationMessages from other than ClientConnection");
 					}
@@ -91,9 +96,7 @@ public class Receiver implements Runnable {
 	}
 
 	private void startResender() {
-		new Thread(new Resender(
-				m_messages.getMessagesToResender(),
-				m_messages.getMessageQueue(),
+		new Thread(new Resender(m_messages.getMessagesToResender(), m_messages.getMessageQueue(),
 				RMConnection.hasFrontEnd)).start();
 		Cad.logger.debugLog("Started Resender successfully ");
 	}
