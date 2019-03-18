@@ -224,7 +224,7 @@ public class TesterUI extends JFrame {
 	}
 	
 	private void GUIFrontEnd() {
-		drawOnGUI();
 		terminateFrontEnd();
+		drawOnGUI();
 	}
 }
