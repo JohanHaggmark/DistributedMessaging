@@ -22,18 +22,18 @@ public class PresentationMessage extends AbstractMessageTopClass {
 		return new PresentationMessage("ReplicaManager");
 	}
 	
-	public PresentationMessage(String type, String name) {
+	private PresentationMessage(String type, String name) {
 		super(uuid);
 		this.type = type;
 		this.name = name;
 	}
 
-	public PresentationMessage(String type) {
+	private PresentationMessage(String type) {
 		super(uuid);
 		this.type = type;
 	}
 	
-	public PresentationMessage() {
+	private PresentationMessage() {
 		super(uuid);
 	}
 

@@ -1,6 +1,5 @@
 package replicaManager;
 
-import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jgroups.Address;
@@ -19,14 +18,16 @@ public class JGroups {
 	public static volatile boolean isCoordinator = false;
 	public static LinkedBlockingQueue electionQueue = new LinkedBlockingQueue<AbstractMessageTopClass>();
 	public static ProjectLogger logger;
-
 	public static State state = new State();
+	
 	private JChannel m_channel;
 	private LocalMessages m_messages;
 
-	public JGroups() {
-		//waitForExitMessage();
-		start();
+	public JGroups(String arg) {
+		if(arg.equals("ReplicaManager")) {
+			//waitForExitMessage();
+			start();			
+		}
 	}
 
 	private void start() {
