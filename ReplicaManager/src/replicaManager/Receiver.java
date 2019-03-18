@@ -62,6 +62,7 @@ public class Receiver extends ReceiverAdapter {
 		// Election happens when primary left:
 		if (JGroups.primaryRM != null && !new_view.containsMember(JGroups.primaryRM) && new_view.size() > 1) {
 			JGroups.isCoordinator = true;
+			JGroups.primaryRM = null;
 			JGroups.logger.debugLog("starting new Election!");
 			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
 			// Only the primary sends out to new replica managers about the coordinator
@@ -84,17 +85,13 @@ public class Receiver extends ReceiverAdapter {
 			JGroups.logger.debugLog("starting election!");
 			JGroups.isCoordinator = true;
 			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
-			// JGroups.primaryRM = m_channel.getAddress();
 		}
-//		else if (new_view.size() > 1 && JGroups.primaryRM == null) {
-//			JGroups.isCoordinator = true;
-//			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
-//		}
 		m_oldView = new_view;
 	}
 
 	public void receive(Message msg) {
-		if (!msg.getSrc().equals(m_channel.getAddress())) {
+		if (!msg.getSrc().toString().equals(m_channel.getAddress().toString())) {
+			JGroups.logger.debugLog(msg.getSrc().toString() + "   != " + m_channel.getAddress().toString());
 			counter++;
 			JGroups.logger.debugLog(counter + " RECEIVE");
 			byte[] bytes = msg.getBuffer();
@@ -102,7 +99,6 @@ public class Receiver extends ReceiverAdapter {
 			// Unpacking msg
 			Optional<MessagePayload> mpl = MessagePayload.createMessage(bytes);
 			AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) mpl.get();
-
 			JGroups.logger.debugLog(counter + "UUID: " + msgTopClass.getUUID());
 
 			// AcknowledgeMessage
@@ -116,16 +112,26 @@ public class Receiver extends ReceiverAdapter {
 				HashMap<String, String> map = msgTopClass.getObject();
 				String key = map.keySet().iterator().next();
 				JGroups.logger.debugLog(counter + "key of map: " + key);
+				JGroups.logger.debugLog("current state: clients: " + state.getClients().size() + " drawobjects: " + state.getObjectList().size());
 				if (map.get(key).equals("add")) {
 					state.addObject(key);
 					JGroups.logger.debugLog(counter + "sending the drawobject");
-					m_messages.addNewMessageWithAcknowledge(
-							new DrawObjectsMessage(msgTopClass.getObject(), msgTopClass.getName()));
+					for(String client : state.getClients()) {
+						if(!msgTopClass.getName().equals(client)) {
+							m_messages.addNewMessageWithAcknowledge(
+									new DrawObjectsMessage(msgTopClass.getObject(), client));
+						}
+					}
+
 				} else { // remove object
 					state.removeObject(key);
 					JGroups.logger.debugLog(counter + "sending the drawobject");
-					m_messages.addNewMessageWithAcknowledge(
-							new DrawObjectsMessage(msgTopClass.getObject(), msgTopClass.getName()));
+					for(String client : state.getClients()) {
+						if(!msgTopClass.getName().equals(client)) {
+							m_messages.addNewMessageWithAcknowledge(
+									new DrawObjectsMessage(msgTopClass.getObject(), client));
+						}
+					}
 				}
 			}
 			// PresentationMessage
@@ -139,7 +145,7 @@ public class Receiver extends ReceiverAdapter {
 					startResender();
 				} else if (type.equals("Client")) {
 					JGroups.logger.debugLog(counter + "Added new client with name " + msgTopClass.getName());
-					JGroups.clients.add(msgTopClass.getName());
+					state.getClients().add(msgTopClass.getName());
 
 					m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
 				} else {
@@ -186,23 +192,22 @@ public class Receiver extends ReceiverAdapter {
 
 	public void getState(OutputStream output) throws Exception {
 		JGroups.logger.debugLog(counter + "JGroups getState(OutputStream output)");
-		synchronized (state.getObjectList()) {
-			Util.objectToStream(state.getObjectList(), new DataOutputStream(output));
+		synchronized (state) {
+			Util.objectToStream(state, new DataOutputStream(output));
 		}
 	}
 
 	public void setState(InputStream input) throws Exception {
-		LinkedList<String> list;
+		State input_state;
 		JGroups.logger.debugLog(counter + " set the state");
-		list = (LinkedList<String>) Util.objectFromStream(new DataInputStream(input));
+		input_state = (State) Util.objectFromStream(new DataInputStream(input));
 		synchronized (state) {
-			state.setState(list);
+			state = input_state;
 		}
 	}
 
 	private void startResender() {
-		new Thread(new Resender(m_messages.getMessagesToResender(), m_messages.getMessageQueue(),
-				m_messages)).start();
+		new Thread(new Resender(m_messages.getMessagesToResender(), m_messages.getMessageQueue(), m_messages)).start();
 		JGroups.logger.debugLog("Started Resender successfully ");
 	}
 }
