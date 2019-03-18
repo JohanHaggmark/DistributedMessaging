@@ -34,7 +34,6 @@ public class Receiver extends ReceiverAdapter {
 	private View m_oldView;
 	private Integer id;
 
-	//private LinkedList<String> clients = new LinkedList<String>();
 	private State state = new State();
 
 	private int counter = 0;
@@ -122,12 +121,12 @@ public class Receiver extends ReceiverAdapter {
 					state.addObject(key);
 					JGroups.logger.debugLog(counter + "sending the drawobject size of client list: " + state.getClients().size());
 					for (String client : state.getClients()) {
-					//	if (!msgTopClass.getName().equals(client)) {
+						if (!msgTopClass.getName().equals(client)) {
 							JGroups.logger.debugLog(counter + "send add draw: " + client);
 							m_messages.addNewMessageWithAcknowledge(			
 									new DrawObjectsMessage(msgTopClass.getObject(), client));
 							JGroups.logger.debugLog(counter + "send add drawafter");
-					//	}
+						}
 					}
 
 				} else { // remove object
