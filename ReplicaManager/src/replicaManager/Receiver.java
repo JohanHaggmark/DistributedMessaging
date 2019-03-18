@@ -51,7 +51,6 @@ public class Receiver extends ReceiverAdapter {
 	private void setId() {
 		String[] split = m_channel.getName().split("-");
 		this.id = Integer.parseInt(split[split.length - 1]);
-		this.id = Integer.parseInt(split[split.length - 1]);
 	}
 
 	public void viewAccepted(View new_view) {
@@ -73,14 +72,14 @@ public class Receiver extends ReceiverAdapter {
 			if (new_RM.isEmpty()) {
 				JGroups.logger.debugLog("Member left");
 			} else {
-//				for (Address newMember : new_RM) {
-//					try {
-//						JGroups.logger.debugLog("sending I am the coordinator!");
-//						m_channel.send(new Message(newMember, new CoordinatorMessage().serialize()));
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
-//				}
+				for (Address newMember : new_RM) {
+					try {
+						JGroups.logger.debugLog("sending I am the coordinator!");
+						m_channel.send(new Message(newMember, new CoordinatorMessage().serialize()));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		} else if ((new_view.size() == 1 || new_view.size() == 2) && JGroups.primaryRM == null) {
 			// sets the first replica manager to the coordinator:
@@ -167,7 +166,7 @@ public class Receiver extends ReceiverAdapter {
 						e.printStackTrace();
 					}
 				} else {
-					JGroups.logger.debugLog(counter + "Presentation - hittar inte rätt typ! :(");
+					JGroups.logger.debugLog(counter + "Presentation - hittar inte rätt typ! :(" + type);
 				}
 			}
 			// ElectionMessage

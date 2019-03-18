@@ -41,23 +41,25 @@ public class TesterUI extends JFrame {
 	
 	public static void main(String[] args) {
 		if(args[0].equals("TesterUI")) {
-			new TesterUI();			
+			new TesterUI(args[0]);			
 		}		
 	}
 	
-	public TesterUI(){
-		startProgramThreads();
-		
-		setTitle("Tester");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		pack();
-		setBounds(100, 100, 450, 600);
-		setLocationRelativeTo(null);
-		setResizable(false);
-		setVisible(true);
-		getContentPane().setLayout(null);
-		this.configurePanels();
-		this.repaint();
+	public TesterUI(String arg){
+		if(arg.equals("TesterUI")) {
+			startProgramThreads();
+			
+			setTitle("Tester");
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			pack();
+			setBounds(100, 100, 450, 600);
+			setLocationRelativeTo(null);
+			setResizable(false);
+			setVisible(true);
+			getContentPane().setLayout(null);
+			this.configurePanels();
+			this.repaint();			
+		}
 	}
 	
 	private void startProgramThreads() {
