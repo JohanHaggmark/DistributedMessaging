@@ -10,6 +10,7 @@ public class CmdMonitor {
 
 	public static void main(String[] args) {
 		startReplicaMonitor();
+//		startFrontEndMonitor();
 	}
 	
 	private static void startReplicaMonitor() {
@@ -22,7 +23,7 @@ public class CmdMonitor {
 					String correctFile1Text = 
 							"[\n" 		
 									+ "\t{\n"
-									+ "\t\t\"argument\": [\"C:/java/exe/ReplicaManager.exe\"],\n"
+									+ "\t\t\"argument\": [\"C:/java/exe/ReplicaManager2.exe\"],\n"
 									+ "\t\t\"relaunch\": true,\n"
 									+ "\t\t\"noOfRetries\": 10,\n"
 									+ "\t\t\"deadReckoningOfStartedTimeInMilliSeconds\": 1000"
