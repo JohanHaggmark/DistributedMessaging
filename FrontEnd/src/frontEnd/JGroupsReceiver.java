@@ -73,7 +73,6 @@ public class JGroupsReceiver extends ReceiverAdapter {
 			// PresentationMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
 				FrontEnd.logger.debugLog("Received PresentationMessage");
-				FrontEnd.logger.debugLog("SOMETHING IS WRONG IF FRONT END RECEIVES PRESENTATION MESSAGES YOU KNOW...");
 			}
 			// ElectionMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {

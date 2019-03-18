@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.Semaphore;
 
 import DCAD.MainDCAD;
+import TestingControllability.SemaphoreChannel;
 import se.his.drts.message.AbstractMessageTopClass;
 
 public class RMConnection implements Runnable {
@@ -20,6 +21,7 @@ public class RMConnection implements Runnable {
 	public static String connectionName = null;
 
 	public RMConnection(String address, int port) {
+		waitForExitMessage();
 		try {
 			this.m_serverAddress = InetAddress.getByName(address);
 			this.m_serverPort = port;
@@ -64,7 +66,25 @@ public class RMConnection implements Runnable {
 			}
 		}
 	}
+
 	public void releaseSem() {
 		m_connected.release();
+	}
+
+	private void waitForExitMessage() {
+		new Thread() {
+			@Override
+			public void run() {
+				SemaphoreChannel channel = new SemaphoreChannel(26000);
+				channel.waitForActionMessage();
+				try {
+					m_socket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					System.exit(-1);
+				}
+				System.exit(0);
+			}
+		}.start();
 	}
 }
