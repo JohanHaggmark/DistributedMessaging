@@ -34,7 +34,7 @@ public class Receiver extends ReceiverAdapter {
 	private View m_oldView;
 	private Integer id;
 
-	private LinkedList<String> clients = new LinkedList<String>();
+	//private LinkedList<String> clients = new LinkedList<String>();
 	private State state = new State();
 
 	private int counter = 0;
@@ -120,8 +120,8 @@ public class Receiver extends ReceiverAdapter {
 						+ state.getObjectList().size());
 				if (map.get(key).equals("add")) {
 					state.addObject(key);
-					JGroups.logger.debugLog(counter + "sending the drawobject size of client list: " + clients.size());
-					for (String client : clients) {
+					JGroups.logger.debugLog(counter + "sending the drawobject size of client list: " + state.getClients().size());
+					for (String client : state.getClients()) {
 					//	if (!msgTopClass.getName().equals(client)) {
 							JGroups.logger.debugLog(counter + "send add draw: " + client);
 							m_messages.addNewMessageWithAcknowledge(			
@@ -133,7 +133,7 @@ public class Receiver extends ReceiverAdapter {
 				} else { // remove object
 					state.removeObject(key);
 					JGroups.logger.debugLog(counter + "sending the drawobject");
-					for (String client : clients) {
+					for (String client : state.getClients()) {
 						if (!msgTopClass.getName().equals(client)) {
 							m_messages.addNewMessageWithAcknowledge(
 									new DrawObjectsMessage(msgTopClass.getObject(), client));
@@ -152,8 +152,8 @@ public class Receiver extends ReceiverAdapter {
 					startResender();
 				} else if (type.equals("Client")) {
 					JGroups.logger.debugLog(counter + "Added new client with name " + msgTopClass.getName());
-					if (!clients.contains(msgTopClass.getName())) {
-						clients.add(msgTopClass.getName());
+					if (!state.getClients().contains(msgTopClass.getName())) {
+						state.getClients().add(msgTopClass.getName());
 					}
 
 					m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
@@ -201,17 +201,17 @@ public class Receiver extends ReceiverAdapter {
 
 	public void getState(OutputStream output) throws Exception {
 		JGroups.logger.debugLog(counter + "JGroups getState(OutputStream output)");
-		synchronized (clients) {
-			Util.objectToStream(clients, new DataOutputStream(output));
+		synchronized (state) {
+			Util.objectToStream(state, new DataOutputStream(output));
 		}
 	}
 
 	public void setState(InputStream input) throws Exception {
-		LinkedList<String> input_state;
+		State input_state;
 		JGroups.logger.debugLog(counter + " set the state");
-		input_state = (LinkedList<String>) Util.objectFromStream(new DataInputStream(input));
-		synchronized (clients) {
-			clients = input_state;
+		input_state = (State) Util.objectFromStream(new DataInputStream(input));
+		synchronized (state) {
+			state = input_state;
 		}
 	}
 
