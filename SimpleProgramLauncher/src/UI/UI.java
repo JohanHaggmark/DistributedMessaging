@@ -1,4 +1,4 @@
-package launcher;
+package UI;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -25,6 +25,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.BevelBorder;
 
 import Logging.ProjectLogger;
+import monitor.ProcessMonitor;
 
 public class UI extends JFrame {
 
