@@ -11,7 +11,6 @@ public class RTTMessageRepeater implements Runnable {
 	// the world
 	//måste göras om för nytt vettigt värde
 	private int averageRTT = 117;
-	private int exp = 0;
 	
 	public RTTMessageRepeater(LinkedBlockingQueue m_RTTMessageQueue, LinkedBlockingQueue m_messageQueue, int rTT, int exp) {
 		this.m_RTTMessageQueue = m_RTTMessageQueue;
@@ -31,7 +30,7 @@ public class RTTMessageRepeater implements Runnable {
 			LocalMessage msg = null;
 			try {
 				msg = m_RTTMessageQueue.take();
-				Thread.sleep(averageRTT + msg.getExp());
+				Thread.sleep(averageRTT);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} 

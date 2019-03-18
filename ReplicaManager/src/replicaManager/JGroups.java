@@ -18,7 +18,7 @@ public class JGroups {
 	public static volatile boolean isCoordinator = false;
 	public static LinkedBlockingQueue electionQueue = new LinkedBlockingQueue<AbstractMessageTopClass>();
 	public static ProjectLogger logger;
-	public static State state = new State();
+	public static Address frontEnd = null;
 	
 	private JChannel m_channel;
 	private LocalMessages m_messages;
@@ -39,18 +39,7 @@ public class JGroups {
 			new Thread(new Sender(m_channel, m_messages)).start();
 			new Thread(new RTTMessageRepeater(m_messages.getMessageQueue(), m_messages.getRTTMessageQueue())).start();
 			new Thread(new Election(m_channel, m_messages)).start();
-			
-			sendPresentation();
 		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void sendPresentation() {
-		try {
-			m_channel.send(new Message(null, PresentationMessage.createReplicaManagerPresentation().serialize()));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

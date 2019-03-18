@@ -25,7 +25,7 @@ public class FrontEnd {
 
 	public FrontEnd(String arg) {
 		if(arg.equals("FrontEnd")) {
-			waitForExitMessage();
+			//waitForExitMessage();
 			logger = new ProjectLogger("FrontEnd");
 			m_messagesFromClients = new LinkedBlockingQueue<byte[]>();
 			startJGroupsConnection();
@@ -57,7 +57,6 @@ public class FrontEnd {
 			m_channel = new JChannel(); // default config?
 			new JGroupsReceiver(m_channel, messages).start();
 			new Thread(new JGroupsSender(m_channel, m_messagesFromClients)).start();
-			m_channel.send(null, PresentationMessage.createFrontEndPresentation().serialize());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

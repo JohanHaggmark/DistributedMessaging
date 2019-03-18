@@ -12,7 +12,6 @@ public class State implements Serializable{
 
 	private final LinkedList<String> clientList;
 	private final LinkedList<String> objectList;
-	public Address frontEnd = null;
 
 	public State() {
 		objectList = new LinkedList<String>();

@@ -46,11 +46,10 @@ public class Receiver implements Runnable {
 			while (runThread) {
 
 				// Unpacking msg
-				Optional<MessagePayload> mpl = MessagePayload.createMessage((byte[]) oin.readObject());
-				AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) mpl.get();
+//				Optional<MessagePayload> mpl = MessagePayload.createMessage((byte[]) oin.readObject());
+//				AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) mpl.get();
 
-				// AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass)
-				// oin.readObject();
+				AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) oin.readObject();
 				Cad.logger.debugLog("Received UUID: " + msgTopClass.getUUID());
 
 				// AcknowledgeMessage
