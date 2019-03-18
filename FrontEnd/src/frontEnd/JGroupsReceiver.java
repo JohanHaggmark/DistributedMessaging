@@ -68,7 +68,7 @@ public class JGroupsReceiver extends ReceiverAdapter {
 			// DrawObjectsMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
 				FrontEnd.logger.debugLog("Received DrawObjectsMessage");
-				addMessageToClientsExceptOne(msgTopClass);
+				FrontEnd.m_connectedClients.get(msgTopClass.getName()).addMessageToClient(msgTopClass);
 			}
 			// PresentationMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
@@ -96,16 +96,6 @@ public class JGroupsReceiver extends ReceiverAdapter {
 			} else {
 				FrontEnd.logger.debugLog("Could not find the correct type");
 			}
-		}
-	}
-
-	private void addMessageToClientsExceptOne(AbstractMessageTopClass msgTopClass) {
-		for (Map.Entry<String, ClientConnection> entry : FrontEnd.m_connectedClients.entrySet()) {
-			// if(entry.getKey() != msgTopClass.getName()) { //Dont send the state back to
-			// the source, only update other clients
-			entry.getValue().addMessageToClient(msgTopClass);
-			FrontEnd.logger.debugLog("sending drawobjects to Client: " + entry.getKey());
-			// }
 		}
 	}
 }

@@ -84,12 +84,7 @@ public class Receiver extends ReceiverAdapter {
 			JGroups.logger.debugLog("starting election!");
 			JGroups.isCoordinator = true;
 			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
-			// JGroups.primaryRM = m_channel.getAddress();
 		}
-//		else if (new_view.size() > 1 && JGroups.primaryRM == null) {
-//			JGroups.isCoordinator = true;
-//			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
-//		}
 		m_oldView = new_view;
 	}
 
@@ -119,13 +114,22 @@ public class Receiver extends ReceiverAdapter {
 				if (map.get(key).equals("add")) {
 					state.addObject(key);
 					JGroups.logger.debugLog(counter + "sending the drawobject");
-					m_messages.addNewMessageWithAcknowledge(
-							new DrawObjectsMessage(msgTopClass.getObject(), msgTopClass.getName()));
+					for(String client : JGroups.clients) {
+						if(!msgTopClass.getName().equals(client)) {
+							m_messages.addNewMessageWithAcknowledge(
+									new DrawObjectsMessage(msgTopClass.getObject(), client));
+						}
+					}
+
 				} else { // remove object
 					state.removeObject(key);
 					JGroups.logger.debugLog(counter + "sending the drawobject");
-					m_messages.addNewMessageWithAcknowledge(
-							new DrawObjectsMessage(msgTopClass.getObject(), msgTopClass.getName()));
+					for(String client : JGroups.clients) {
+						if(!msgTopClass.getName().equals(client)) {
+							m_messages.addNewMessageWithAcknowledge(
+									new DrawObjectsMessage(msgTopClass.getObject(), client));
+						}
+					}
 				}
 			}
 			// PresentationMessage
@@ -201,8 +205,7 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	private void startResender() {
-		new Thread(new Resender(m_messages.getMessagesToResender(), m_messages.getMessageQueue(),
-				m_messages)).start();
+		new Thread(new Resender(m_messages.getMessagesToResender(), m_messages.getMessageQueue(), m_messages)).start();
 		JGroups.logger.debugLog("Started Resender successfully ");
 	}
 }
