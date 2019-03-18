@@ -9,8 +9,6 @@ public class JGroupsSender implements Runnable {
 
 	private JChannel m_channel;
 	private LinkedBlockingQueue<byte[]> m_messagesFromClients;
-	private LinkedBlockingQueue<byte[]> m_resendMessages = new LinkedBlockingQueue();
-	private boolean m_hasPrimary = false;
 
 	public JGroupsSender(JChannel channel, LinkedBlockingQueue<byte[]> m_messagesFromClients) {
 		this.m_messagesFromClients = m_messagesFromClients;
@@ -27,6 +25,8 @@ public class JGroupsSender implements Runnable {
 				if (FrontEnd.primaryRM != null) {
 					FrontEnd.logger.debugLog("JGroupsSender() - Sending bytes from client" + bytes);
 					m_channel.send(new Message(FrontEnd.primaryRM, bytes));
+				} else {
+					FrontEnd.logger.debugLog("JGroupsSender() - Primary = null");
 				}
 			} catch (Exception e) {
 				FrontEnd.logger.criticalLog("JGroupsSender() - Exception in JGroupsSender");
