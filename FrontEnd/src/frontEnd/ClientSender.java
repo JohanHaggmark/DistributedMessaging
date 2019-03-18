@@ -29,7 +29,7 @@ public class ClientSender implements Runnable {
 				FrontEnd.logger.debugLog("ClientSender() - run() sending message to client");
 				AbstractMessageTopClass msg = m_messagesToClient.take();
 				FrontEnd.logger.debugLog("ClientSender() - check type before sending:  " + msg.getUUID());
-				oos.writeObject(msg.serialize());
+				oos.writeObject(msg);
 				FrontEnd.logger.debugLog("ClientSender() - run() sending message to client ------ take()");
 			}
 		} catch (IOException | InterruptedException e) {

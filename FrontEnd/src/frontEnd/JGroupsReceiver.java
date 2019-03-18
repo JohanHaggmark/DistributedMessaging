@@ -77,19 +77,25 @@ public class JGroupsReceiver extends ReceiverAdapter {
 			// ElectionMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {
 				FrontEnd.logger.debugLog("Received ElectionMessage");
+				try {
+					m_channel.send(new Message(FrontEnd.primaryRM,
+							PresentationMessage.createFrontEndPresentation().serialize()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			// CoordinatorMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("88486f0c-1a3e-428e-a90c-3ceda5426f27"))) {
 				FrontEnd.primaryRM = msg.getSrc();
 				FrontEnd.logger.debugLog(
 						"Received CoordinatorMessage, will send presentation to primary:" + FrontEnd.primaryRM);
-//				try {
-//					// PresentationMessage msg1 = PresentationMessage.createFrontEndPresentation();
-//					m_channel.send(new Message(FrontEnd.primaryRM,
-//							PresentationMessage.createFrontEndPresentation().serialize()));
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
+				try {
+					// PresentationMessage msg1 = PresentationMessage.createFrontEndPresentation();
+					m_channel.send(new Message(FrontEnd.primaryRM,
+							PresentationMessage.createFrontEndPresentation().serialize()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
 				FrontEnd.logger.debugLog(msg.getSrc() + " destination");
 			} else {

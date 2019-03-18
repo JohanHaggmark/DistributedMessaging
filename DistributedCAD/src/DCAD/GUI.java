@@ -49,8 +49,8 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 
 	
 	public GUI(int xpos, int ypos) {	
-		this.waitForDrawMessage();
-		this.waitForRemoveMessage();
+		//this.waitForDrawMessage();
+		//this.waitForRemoveMessage();
 		
 		setSize(xpos, ypos);
 		setTitle("FTCAD");

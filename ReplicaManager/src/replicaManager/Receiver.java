@@ -34,6 +34,9 @@ public class Receiver extends ReceiverAdapter {
 	private View m_oldView;
 	private Integer id;
 
+	private LinkedList<String> clients = new LinkedList<String>();
+	private State state = new State();
+
 	private int counter = 0;
 
 	public Receiver(JChannel channel, LocalMessages messages) {
@@ -56,9 +59,9 @@ public class Receiver extends ReceiverAdapter {
 	public void viewAccepted(View new_view) {
 		JGroups.logger.debugLog("View Changed! with size:" + new_view.size() + " primary is: " + JGroups.primaryRM);
 		System.out.println("size of view: " + new_view.size());
-		if (!new_view.containsMember(JGroups.state.frontEnd)) {
+		if (!new_view.containsMember(JGroups.frontEnd)) {
 			// Exponential backoff tills FrontEnd är uppe igen
-			JGroups.state.frontEnd = null;
+			JGroups.frontEnd = null;
 		}
 		// Election happens when primary left:
 		if (JGroups.primaryRM != null && !new_view.containsMember(JGroups.primaryRM) && new_view.size() > 1) {
@@ -113,22 +116,24 @@ public class Receiver extends ReceiverAdapter {
 				HashMap<String, String> map = msgTopClass.getObject();
 				String key = map.keySet().iterator().next();
 				JGroups.logger.debugLog(counter + "key of map: " + key);
-				JGroups.logger.debugLog("current state: clients: " + JGroups.state.getClients().size() + " drawobjects: "
-						+ JGroups.state.getObjectList().size());
+				JGroups.logger.debugLog("current state: clients: " + state.getClients().size() + " drawobjects: "
+						+ state.getObjectList().size());
 				if (map.get(key).equals("add")) {
-					JGroups.state.addObject(key);
-					JGroups.logger.debugLog(counter + "sending the drawobject");
-					for (String client : JGroups.state.getClients()) {
-						if (!msgTopClass.getName().equals(client)) {
-							m_messages.addNewMessageWithAcknowledge(
+					state.addObject(key);
+					JGroups.logger.debugLog(counter + "sending the drawobject size of client list: " + clients.size());
+					for (String client : clients) {
+					//	if (!msgTopClass.getName().equals(client)) {
+							JGroups.logger.debugLog(counter + "send add draw: " + client);
+							m_messages.addNewMessageWithAcknowledge(			
 									new DrawObjectsMessage(msgTopClass.getObject(), client));
-						}
+							JGroups.logger.debugLog(counter + "send add drawafter");
+					//	}
 					}
 
 				} else { // remove object
-					JGroups.state.removeObject(key);
+					state.removeObject(key);
 					JGroups.logger.debugLog(counter + "sending the drawobject");
-					for (String client : JGroups.state.getClients()) {
+					for (String client : clients) {
 						if (!msgTopClass.getName().equals(client)) {
 							m_messages.addNewMessageWithAcknowledge(
 									new DrawObjectsMessage(msgTopClass.getObject(), client));
@@ -142,29 +147,16 @@ public class Receiver extends ReceiverAdapter {
 				if (type == null) {
 					JGroups.logger.debugLog(counter + "Presentation null");
 				} else if (type.equals("FrontEnd")) {
-					JGroups.state.frontEnd = msg.src();
+					JGroups.frontEnd = msg.src();
 					JGroups.logger.debugLog(counter + "received from FrontEnd");
-					if (JGroups.primaryRM.equals(m_channel.getAddress())) {
-						try {
-							JGroups.logger.debugLog("sending I am the coordinator!");
-							m_channel.send(new Message(msg.getSrc(), new CoordinatorMessage().serialize()));
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
 					startResender();
 				} else if (type.equals("Client")) {
 					JGroups.logger.debugLog(counter + "Added new client with name " + msgTopClass.getName());
-					JGroups.state.getClients().add(msgTopClass.getName());
-
-					m_messages.addNewMessageWithAcknowledge(JGroups.state.getStateMessage(msgTopClass.getName()));
-				} else if (type.equals("ReplicaManager") && JGroups.primaryRM.equals(m_channel.getAddress())) {
-					try {
-						JGroups.logger.debugLog("sending I am the coordinator!");
-						m_channel.send(new Message(msg.getSrc(), new CoordinatorMessage().serialize()));
-					} catch (Exception e) {
-						e.printStackTrace();
+					if (!clients.contains(msgTopClass.getName())) {
+						clients.add(msgTopClass.getName());
 					}
+
+					m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
 				} else {
 					JGroups.logger.debugLog(counter + "Presentation - hittar inte rätt typ! :(" + type);
 				}
@@ -209,17 +201,17 @@ public class Receiver extends ReceiverAdapter {
 
 	public void getState(OutputStream output) throws Exception {
 		JGroups.logger.debugLog(counter + "JGroups getState(OutputStream output)");
-		synchronized (JGroups.state) {
-			Util.objectToStream(JGroups.state, new DataOutputStream(output));
+		synchronized (clients) {
+			Util.objectToStream(clients, new DataOutputStream(output));
 		}
 	}
 
 	public void setState(InputStream input) throws Exception {
-		State input_state;
+		LinkedList<String> input_state;
 		JGroups.logger.debugLog(counter + " set the state");
-		input_state = (State) Util.objectFromStream(new DataInputStream(input));
-		synchronized (JGroups.state) {
-			JGroups.state = input_state;
+		input_state = (LinkedList<String>) Util.objectFromStream(new DataInputStream(input));
+		synchronized (clients) {
+			clients = input_state;
 		}
 	}
 

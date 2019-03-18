@@ -31,7 +31,7 @@ public class RTTMessageRepeater implements Runnable {
 			LocalMessage msg = null;
 			try {
 				msg = m_RTTMessageQueue.take();
-				Thread.sleep(averageRTT + msg.getExp());
+				Thread.sleep(averageRTT);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} 
