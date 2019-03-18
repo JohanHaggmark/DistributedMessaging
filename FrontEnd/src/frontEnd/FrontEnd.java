@@ -23,16 +23,18 @@ public class FrontEnd {
 	private ServerSocket m_socket;
 	private JChannel m_channel;
 
-	public FrontEnd() {
-		waitForExitMessage();
-		logger = new ProjectLogger("FrontEnd");
-		m_messagesFromClients = new LinkedBlockingQueue<byte[]>();
-		startJGroupsConnection();
-		try {
-			m_socket = new ServerSocket(25000);
-			listenForClientConnections();
-		} catch (IOException e) {
-			e.printStackTrace();
+	public FrontEnd(String arg) {
+		if(arg.equals("FrontEnd")) {
+			waitForExitMessage();
+			logger = new ProjectLogger("FrontEnd");
+			m_messagesFromClients = new LinkedBlockingQueue<byte[]>();
+			startJGroupsConnection();
+			try {
+				m_socket = new ServerSocket(25000);
+				listenForClientConnections();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}			
 		}
 	}
 
