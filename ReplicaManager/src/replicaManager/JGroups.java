@@ -19,7 +19,7 @@ public class JGroups {
 	public static volatile boolean isCoordinator = false;
 	public static LinkedBlockingQueue electionQueue = new LinkedBlockingQueue<AbstractMessageTopClass>();
 	public static ProjectLogger logger;
-	public static LinkedList<String> clients = new LinkedList();
+
 
 	private JChannel m_channel;
 	private LocalMessages m_messages;
