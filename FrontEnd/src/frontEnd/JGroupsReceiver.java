@@ -41,7 +41,7 @@ public class JGroupsReceiver extends ReceiverAdapter {
 	}
 
 	public void viewAccepted(View new_view) {
-		FrontEnd.logger.debugLog("View changed");
+		FrontEnd.logger.debugLog("View changed, size:" + new_view.size());
 
 		// Election happens when primary left:
 		if (FrontEnd.primaryRM != null && !new_view.containsMember(FrontEnd.primaryRM)) {
@@ -83,13 +83,13 @@ public class JGroupsReceiver extends ReceiverAdapter {
 				FrontEnd.primaryRM = msg.getSrc();
 				FrontEnd.logger.debugLog(
 						"Received CoordinatorMessage, will send presentation to primary:" + FrontEnd.primaryRM);
-				try {
-					// PresentationMessage msg1 = PresentationMessage.createFrontEndPresentation();
-					m_channel.send(new Message(FrontEnd.primaryRM,
-							PresentationMessage.createFrontEndPresentation().serialize()));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+//				try {
+//					// PresentationMessage msg1 = PresentationMessage.createFrontEndPresentation();
+//					m_channel.send(new Message(FrontEnd.primaryRM,
+//							PresentationMessage.createFrontEndPresentation().serialize()));
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
 
 				FrontEnd.logger.debugLog(msg.getSrc() + " destination");
 			} else {
