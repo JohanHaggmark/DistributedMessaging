@@ -25,14 +25,13 @@ public class JGroups {
 	private LocalMessages m_messages;
 
 	public JGroups() {
-		waitForExitMessage();
-		this.start();
+		//waitForExitMessage();
+		start();
 	}
 
 	private void start() {
 		logger = new ProjectLogger("ReplicaManager");
 		try {
-			new State();
 			m_messages = new LocalMessages();
 			m_channel = new JChannel();
 			new Receiver(m_channel, m_messages).start();

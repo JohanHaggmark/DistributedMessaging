@@ -55,6 +55,7 @@ public class Receiver extends ReceiverAdapter {
 
 	public void viewAccepted(View new_view) {
 		JGroups.logger.debugLog("View Changed! with size:" + new_view.size() + " primary is: " + JGroups.primaryRM);
+		System.out.println("size of view: " + new_view.size());
 		if (!new_view.containsMember(JGroups.frontEnd)) {
 			// Exponential backoff tills FrontEnd är uppe igen
 			JGroups.frontEnd = null;
