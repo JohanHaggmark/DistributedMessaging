@@ -23,11 +23,7 @@ public class ClientConnection {
 
 	private void sendPresentationMessage() {
 		PresentationMessage msg = PresentationMessage.createClientConnectionPresentation(m_socket.toString());
-		try {
-			m_messagesToClient.put(msg);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		m_messagesToClient.add(msg);	
 	}
 	
 	public void addMessageToClient(AbstractMessageTopClass msgTopClass) {

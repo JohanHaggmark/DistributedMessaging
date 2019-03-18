@@ -17,23 +17,19 @@ public class PresentationMessage extends AbstractMessageTopClass {
 	public static PresentationMessage createFrontEndPresentation() {
 		return new PresentationMessage("FrontEnd");
 	}
-
-	public static PresentationMessage createReplicaManagerPresentation() {
-		return new PresentationMessage("ReplicaManager");
-	}
 	
-	private PresentationMessage(String type, String name) {
+	public PresentationMessage(String type, String name) {
 		super(uuid);
 		this.type = type;
 		this.name = name;
 	}
 
-	private PresentationMessage(String type) {
+	public PresentationMessage(String type) {
 		super(uuid);
 		this.type = type;
 	}
 	
-	private PresentationMessage() {
+	public PresentationMessage() {
 		super(uuid);
 	}
 
