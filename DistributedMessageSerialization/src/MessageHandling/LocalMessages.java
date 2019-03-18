@@ -26,6 +26,12 @@ public class LocalMessages {
 		m_mapOfMessages.put(msgTopClass.getackID(), msg);
 		addToMessageQueue(msg);
 	}
+	
+	public synchronized void addNewMessageWithAcknowledgeInCad(AbstractMessageTopClass msgTopClass) {
+		LocalMessage msg = new LocalMessage(msgTopClass, true, 128);
+		m_mapOfMessages.put(msgTopClass.getackID(), msg);
+		addToMessageQueue(msg);
+	}
 
 	public synchronized void addNewMessage(AbstractMessageTopClass msgTopClass) {
 		LocalMessage msg = new LocalMessage(msgTopClass, false);

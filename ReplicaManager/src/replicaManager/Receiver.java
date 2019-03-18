@@ -32,14 +32,14 @@ public class Receiver extends ReceiverAdapter {
 	private JChannel m_channel;
 	private LocalMessages m_messages;
 	private View m_oldView;
-	private State state;
+	private Integer id;
 
 	private int counter = 0;
 
 	public Receiver(JChannel channel, LocalMessages messages) {
 		this.m_channel = channel;
 		this.m_messages = messages;
-		state = new State();
+
 	}
 
 	public void start() throws Exception {
@@ -50,51 +50,50 @@ public class Receiver extends ReceiverAdapter {
 
 	private void setId() {
 		String[] split = m_channel.getName().split("-");
-		JGroups.id = Integer.parseInt(split[split.length - 1]);
+		this.id = Integer.parseInt(split[split.length - 1]);
+		this.id = Integer.parseInt(split[split.length - 1]);
 	}
 
 	public void viewAccepted(View new_view) {
 		JGroups.logger.debugLog("View Changed! with size:" + new_view.size() + " primary is: " + JGroups.primaryRM);
-		if (!new_view.containsMember(JGroups.frontEnd)) {
+		System.out.println("size of view: " + new_view.size());
+		if (!new_view.containsMember(JGroups.state.frontEnd)) {
 			// Exponential backoff tills FrontEnd är uppe igen
-			JGroups.frontEnd = null;
+			JGroups.state.frontEnd = null;
 		}
 		// Election happens when primary left:
 		if (JGroups.primaryRM != null && !new_view.containsMember(JGroups.primaryRM) && new_view.size() > 1) {
 			JGroups.isCoordinator = true;
+			JGroups.primaryRM = null;
 			JGroups.logger.debugLog("starting new Election!");
-			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
+			JGroups.electionQueue.add(new ElectionMessage(this.id));
 			// Only the primary sends out to new replica managers about the coordinator
 		} else if (m_channel.getAddress().equals(JGroups.primaryRM)) {
 			List<Address> new_RM = View.newMembers(m_oldView, new_view);
 			if (new_RM.isEmpty()) {
 				JGroups.logger.debugLog("Member left");
 			} else {
-				for (Address newMember : new_RM) {
-					try {
-						JGroups.logger.debugLog("sending I am the coordinator!");
-						m_channel.send(new Message(newMember, new CoordinatorMessage().serialize()));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
+//				for (Address newMember : new_RM) {
+//					try {
+//						JGroups.logger.debugLog("sending I am the coordinator!");
+//						m_channel.send(new Message(newMember, new CoordinatorMessage().serialize()));
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//					}
+//				}
 			}
 		} else if ((new_view.size() == 1 || new_view.size() == 2) && JGroups.primaryRM == null) {
 			// sets the first replica manager to the coordinator:
 			JGroups.logger.debugLog("starting election!");
 			JGroups.isCoordinator = true;
-			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
-			// JGroups.primaryRM = m_channel.getAddress();
+			JGroups.electionQueue.add(new ElectionMessage(this.id));
 		}
-//		else if (new_view.size() > 1 && JGroups.primaryRM == null) {
-//			JGroups.isCoordinator = true;
-//			JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
-//		}
 		m_oldView = new_view;
 	}
 
 	public void receive(Message msg) {
-		if (!msg.getSrc().equals(m_channel.getAddress())) {
+		if (!msg.getSrc().toString().equals(m_channel.getAddress().toString())) {
+			JGroups.logger.debugLog(msg.getSrc().toString() + "   != " + m_channel.getAddress().toString());
 			counter++;
 			JGroups.logger.debugLog(counter + " RECEIVE");
 			byte[] bytes = msg.getBuffer();
@@ -102,7 +101,6 @@ public class Receiver extends ReceiverAdapter {
 			// Unpacking msg
 			Optional<MessagePayload> mpl = MessagePayload.createMessage(bytes);
 			AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) mpl.get();
-
 			JGroups.logger.debugLog(counter + "UUID: " + msgTopClass.getUUID());
 
 			// AcknowledgeMessage
@@ -116,16 +114,27 @@ public class Receiver extends ReceiverAdapter {
 				HashMap<String, String> map = msgTopClass.getObject();
 				String key = map.keySet().iterator().next();
 				JGroups.logger.debugLog(counter + "key of map: " + key);
+				JGroups.logger.debugLog("current state: clients: " + JGroups.state.getClients().size() + " drawobjects: "
+						+ JGroups.state.getObjectList().size());
 				if (map.get(key).equals("add")) {
-					state.addObject(key);
+					JGroups.state.addObject(key);
 					JGroups.logger.debugLog(counter + "sending the drawobject");
-					m_messages.addNewMessageWithAcknowledge(
-							new DrawObjectsMessage(msgTopClass.getObject(), msgTopClass.getName()));
+					for (String client : JGroups.state.getClients()) {
+						if (!msgTopClass.getName().equals(client)) {
+							m_messages.addNewMessageWithAcknowledge(
+									new DrawObjectsMessage(msgTopClass.getObject(), client));
+						}
+					}
+
 				} else { // remove object
-					state.removeObject(key);
+					JGroups.state.removeObject(key);
 					JGroups.logger.debugLog(counter + "sending the drawobject");
-					m_messages.addNewMessageWithAcknowledge(
-							new DrawObjectsMessage(msgTopClass.getObject(), msgTopClass.getName()));
+					for (String client : JGroups.state.getClients()) {
+						if (!msgTopClass.getName().equals(client)) {
+							m_messages.addNewMessageWithAcknowledge(
+									new DrawObjectsMessage(msgTopClass.getObject(), client));
+						}
+					}
 				}
 			}
 			// PresentationMessage
@@ -134,14 +143,29 @@ public class Receiver extends ReceiverAdapter {
 				if (type == null) {
 					JGroups.logger.debugLog(counter + "Presentation null");
 				} else if (type.equals("FrontEnd")) {
-					JGroups.frontEnd = msg.src();
+					JGroups.state.frontEnd = msg.src();
 					JGroups.logger.debugLog(counter + "received from FrontEnd");
+					if (JGroups.primaryRM.equals(m_channel.getAddress())) {
+						try {
+							JGroups.logger.debugLog("sending I am the coordinator!");
+							m_channel.send(new Message(msg.getSrc(), new CoordinatorMessage().serialize()));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
 					startResender();
 				} else if (type.equals("Client")) {
 					JGroups.logger.debugLog(counter + "Added new client with name " + msgTopClass.getName());
-					JGroups.clients.add(msgTopClass.getName());
+					JGroups.state.getClients().add(msgTopClass.getName());
 
-					m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
+					m_messages.addNewMessageWithAcknowledge(JGroups.state.getStateMessage(msgTopClass.getName()));
+				} else if (type.equals("ReplicaManager") && JGroups.primaryRM.equals(m_channel.getAddress())) {
+					try {
+						JGroups.logger.debugLog("sending I am the coordinator!");
+						m_channel.send(new Message(msg.getSrc(), new CoordinatorMessage().serialize()));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				} else {
 					JGroups.logger.debugLog(counter + "Presentation - hittar inte rätt typ! :(");
 				}
@@ -149,11 +173,11 @@ public class Receiver extends ReceiverAdapter {
 			// ElectionMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("eceb2eb4-361c-425f-a760-a2cd434bbdff"))) {
 				Integer id = (Integer) msgTopClass.getPid();
-				JGroups.logger.debugLog(counter + " election. my id: " + JGroups.id + " msg.id: " + id);
-				if (!JGroups.id.equals(id)) {
-					if (JGroups.id > id) {
+				JGroups.logger.debugLog(counter + " election. my id: " + this.id + " msg.id: " + id);
+				if (!this.id.equals(id)) {
+					if (this.id > id) {
 						JGroups.isCoordinator = true;
-						JGroups.electionQueue.add(new ElectionMessage(JGroups.id));
+						JGroups.electionQueue.add(new ElectionMessage(this.id));
 					} else {
 						JGroups.isCoordinator = false;
 					}
@@ -186,23 +210,22 @@ public class Receiver extends ReceiverAdapter {
 
 	public void getState(OutputStream output) throws Exception {
 		JGroups.logger.debugLog(counter + "JGroups getState(OutputStream output)");
-		synchronized (state.getObjectList()) {
-			Util.objectToStream(state.getObjectList(), new DataOutputStream(output));
+		synchronized (JGroups.state) {
+			Util.objectToStream(JGroups.state, new DataOutputStream(output));
 		}
 	}
 
 	public void setState(InputStream input) throws Exception {
-		LinkedList<String> list;
+		State input_state;
 		JGroups.logger.debugLog(counter + " set the state");
-		list = (LinkedList<String>) Util.objectFromStream(new DataInputStream(input));
-		synchronized (state) {
-			state.setState(list);
+		input_state = (State) Util.objectFromStream(new DataInputStream(input));
+		synchronized (JGroups.state) {
+			JGroups.state = input_state;
 		}
 	}
 
 	private void startResender() {
-		new Thread(new Resender(m_messages.getMessagesToResender(), m_messages.getMessageQueue(),
-				m_messages)).start();
+		new Thread(new Resender(m_messages.getMessagesToResender(), m_messages.getMessageQueue(), m_messages)).start();
 		JGroups.logger.debugLog("Started Resender successfully ");
 	}
 }

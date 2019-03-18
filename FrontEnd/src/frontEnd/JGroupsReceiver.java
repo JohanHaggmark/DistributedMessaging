@@ -41,7 +41,7 @@ public class JGroupsReceiver extends ReceiverAdapter {
 	}
 
 	public void viewAccepted(View new_view) {
-		FrontEnd.logger.debugLog("View changed");
+		FrontEnd.logger.debugLog("View changed, size:" + new_view.size());
 
 		// Election happens when primary left:
 		if (FrontEnd.primaryRM != null && !new_view.containsMember(FrontEnd.primaryRM)) {
@@ -68,7 +68,7 @@ public class JGroupsReceiver extends ReceiverAdapter {
 			// DrawObjectsMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
 				FrontEnd.logger.debugLog("Received DrawObjectsMessage");
-				addMessageToClientsExceptOne(msgTopClass);
+				FrontEnd.m_connectedClients.get(msgTopClass.getName()).addMessageToClient(msgTopClass);
 			}
 			// PresentationMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
@@ -83,28 +83,18 @@ public class JGroupsReceiver extends ReceiverAdapter {
 				FrontEnd.primaryRM = msg.getSrc();
 				FrontEnd.logger.debugLog(
 						"Received CoordinatorMessage, will send presentation to primary:" + FrontEnd.primaryRM);
-				try {
-					// PresentationMessage msg1 = PresentationMessage.createFrontEndPresentation();
-					m_channel.send(new Message(FrontEnd.primaryRM,
-							PresentationMessage.createFrontEndPresentation().serialize()));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+//				try {
+//					// PresentationMessage msg1 = PresentationMessage.createFrontEndPresentation();
+//					m_channel.send(new Message(FrontEnd.primaryRM,
+//							PresentationMessage.createFrontEndPresentation().serialize()));
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
 
 				FrontEnd.logger.debugLog(msg.getSrc() + " destination");
 			} else {
 				FrontEnd.logger.debugLog("Could not find the correct type");
 			}
-		}
-	}
-
-	private void addMessageToClientsExceptOne(AbstractMessageTopClass msgTopClass) {
-		for (Map.Entry<String, ClientConnection> entry : FrontEnd.m_connectedClients.entrySet()) {
-			// if(entry.getKey() != msgTopClass.getName()) { //Dont send the state back to
-			// the source, only update other clients
-			entry.getValue().addMessageToClient(msgTopClass);
-			FrontEnd.logger.debugLog("sending drawobjects to Client: " + entry.getKey());
-			// }
 		}
 	}
 }
