@@ -1,4 +1,4 @@
-package TestingControllability;
+package TesterUI;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -8,6 +8,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
+
+import TestingControllability.ProgramConnection;
 
 public class TesterUI extends JFrame {
 

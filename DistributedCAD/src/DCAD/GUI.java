@@ -18,7 +18,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.ListIterator;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
@@ -238,9 +238,8 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 			@Override
 			public void run() {
 				while (true) {
-					SemaphoreChannel removeChannel = SemaphoreChannel.createSemaphoreChannel(26001);
-					System.out.println("1 - Waiting for action message  " + System.currentTimeMillis());
-					removeChannel.waitForActionMessage();
+					SemaphoreChannel channel = new SemaphoreChannel(26001);
+					channel.waitForActionMessage();
 					System.out.println("1 - Received action message  " + System.currentTimeMillis());		
 					simulateDraw();
 				}
@@ -253,9 +252,8 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 			@Override
 			public void run() {
 				while (true) {
-					SemaphoreChannel removeChannel = SemaphoreChannel.createSemaphoreChannel(26002);
-					System.out.println("2 - Waiting for action message  " + System.currentTimeMillis());
-					removeChannel.waitForActionMessage();
+					SemaphoreChannel channel = new SemaphoreChannel(26002);
+					channel.waitForActionMessage();
 					System.out.println("2 - Received action message  " + System.currentTimeMillis());
 					simulateRightClick();
 				}
