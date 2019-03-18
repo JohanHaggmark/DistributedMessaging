@@ -12,6 +12,7 @@ import org.jgroups.JChannel;
 import Logging.ProjectLogger;
 import MessageHandling.LocalMessages;
 import TestingControllability.SemaphoreChannel;
+import se.his.drts.message.PresentationMessage;
 
 public class FrontEnd {
 	public static ProjectLogger logger;
@@ -54,6 +55,7 @@ public class FrontEnd {
 			m_channel = new JChannel(); // default config?
 			new JGroupsReceiver(m_channel, messages).start();
 			new Thread(new JGroupsSender(m_channel, m_messagesFromClients)).start();
+			m_channel.send(null, PresentationMessage.createFrontEndPresentation().serialize());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

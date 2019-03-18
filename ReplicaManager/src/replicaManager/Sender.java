@@ -32,10 +32,10 @@ public class Sender implements Runnable {
 		while (true) {
 			try {
 				LocalMessage msg = (LocalMessage) m_messages.getMessageQueue().take();
-				if (JGroups.frontEnd != null) { // Check if frontEnd exsists
+				if (JGroups.state.frontEnd != null) { // Check if frontEnd exsists
 					JGroups.logger.debugLog("Sender trying to send to:  " + msg.getMsgTopClass().getName());
 					JGroups.logger.debugLog("message:  " + msg.getMsgTopClass().getUUID());
-					m_channel.send(new Message(JGroups.frontEnd, msg.getMsgTopClass().serialize()));
+					m_channel.send(new Message(JGroups.state.frontEnd, msg.getMsgTopClass().serialize()));
 					tryAddToRTT(msg); // Check if message should be acknowledged
 				} else {
 					m_messages.addToMessagesToResender(msg); // All messages gets stored when fronend is down
