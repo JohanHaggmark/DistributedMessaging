@@ -6,7 +6,7 @@ public class MainReplicaManager {
 
 	public static void main(String[] args) throws Exception {
 		if(args[0].equals("ReplicaManager")) {		
-			new JGroups(args[0]);			
+			new JGroups(args);			
 		} 
 	}
 }

@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.MessagePayload;
 
-public class ClientReceiver implements Runnable{
+public class ClientReceiver implements Runnable {
 	private LinkedBlockingQueue messagesFromClients;
 	private Socket m_socket;
 	

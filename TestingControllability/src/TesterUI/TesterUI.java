@@ -68,8 +68,8 @@ public class TesterUI extends JFrame {
 		m_GUIRemoveConnection = new ProgramConnection(26002);
 		m_frontEndConnection = new ProgramConnection(27000);
 		m_replicaManagerConnection1 = new ProgramConnection(28001);
-		m_replicaManagerConnection1 = new ProgramConnection(28002);
-		m_replicaManagerConnection1 = new ProgramConnection(28003);
+		m_replicaManagerConnection2 = new ProgramConnection(28002);
+		m_replicaManagerConnection3 = new ProgramConnection(28003);
 
 		new Thread(m_replicaManagerConnection1).start();
 		new Thread(m_replicaManagerConnection2).start();
@@ -107,13 +107,14 @@ public class TesterUI extends JFrame {
 		m_replicaManagerPanel1.setBounds(10, 10, 414, 60);
 		getContentPane().add(m_replicaManagerPanel1);
 
-		m_terminateReplicaManagerButton1 = new JButton("Terminate Replica Manager 1");
+		m_terminateReplicaManagerButton1 = new JButton("Draw & Kill RM1");
 		m_terminateReplicaManagerButton1.setBounds(100, 10, 200, 40);
 		m_replicaManagerPanel1.add(m_terminateReplicaManagerButton1);
 
 		m_terminateReplicaManagerButton1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				terminateReplicaManager1();				
+				terminateReplicaManager1();	
+				drawOnGUI();
 			}
 		});
 
@@ -128,13 +129,14 @@ public class TesterUI extends JFrame {
 		m_replicaManagerPanel2.setBounds(10, 80, 414, 60);
 		getContentPane().add(m_replicaManagerPanel2);
 
-		m_terminateReplicaManagerButton2 = new JButton("Terminate Replica Manager 2");
+		m_terminateReplicaManagerButton2 = new JButton("Remove from GUI & kill RM2");
 		m_terminateReplicaManagerButton2.setBounds(100, 10, 200, 40);
 		m_replicaManagerPanel2.add(m_terminateReplicaManagerButton2);
 
 		m_terminateReplicaManagerButton2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				terminateReplicaManager2();				
+				terminateReplicaManager2();	
+				removeFromGUI();
 			}
 		});
 
@@ -256,7 +258,8 @@ public class TesterUI extends JFrame {
 
 		m_GUIFrontEndButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				GUIFrontEnd();
+				terminateFrontEnd();
+				drawOnGUI();
 			}
 		});
 		// add buttons
@@ -289,10 +292,5 @@ public class TesterUI extends JFrame {
 	
 	private void removeFromGUI() {
 		m_GUIRemoveConnection.sendActionMessage();
-	}
-	
-	private void GUIFrontEnd() {
-		terminateFrontEnd();
-		drawOnGUI();
 	}
 }

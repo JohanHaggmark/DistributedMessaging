@@ -59,7 +59,7 @@ public class Receiver extends ReceiverAdapter {
 		JGroups.logger.debugLog("View Changed! with size:" + new_view.size() + " primary is: " + JGroups.primaryRM);
 		System.out.println("size of view: " + new_view.size());
 		if (!new_view.containsMember(JGroups.frontEnd)) {
-			// Exponential backoff tills FrontEnd ‰r uppe igen
+			// Exponential backoff tills FrontEnd √§r uppe igen
 			JGroups.frontEnd = null;
 		}
 		// Election happens when primary left:
@@ -157,7 +157,7 @@ public class Receiver extends ReceiverAdapter {
 
 					m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
 				} else {
-					JGroups.logger.debugLog(counter + "Presentation - hittar inte r‰tt typ! :(" + type);
+					JGroups.logger.debugLog(counter + "Presentation - hittar inte r√§tt typ! :(" + type);
 				}
 			}
 			// ElectionMessage
