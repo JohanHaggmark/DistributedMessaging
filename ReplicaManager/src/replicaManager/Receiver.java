@@ -34,7 +34,6 @@ public class Receiver extends ReceiverAdapter {
 	private View m_oldView;
 	private Integer id;
 
-	//private LinkedList<String> clients = new LinkedList<String>();
 	private State state = new State();
 
 	private int counter = 0;
@@ -107,7 +106,7 @@ public class Receiver extends ReceiverAdapter {
 
 			// AcknowledgeMessage
 			if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
-				m_messages.removeAcknowledgeFromMessage(msgTopClass.getMessageNumber());
+				m_messages.removeAcknowledgeFromMessage((Integer)msgTopClass.getackID());
 			}
 			// DrawObjectsMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
@@ -122,12 +121,12 @@ public class Receiver extends ReceiverAdapter {
 					state.addObject(key);
 					JGroups.logger.debugLog(counter + "sending the drawobject size of client list: " + state.getClients().size());
 					for (String client : state.getClients()) {
-					//	if (!msgTopClass.getName().equals(client)) {
+						if (!msgTopClass.getName().equals(client)) {
 							JGroups.logger.debugLog(counter + "send add draw: " + client);
 							m_messages.addNewMessageWithAcknowledge(			
 									new DrawObjectsMessage(msgTopClass.getObject(), client));
 							JGroups.logger.debugLog(counter + "send add drawafter");
-					//	}
+						}
 					}
 
 				} else { // remove object
