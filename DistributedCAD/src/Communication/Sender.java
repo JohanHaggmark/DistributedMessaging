@@ -8,6 +8,7 @@ public class Sender implements Runnable {
 
 	LocalMessages m_messages;
 	RMConnection m_RMConnection;
+	private boolean runThread = true;
 	private final int ATTEMPTS = 10;
 
 	public Sender(RMConnection rmConnection, LocalMessages messages) {
@@ -20,25 +21,26 @@ public class Sender implements Runnable {
 	public void run() {
 
 		try {
-			while (true) {
+			while (runThread) {
 				LocalMessage msg = (LocalMessage) m_messages.getMessageQueue().take();
+
 				Cad.logger.debugLog("took a message from messageQueue ");
-				if (m_messages.isSenderHasConnection()  && RMConnection.connectionName != null) {
+				if (m_messages.isSenderHasConnection() && RMConnection.connectionName != null) {
 					msg.getMsgTopClass().changeName(RMConnection.connectionName); // Make sure msg has the latest
-																					// connectionName
+					Cad.logger.debugLog("sending over channel, atleast try");										// connectionName
 					m_RMConnection.sendMessage(msg.getMsgTopClass());
 					tryAddToRTT(msg);
 				} else {
 					m_messages.setSenderHasConnection(false);
-					Cad.logger.debugLog("fronend: " + m_messages.isSenderHasConnection() + "  RMConnection: " + RMConnection.connectionName);
+					Cad.logger.debugLog("fronend: " + m_messages.isSenderHasConnection() + "  RMConnection: "
+							+ RMConnection.connectionName);
 					m_messages.addToMessagesToResender(msg);
+					runThread = false;
 				}
+
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-			m_messages.setSenderHasConnection(false);
-			RMConnection.connectionName = null;
-			m_RMConnection.releaseSem();
 			Cad.logger.debugLog("Sender got exception");
 		}
 

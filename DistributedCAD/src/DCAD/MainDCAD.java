@@ -10,6 +10,9 @@ public class MainDCAD {
 	private static GUI gui = new GUI(750, 600);
 	private static RMConnection rmConnection;
 	private static LocalMessages messages;
+	
+	public static Thread receiver;
+	public static Thread sender;
 
 	//starts applications threads here:
 	public static void main(String[] args)  {
@@ -23,7 +26,10 @@ public class MainDCAD {
     }
 	
 	public static void resetConnection() {
-		new Thread(new Receiver(rmConnection, gui, messages)).start();
-        new Thread(new Sender(rmConnection, messages)).start();
+		receiver = new Thread(new Receiver(rmConnection, gui, messages));
+        sender = new Thread(new Sender(rmConnection, messages));
+        
+        receiver.start();
+        sender.start();
 	}
 }

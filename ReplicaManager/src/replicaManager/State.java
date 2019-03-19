@@ -8,7 +8,7 @@ import org.jgroups.Address;
 
 import se.his.drts.message.DrawObjectsMessage;
 
-public class State implements Serializable{
+public class State implements Serializable {
 
 	private final LinkedList<String> clientList;
 	private final LinkedList<String> objectList;
@@ -17,13 +17,17 @@ public class State implements Serializable{
 		objectList = new LinkedList<String>();
 		clientList = new LinkedList<String>();
 	}
-	
+
 	public void addObject(String object) {
 		objectList.addLast(object);
 	}
 
-	public void removeObject(String object) {
-		objectList.remove(object);
+	public boolean removeObject(String object) {
+		if (objectList.contains(object)) {
+			objectList.remove(object);
+			return true;
+		}
+		return false;
 	}
 
 	public LinkedList<String> getObjectList() {
@@ -34,10 +38,10 @@ public class State implements Serializable{
 		objectList.clear();
 		objectList.addAll(list);
 	}
-	
+
 	public DrawObjectsMessage getStateMessage(String name) {
 		HashMap<String, String> objects = new HashMap();
-		for(String string : objectList) {
+		for (String string : objectList) {
 			objects.put(string, "add");
 		}
 		return new DrawObjectsMessage(objects, name);

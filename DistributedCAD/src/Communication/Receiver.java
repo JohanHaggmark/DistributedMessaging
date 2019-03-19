@@ -13,6 +13,7 @@ import DCAD.Cad;
 import DCAD.GUI;
 import MessageHandling.GObject;
 import MessageHandling.GObjectFactory;
+import MessageHandling.LocalMessage;
 import MessageHandling.LocalMessages;
 import MessageHandling.Resender;
 import se.his.drts.message.AbstractMessageTopClass;
@@ -44,11 +45,7 @@ public class Receiver implements Runnable {
 			oin = new ObjectInputStream(din);
 
 			while (runThread) {
-
-				// Unpacking msg
-//				Optional<MessagePayload> mpl = MessagePayload.createMessage((byte[]) oin.readObject());
-//				AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) mpl.get();
-
+				Cad.logger.debugLog("From: " + rmConnection.getSocket());
 				AbstractMessageTopClass msgTopClass = (AbstractMessageTopClass) oin.readObject();
 				Cad.logger.debugLog("Received UUID: " + msgTopClass.getUUID());
 
@@ -62,9 +59,6 @@ public class Receiver implements Runnable {
 				}
 				// DrawObjectsMessage
 				else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
-					// gui.setState((State) msgTopClass.executeInClient());
-					//System.out.println(msgTopClass.getObject().get("shape") + msgTopClass.getObject().get("color")
-					//		+ msgTopClass.getObject().get("x"));
 					m_messages.addNewMessage(new AcknowledgeMessage(msgTopClass.getackID(), msgTopClass.getName()));
 					gui.addGObjects(GObjectFactory.addObjects(msgTopClass.getObject()));
 					gui.removeGObjects(GObjectFactory.removeObjects(msgTopClass.getObject()));
@@ -79,7 +73,6 @@ public class Receiver implements Runnable {
 						m_messages.addNewMessageWithAcknowledge(PresentationMessage.createClientPresentation(name));
 						Cad.logger.debugLog("Starting Resender");	
 						startResender();
-
 					} else {
 						Cad.logger.debugLog(
 								"Cad should not be receiving PresentationMessages from other than ClientConnection");
@@ -90,6 +83,14 @@ public class Receiver implements Runnable {
 			}
 		} catch (IOException | ClassNotFoundException e) {
 			Cad.logger.debugLog("Exception on receiver " ); 
+			try {
+				rmConnection.getSocket().close();
+				
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			rmConnection.m_socket = null;
 			e.printStackTrace();
 			m_messages.setSenderHasConnection(false);
 			RMConnection.connectionName = null;

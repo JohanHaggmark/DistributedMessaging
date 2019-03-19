@@ -132,12 +132,13 @@ public class Receiver extends ReceiverAdapter {
 					}
 
 				} else { // remove old drawobject
-					state.removeObject(key);
-					JGroups.logger.debugLog(counter + "sending the drawobject");
-					for (String client : state.getClients()) {
-						if (!msgTopClass.getName().equals(client)) {
-							m_messages.addNewMessageWithAcknowledge(
-									new DrawObjectsMessage(msgTopClass.getObject(), client));
+					if (state.removeObject(key)) {
+						JGroups.logger.debugLog(counter + "sending the drawobject");
+						for (String client : state.getClients()) {
+							if (!msgTopClass.getName().equals(client)) {
+								m_messages.addNewMessageWithAcknowledge(
+										new DrawObjectsMessage(msgTopClass.getObject(), client));
+							}
 						}
 					}
 				}
@@ -166,12 +167,10 @@ public class Receiver extends ReceiverAdapter {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						//need to make double here, else sender to not take msg
-						m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
 						m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
 						JGroups.logger.debugLog(counter + "sent state " + msgTopClass.getName());
 					}
-					
+
 				} else {
 					JGroups.logger.debugLog(counter + "Presentation - hittar inte rätt typ! :(" + type);
 				}

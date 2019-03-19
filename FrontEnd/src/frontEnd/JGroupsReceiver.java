@@ -62,13 +62,17 @@ public class JGroupsReceiver extends ReceiverAdapter {
 			// AcknowledgeMessage
 			if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
 				FrontEnd.logger.debugLog("Received AcknowledgeMessage");
-				ClientConnection cc = FrontEnd.m_connectedClients.get(msgTopClass.getName());
-				cc.addMessageToClient(msgTopClass);
+				if (FrontEnd.m_connectedClients.containsKey(msgTopClass.getName())) {
+					ClientConnection cc = FrontEnd.m_connectedClients.get(msgTopClass.getName());
+					cc.addMessageToClient(msgTopClass);
+				}
 			}
 			// DrawObjectsMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
 				FrontEnd.logger.debugLog("Received DrawObjectsMessage");
-				FrontEnd.m_connectedClients.get(msgTopClass.getName()).addMessageToClient(msgTopClass);
+				if (FrontEnd.m_connectedClients.containsKey(msgTopClass.getName())) {
+					FrontEnd.m_connectedClients.get(msgTopClass.getName()).addMessageToClient(msgTopClass);
+				}
 			}
 			// PresentationMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("8e69d7fb-4ca9-46de-b33d-cf1dc72377cd"))) {
