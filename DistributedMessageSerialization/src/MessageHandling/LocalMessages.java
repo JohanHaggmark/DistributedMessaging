@@ -24,7 +24,7 @@ public class LocalMessages {
 	public void addNewMessageWithAcknowledge(AbstractMessageTopClass msgTopClass) {
 		LocalMessage msg = new LocalMessage(msgTopClass, true);
 		m_mapOfMessages.put(msgTopClass.getackID(), msg);
-		addToMessageQueue(msg);
+		m_messageQueue.offer(msg);
 	}
 	
 	public void addNewMessageWithAcknowledgeInCad(AbstractMessageTopClass msgTopClass) {
@@ -35,7 +35,7 @@ public class LocalMessages {
 
 	public void addNewMessage(AbstractMessageTopClass msgTopClass) {
 		LocalMessage msg = new LocalMessage(msgTopClass, false);
-		addToMessageQueue(msg);
+		m_messageQueue.add(msg);
 	}
 
 	public void addToMessageQueue(LocalMessage msg) {

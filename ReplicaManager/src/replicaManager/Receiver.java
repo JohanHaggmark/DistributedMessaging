@@ -34,9 +34,9 @@ public class Receiver extends ReceiverAdapter {
 	private View m_oldView;
 	private Integer id;
 
-	private State state = new State();
+	private State state = new State(); // this goes to JGroups state
 
-	private int counter = 0;
+	private int counter = 0; // only used for logging
 
 	public Receiver(JChannel channel, LocalMessages messages) {
 		this.m_channel = channel;
@@ -68,7 +68,8 @@ public class Receiver extends ReceiverAdapter {
 			JGroups.primaryRM = null;
 			JGroups.logger.debugLog("starting new Election!");
 			JGroups.electionQueue.add(new ElectionMessage(this.id));
-			// Only the primary sends out to new replica managers about the coordinator
+			// Only the primary sends out to new replica managers and frontEnd about the
+			// coordinator
 		} else if (m_channel.getAddress().equals(JGroups.primaryRM)) {
 			List<Address> new_RM = View.newMembers(m_oldView, new_view);
 			if (new_RM.isEmpty()) {
@@ -93,7 +94,7 @@ public class Receiver extends ReceiverAdapter {
 	}
 
 	public void receive(Message msg) {
-		if (!msg.getSrc().toString().equals(m_channel.getAddress().toString())) {
+		if (!msg.getSrc().toString().equals(m_channel.getAddress().toString())) { // dont want to receive its own msg
 			JGroups.logger.debugLog(msg.getSrc().toString() + "   != " + m_channel.getAddress().toString());
 			counter++;
 			JGroups.logger.debugLog(counter + " RECEIVE");
@@ -106,7 +107,7 @@ public class Receiver extends ReceiverAdapter {
 
 			// AcknowledgeMessage
 			if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
-				m_messages.removeAcknowledgeFromMessage((Integer)msgTopClass.getackID());
+				m_messages.removeAcknowledgeFromMessage((Integer) msgTopClass.getackID());
 			}
 			// DrawObjectsMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
@@ -117,19 +118,20 @@ public class Receiver extends ReceiverAdapter {
 				JGroups.logger.debugLog(counter + "key of map: " + key);
 				JGroups.logger.debugLog("current state: clients: " + state.getClients().size() + " drawobjects: "
 						+ state.getObjectList().size());
-				if (map.get(key).equals("add")) {
+				if (map.get(key).equals("add")) { // This is a new drawobject
 					state.addObject(key);
-					JGroups.logger.debugLog(counter + "sending the drawobject size of client list: " + state.getClients().size());
+					JGroups.logger.debugLog(
+							counter + "sending the drawobject size of client list: " + state.getClients().size());
 					for (String client : state.getClients()) {
 						if (!msgTopClass.getName().equals(client)) {
 							JGroups.logger.debugLog(counter + "send add draw: " + client);
-							m_messages.addNewMessageWithAcknowledge(			
+							m_messages.addNewMessageWithAcknowledge(
 									new DrawObjectsMessage(msgTopClass.getObject(), client));
 							JGroups.logger.debugLog(counter + "send add drawafter");
 						}
 					}
 
-				} else { // remove object
+				} else { // remove old drawobject
 					state.removeObject(key);
 					JGroups.logger.debugLog(counter + "sending the drawobject");
 					for (String client : state.getClients()) {
@@ -150,12 +152,26 @@ public class Receiver extends ReceiverAdapter {
 					JGroups.logger.debugLog(counter + "received from FrontEnd");
 					startResender();
 				} else if (type.equals("Client")) {
-					JGroups.logger.debugLog(counter + "Added new client with name " + msgTopClass.getName());
+					JGroups.logger.debugLog(counter + "Add new client with name " + msgTopClass.getName());
+					m_messages.addNewMessage(new AcknowledgeMessage(msgTopClass.getackID(), msgTopClass.getName()));
 					if (!state.getClients().contains(msgTopClass.getName())) {
+						JGroups.logger.debugLog(counter + "Adds this new client with name " + msgTopClass.getName());
 						state.getClients().add(msgTopClass.getName());
 					}
-
-					m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
+					JGroups.logger.debugLog(counter + "Added and send state, name " + msgTopClass.getName());
+					if (state.getObjectList().size() > 0) {
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						//need to make double here, else sender to not take msg
+						m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
+						m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
+						JGroups.logger.debugLog(counter + "sent state " + msgTopClass.getName());
+					}
+					
 				} else {
 					JGroups.logger.debugLog(counter + "Presentation - hittar inte rätt typ! :(" + type);
 				}
