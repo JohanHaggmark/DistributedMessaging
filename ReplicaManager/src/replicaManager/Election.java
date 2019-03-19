@@ -6,19 +6,16 @@ import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 
-import MessageHandling.LocalMessages;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.CoordinatorMessage;
 
 public class Election implements Runnable {
 	private Address m_address;
 	private JChannel m_channel;
-	private LocalMessages m_messages;
 	private long m_timeStamp;
 
-	public Election(JChannel channel, LocalMessages messages) {
+	public Election(JChannel channel) {
 		this.m_channel = channel;
-		this.m_messages = messages;
 		this.m_address = channel.getAddress();
 	}
 
@@ -55,7 +52,7 @@ public class Election implements Runnable {
 	}
 
 	private void endElection() {
-		if (JGroups.isCoordinator) {
+		if (JGroups.isCoordinator) {//we are still coordinator if Receive has not received an ElectionMessage with myId<msg.id
 			JGroups.primaryRM = this.m_address;
 			JGroups.logger.debugLog("Election Sending Coordinator message with: " + this.m_address);
 			try {

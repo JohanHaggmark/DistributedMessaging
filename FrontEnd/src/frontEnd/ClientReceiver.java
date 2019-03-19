@@ -5,15 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.Socket;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import se.his.drts.message.AbstractMessageTopClass;
-import se.his.drts.message.MessagePayload;
-
 public class ClientReceiver implements Runnable{
-	private LinkedBlockingQueue messagesFromClients;
+	private LinkedBlockingQueue<byte[]> messagesFromClients;
 	private Socket m_socket;
 	
 	public ClientReceiver(Socket socket, LinkedBlockingQueue<byte[]> messagesFromClients) {

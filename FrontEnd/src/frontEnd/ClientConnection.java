@@ -11,7 +11,7 @@ public class ClientConnection {
 
 	private Socket m_socket;
 	private LinkedBlockingQueue<byte[]> m_messagesFromClients;
-	private LinkedBlockingQueue<AbstractMessageTopClass> m_messagesToClient = new LinkedBlockingQueue();
+	private LinkedBlockingQueue<AbstractMessageTopClass> m_messagesToClient = new LinkedBlockingQueue<AbstractMessageTopClass>();
 
 	public ClientConnection(Socket socket, LinkedBlockingQueue<byte[]> messagesFromClients) {
 		this.m_socket = socket;

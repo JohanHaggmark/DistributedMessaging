@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import org.jgroups.Address;
 
 import se.his.drts.message.DrawObjectsMessage;
 

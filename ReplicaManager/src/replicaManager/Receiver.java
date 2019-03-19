@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,7 +16,6 @@ import org.jgroups.ReceiverAdapter;
 import org.jgroups.View;
 import org.jgroups.util.Util;
 
-import Communication.RMConnection;
 import MessageHandling.LocalMessages;
 import MessageHandling.Resender;
 import se.his.drts.message.AbstractMessageTopClass;
@@ -84,11 +82,14 @@ public class Receiver extends ReceiverAdapter {
 					}
 				}
 			}
-		} else if ((new_view.size() == 1 || new_view.size() == 2) && JGroups.primaryRM == null) {
+		} else if (new_view.size() == 2 && JGroups.primaryRM == null) {
 			// sets the first replica manager to the coordinator:
 			JGroups.logger.debugLog("starting election!");
 			JGroups.isCoordinator = true;
 			JGroups.electionQueue.add(new ElectionMessage(this.id));
+		} else if(new_view.size() == 1) {
+			JGroups.isCoordinator = true;
+			JGroups.primaryRM = m_channel.getAddress();
 		}
 		m_oldView = new_view;
 	}

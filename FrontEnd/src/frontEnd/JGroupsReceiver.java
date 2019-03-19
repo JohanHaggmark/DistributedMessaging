@@ -1,43 +1,29 @@
 package frontEnd;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
 import org.jgroups.View;
 
-import MessageHandling.LocalMessages;
 import se.his.drts.message.AbstractMessageTopClass;
 import se.his.drts.message.MessagePayload;
 import se.his.drts.message.PresentationMessage;
 
 public class JGroupsReceiver extends ReceiverAdapter {
 
-	private Integer m_id;
 	private JChannel m_channel;
-	private LocalMessages m_messages;
 
-	public JGroupsReceiver(JChannel channel, LocalMessages messages) {
+	public JGroupsReceiver(JChannel channel) {
 		this.m_channel = channel;
-		this.m_messages = messages;
 	}
 
 	public void start() throws Exception {
 		FrontEnd.logger.debugLog("Starting Front End");
 		m_channel.setReceiver(this);
 		m_channel.connect("ChatCluster");
-		setId();
-
-	}
-
-	private void setId() {
-		String[] split = m_channel.getName().split("-");
-		this.m_id = Integer.parseInt(split[split.length - 1]);
 	}
 
 	public void viewAccepted(View new_view) {

@@ -4,7 +4,7 @@ import Communication.RMConnection;
 import Communication.Receiver;
 import Communication.Sender;
 import MessageHandling.LocalMessages;
-import MessageHandling.RTTMessageRepeater;
+import MessageHandling.RTMessageRepeater;
 
 public class MainDCAD {
 	private static GUI gui = new GUI(750, 600);
@@ -20,8 +20,8 @@ public class MainDCAD {
 	    	rmConnection = new RMConnection("127.0.0.1", 25000);
 	    	messages = new LocalMessages();
 	    	new Thread(rmConnection).start();
-			new Cad(rmConnection, gui, messages);	
-	        new Thread(new RTTMessageRepeater(messages.getRTTMessageQueue(), messages.getMessageQueue())).start();	
+			new Cad(gui, messages);	
+	        new Thread(new RTMessageRepeater(messages.getRTTMessageQueue(), messages.getMessageQueue())).start();	
 		}		
     }
 	

@@ -25,19 +25,18 @@ public class Sender implements Runnable {
 				LocalMessage msg = (LocalMessage) m_messages.getMessageQueue().take();
 
 				Cad.logger.debugLog("took a message from messageQueue ");
-				if (m_messages.isSenderHasConnection() && RMConnection.connectionName != null) {
+				if (m_messages.isSenderHasConnection() && RMConnection.connectionName != null) { 
 					msg.getMsgTopClass().changeName(RMConnection.connectionName); // Make sure msg has the latest
 					Cad.logger.debugLog("sending over channel, atleast try");										// connectionName
 					m_RMConnection.sendMessage(msg.getMsgTopClass());
 					tryAddToRTT(msg);
-				} else {
+				} else {//we dont send when Front end is down
 					m_messages.setSenderHasConnection(false);
 					Cad.logger.debugLog("fronend: " + m_messages.isSenderHasConnection() + "  RMConnection: "
 							+ RMConnection.connectionName);
 					m_messages.addToMessagesToResender(msg);
 					runThread = false;
 				}
-
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();

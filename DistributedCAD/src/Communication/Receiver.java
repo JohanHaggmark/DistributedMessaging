@@ -72,7 +72,7 @@ public class Receiver implements Runnable {
 						m_messages.setSenderHasConnection(true);
 						m_messages.addNewMessageWithAcknowledge(PresentationMessage.createClientPresentation(name));
 						Cad.logger.debugLog("Starting Resender");	
-						startResender();
+						startResender(); //When a new front end is up, unsent messages should be sent
 					} else {
 						Cad.logger.debugLog(
 								"Cad should not be receiving PresentationMessages from other than ClientConnection");
@@ -87,7 +87,6 @@ public class Receiver implements Runnable {
 				rmConnection.getSocket().close();
 				
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			rmConnection.m_socket = null;
