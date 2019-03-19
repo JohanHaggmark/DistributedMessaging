@@ -106,7 +106,7 @@ public class Receiver extends ReceiverAdapter {
 
 			// AcknowledgeMessage
 			if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
-				m_messages.removeAcknowledgeFromMessage(msgTopClass.getMessageNumber());
+				m_messages.removeAcknowledgeFromMessage((Integer)msgTopClass.getackID());
 			}
 			// DrawObjectsMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
