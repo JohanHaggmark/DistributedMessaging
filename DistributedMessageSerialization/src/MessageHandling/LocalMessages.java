@@ -69,7 +69,8 @@ public class LocalMessages {
 	public void removeAcknowledgeFromMessage(Integer id) {
 		//Must check to avoid null pointer exception
 		if (m_mapOfMessages.containsKey(id.intValue())) {
-			m_mapOfMessages.get(id.intValue()).isAcknowledged();
+			System.out.println("Found message to remove");
+			m_mapOfMessages.get(id.intValue()).setToAcknowledged();
 			m_mapOfMessages.remove(id);
 		}
 	}
