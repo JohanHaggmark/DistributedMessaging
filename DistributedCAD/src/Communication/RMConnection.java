@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.UUID;
 import java.util.concurrent.Semaphore;
 
 import DCAD.MainDCAD;
@@ -19,6 +20,8 @@ public class RMConnection implements Runnable {
 	private Semaphore m_connected = new Semaphore(1);
 	private int m_timeOut = 8;
 	public static String connectionName = null;
+	private OutputStream os;
+	private ObjectOutputStream oos;
 
 	public RMConnection(String address, int port) {
 //		waitForExitMessage();
@@ -32,8 +35,7 @@ public class RMConnection implements Runnable {
 
 	public void sendMessage(AbstractMessageTopClass msg) {
 		try {
-			OutputStream os = m_socket.getOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(os);
+			oos = new ObjectOutputStream(os);
 			oos.writeObject(msg.serialize());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -50,6 +52,7 @@ public class RMConnection implements Runnable {
 			try {
 				m_connected.acquire();
 				m_socket = new Socket(m_serverAddress, m_serverPort);
+				os = m_socket.getOutputStream();
 				MainDCAD.resetConnection();
 				m_timeOut = 8;
 			} catch (IOException | InterruptedException e) {

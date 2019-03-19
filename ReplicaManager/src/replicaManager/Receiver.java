@@ -123,8 +123,9 @@ public class Receiver extends ReceiverAdapter {
 					for (String client : state.getClients()) {
 						if (!msgTopClass.getName().equals(client)) {
 							JGroups.logger.debugLog(counter + "send add draw: " + client);
-							m_messages.addNewMessageWithAcknowledge(			
-									new DrawObjectsMessage(msgTopClass.getObject(), client));
+//							m_messages.addNewMessageWithAcknowledge(			
+//									new DrawObjectsMessage(msgTopClass.getObject(), client));
+							m_messages.addNewMessageWithAcknowledge(state.getStateMessage(client));
 							JGroups.logger.debugLog(counter + "send add drawafter");
 						}
 					}
