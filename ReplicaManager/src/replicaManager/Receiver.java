@@ -119,18 +119,19 @@ public class Receiver extends ReceiverAdapter {
 				JGroups.logger.debugLog("current state: clients: " + state.getClients().size() + " drawobjects: "
 						+ state.getObjectList().size());
 				if (map.get(key).equals("add")) { // This is a new drawobject
-					state.addObject(key);
-					JGroups.logger.debugLog(
-							counter + "sending the drawobject size of client list: " + state.getClients().size());
-					for (String client : state.getClients()) {
-						if (!msgTopClass.getName().equals(client)) {
-							JGroups.logger.debugLog(counter + "send add draw: " + client);
-							m_messages.addNewMessageWithAcknowledge(
-									new DrawObjectsMessage(msgTopClass.getObject(), client));
-							JGroups.logger.debugLog(counter + "send add drawafter");
+					if (!state.getObjectList().contains(key)) {
+						state.addObject(key);
+						JGroups.logger.debugLog(
+								counter + "sending the drawobject size of client list: " + state.getClients().size());
+						for (String client : state.getClients()) {
+							if (!msgTopClass.getName().equals(client)) {
+								JGroups.logger.debugLog(counter + "send add draw: " + client);
+								m_messages.addNewMessageWithAcknowledge(
+										new DrawObjectsMessage(msgTopClass.getObject(), client));
+								JGroups.logger.debugLog(counter + "send add drawafter");
+							}
 						}
 					}
-
 				} else { // remove old drawobject
 					if (state.removeObject(key)) {
 						JGroups.logger.debugLog(counter + "sending the drawobject");
