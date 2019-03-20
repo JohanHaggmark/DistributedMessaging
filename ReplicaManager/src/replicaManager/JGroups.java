@@ -23,7 +23,6 @@ public class JGroups {
 
 	public JGroups(String[] args) {
 		if(args[0].equals("ReplicaManager")) {
-			waitForExitMessage(Integer.parseInt(args[1]));
 			start();			
 		}
 	}
