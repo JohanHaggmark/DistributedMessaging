@@ -22,7 +22,7 @@ public class RMConnection implements Runnable {
 	public static String connectionName = null;
 
 	public RMConnection(String address, int port) {
-		//waitForExitMessage();
+//		waitForExitMessage();
 		try {
 			this.m_serverAddress = InetAddress.getByName(address);
 			this.m_serverPort = port;

@@ -9,6 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ClientReceiver implements Runnable{
 	private LinkedBlockingQueue<byte[]> messagesFromClients;
+
 	private Socket m_socket;
 	
 	public ClientReceiver(Socket socket, LinkedBlockingQueue<byte[]> messagesFromClients) {

@@ -21,9 +21,9 @@ public class JGroups {
 	private JChannel m_channel;
 	private LocalMessages m_messages;
 
-	public JGroups(String arg) {
-		if(arg.equals("ReplicaManager")) {
-			//waitForExitMessage();
+	public JGroups(String[] args) {
+		if(args[0].equals("ReplicaManager")) {
+			waitForExitMessage(Integer.parseInt(args[1]));
 			start();			
 		}
 	}
@@ -32,7 +32,7 @@ public class JGroups {
 		logger = new ProjectLogger("ReplicaManager");
 		try {
 			m_messages = new LocalMessages();
-			m_channel = new JChannel();
+			m_channel = new JChannel("C:/java/udp.xml");
 			new Receiver(m_channel, m_messages).start();
 			new Thread(new Sender(m_channel, m_messages)).start();
 			new Thread(new RTMessageRepeater(m_messages.getMessageQueue(), m_messages.getRTTMessageQueue())).start();
@@ -42,11 +42,11 @@ public class JGroups {
 		}
 	}
 
-	private void waitForExitMessage() {
+	private void waitForExitMessage(int port) {
 		new Thread() {
 			@Override
 			public void run() {
-				SemaphoreChannel channel = new SemaphoreChannel(28000);
+				SemaphoreChannel channel = new SemaphoreChannel(port);
 				channel.waitForActionMessage();
 				System.exit(0);
 			}

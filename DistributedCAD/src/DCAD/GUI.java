@@ -47,9 +47,8 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 	private LinkedList<String> stringGObjects = new LinkedList<String>();
 	private Cad m_cad;
 
+
 	public GUI(int xpos, int ypos) {
-		// this.waitForDrawMessage();
-		// this.waitForRemoveMessage();
 
 		setSize(xpos, ypos);
 		setTitle("FTCAD");
