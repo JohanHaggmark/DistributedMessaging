@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,7 +16,6 @@ import org.jgroups.ReceiverAdapter;
 import org.jgroups.View;
 import org.jgroups.util.Util;
 
-import Communication.RMConnection;
 import MessageHandling.LocalMessages;
 import MessageHandling.Resender;
 import se.his.drts.message.AbstractMessageTopClass;
@@ -34,9 +32,9 @@ public class Receiver extends ReceiverAdapter {
 	private View m_oldView;
 	private Integer id;
 
-	private State state = new State();
+	private State state = new State(); // this goes to JGroups state
 
-	private int counter = 0;
+	private int counter = 0; // only used for logging
 
 	public Receiver(JChannel channel, LocalMessages messages) {
 		this.m_channel = channel;
@@ -59,7 +57,7 @@ public class Receiver extends ReceiverAdapter {
 		JGroups.logger.debugLog("View Changed! with size:" + new_view.size() + " primary is: " + JGroups.primaryRM);
 		System.out.println("size of view: " + new_view.size());
 		if (!new_view.containsMember(JGroups.frontEnd)) {
-			// Exponential backoff tills FrontEnd √§r uppe igen
+			// Exponential backoff tills FrontEnd ‰r uppe igen
 			JGroups.frontEnd = null;
 		}
 		// Election happens when primary left:
@@ -68,7 +66,8 @@ public class Receiver extends ReceiverAdapter {
 			JGroups.primaryRM = null;
 			JGroups.logger.debugLog("starting new Election!");
 			JGroups.electionQueue.add(new ElectionMessage(this.id));
-			// Only the primary sends out to new replica managers about the coordinator
+			// Only the primary sends out to new replica managers and frontEnd about the
+			// coordinator
 		} else if (m_channel.getAddress().equals(JGroups.primaryRM)) {
 			List<Address> new_RM = View.newMembers(m_oldView, new_view);
 			if (new_RM.isEmpty()) {
@@ -83,17 +82,20 @@ public class Receiver extends ReceiverAdapter {
 					}
 				}
 			}
-		} else if ((new_view.size() == 1 || new_view.size() == 2) && JGroups.primaryRM == null) {
+		} else if (new_view.size() == 2 && JGroups.primaryRM == null) {
 			// sets the first replica manager to the coordinator:
 			JGroups.logger.debugLog("starting election!");
 			JGroups.isCoordinator = true;
 			JGroups.electionQueue.add(new ElectionMessage(this.id));
+		} else if(new_view.size() == 1) {
+			JGroups.isCoordinator = true;
+			JGroups.primaryRM = m_channel.getAddress();
 		}
 		m_oldView = new_view;
 	}
 
 	public void receive(Message msg) {
-		if (!msg.getSrc().toString().equals(m_channel.getAddress().toString())) {
+		if (!msg.getSrc().toString().equals(m_channel.getAddress().toString())) { // dont want to receive its own msg
 			JGroups.logger.debugLog(msg.getSrc().toString() + "   != " + m_channel.getAddress().toString());
 			counter++;
 			JGroups.logger.debugLog(counter + " RECEIVE");
@@ -106,7 +108,7 @@ public class Receiver extends ReceiverAdapter {
 
 			// AcknowledgeMessage
 			if (msgTopClass.getUUID().equals(UUID.fromString("bb5eeb2c-fa66-4e70-891b-382d87b64814"))) {
-				m_messages.removeAcknowledgeFromMessage((Integer)msgTopClass.getackID());
+				m_messages.removeAcknowledgeFromMessage((Integer) msgTopClass.getackID());
 			}
 			// DrawObjectsMessage
 			else if (msgTopClass.getUUID().equals(UUID.fromString("54f642d7-eaf6-4d62-ad2d-316e4b821c03"))) {
@@ -117,25 +119,28 @@ public class Receiver extends ReceiverAdapter {
 				JGroups.logger.debugLog(counter + "key of map: " + key);
 				JGroups.logger.debugLog("current state: clients: " + state.getClients().size() + " drawobjects: "
 						+ state.getObjectList().size());
-				if (map.get(key).equals("add")) {
-					state.addObject(key);
-					JGroups.logger.debugLog(counter + "sending the drawobject size of client list: " + state.getClients().size());
-					for (String client : state.getClients()) {
-						if (!msgTopClass.getName().equals(client)) {
-							JGroups.logger.debugLog(counter + "send add draw: " + client);
-							m_messages.addNewMessageWithAcknowledge(			
-									new DrawObjectsMessage(msgTopClass.getObject(), client));
-							JGroups.logger.debugLog(counter + "send add drawafter");
+				if (map.get(key).equals("add")) { // This is a new drawobject
+					if (!state.getObjectList().contains(key)) {
+						state.addObject(key);
+						JGroups.logger.debugLog(
+								counter + "sending the drawobject size of client list: " + state.getClients().size());
+						for (String client : state.getClients()) {
+							if (!msgTopClass.getName().equals(client)) {
+								JGroups.logger.debugLog(counter + "send add draw: " + client);
+								m_messages.addNewMessageWithAcknowledge(
+										new DrawObjectsMessage(msgTopClass.getObject(), client));
+								JGroups.logger.debugLog(counter + "send add drawafter");
+							}
 						}
 					}
-
-				} else { // remove object
-					state.removeObject(key);
-					JGroups.logger.debugLog(counter + "sending the drawobject");
-					for (String client : state.getClients()) {
-						if (!msgTopClass.getName().equals(client)) {
-							m_messages.addNewMessageWithAcknowledge(
-									new DrawObjectsMessage(msgTopClass.getObject(), client));
+				} else { // remove old drawobject
+					if (state.removeObject(key)) {
+						JGroups.logger.debugLog(counter + "sending the drawobject");
+						for (String client : state.getClients()) {
+							if (!msgTopClass.getName().equals(client)) {
+								m_messages.addNewMessageWithAcknowledge(
+										new DrawObjectsMessage(msgTopClass.getObject(), client));
+							}
 						}
 					}
 				}
@@ -150,14 +155,26 @@ public class Receiver extends ReceiverAdapter {
 					JGroups.logger.debugLog(counter + "received from FrontEnd");
 					startResender();
 				} else if (type.equals("Client")) {
-					JGroups.logger.debugLog(counter + "Added new client with name " + msgTopClass.getName());
+					JGroups.logger.debugLog(counter + "Add new client with name " + msgTopClass.getName());
+					m_messages.addNewMessage(new AcknowledgeMessage(msgTopClass.getackID(), msgTopClass.getName()));
 					if (!state.getClients().contains(msgTopClass.getName())) {
+						JGroups.logger.debugLog(counter + "Adds this new client with name " + msgTopClass.getName());
 						state.getClients().add(msgTopClass.getName());
 					}
+					JGroups.logger.debugLog(counter + "Added and send state, name " + msgTopClass.getName());
+					if (state.getObjectList().size() > 0) {
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
+						JGroups.logger.debugLog(counter + "sent state " + msgTopClass.getName());
+					}
 
-					m_messages.addNewMessageWithAcknowledge(state.getStateMessage(msgTopClass.getName()));
 				} else {
-					JGroups.logger.debugLog(counter + "Presentation - hittar inte r√§tt typ! :(" + type);
+					JGroups.logger.debugLog(counter + "Presentation - hittar inte r‰tt typ! :(" + type);
 				}
 			}
 			// ElectionMessage

@@ -4,19 +4,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jgroups.Address;
 import org.jgroups.JChannel;
-import org.jgroups.Message;
 
 import Logging.ProjectLogger;
 import MessageHandling.LocalMessages;
-import MessageHandling.RTTMessageRepeater;
+import MessageHandling.RTMessageRepeater;
 import TestingControllability.SemaphoreChannel;
 import se.his.drts.message.AbstractMessageTopClass;
-import se.his.drts.message.PresentationMessage;
 
 public class JGroups {
 	public static Address primaryRM = null;
 	public static volatile boolean isCoordinator = false;
-	public static LinkedBlockingQueue electionQueue = new LinkedBlockingQueue<AbstractMessageTopClass>();
+	public static LinkedBlockingQueue<AbstractMessageTopClass> electionQueue = new LinkedBlockingQueue<AbstractMessageTopClass>();
 	public static ProjectLogger logger;
 	public static Address frontEnd = null;
 	
@@ -37,8 +35,8 @@ public class JGroups {
 			m_channel = new JChannel("C:/java/udp.xml");
 			new Receiver(m_channel, m_messages).start();
 			new Thread(new Sender(m_channel, m_messages)).start();
-			new Thread(new RTTMessageRepeater(m_messages.getMessageQueue(), m_messages.getRTTMessageQueue())).start();
-			new Thread(new Election(m_channel, m_messages)).start();
+			new Thread(new RTMessageRepeater(m_messages.getMessageQueue(), m_messages.getRTTMessageQueue())).start();
+			new Thread(new Election(m_channel)).start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

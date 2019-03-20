@@ -40,18 +40,16 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 	JButton pinkButton = new JButton("Pink");
 
 	private GObject template = new GObject(Shape.OVAL, Color.RED, 363, 65, 25, 25);
-	private GObject testObject = new GObject(Shape.OVAL, Color.GREEN, 363, 200, 100, 50); 
+	private GObject testObject = new GObject(Shape.OVAL, Color.GREEN, 363, 200, 100, 50);
 	private GObject current = null;
 
 	private HashMap<String, GObject> mapOfObjects = new HashMap<String, GObject>();
 	private LinkedList<String> stringGObjects = new LinkedList<String>();
 	private Cad m_cad;
 
-	
-	public GUI(int xpos, int ypos) {	
-		this.waitForDrawMessage();
-		this.waitForRemoveMessage();
-		
+
+	public GUI(int xpos, int ypos) {
+
 		setSize(xpos, ypos);
 		setTitle("FTCAD");
 
@@ -72,7 +70,7 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 		pane.setLayout(new FlowLayout());
 		setVisible(true);
 	}
-	
+
 	public void addCad(Cad cad) {
 		this.m_cad = cad;
 	}
@@ -81,7 +79,7 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 		addWindowListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);
-		
+
 		ovalButton.addActionListener(this);
 		rectangleButton.addActionListener(this);
 		lineButton.addActionListener(this);
@@ -141,7 +139,7 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 	public void mouseClicked(MouseEvent e) {
 		// User clicks the right mouse button:
 		// undo an operation by removing the most recently added object.
-		if (e.getButton() == MouseEvent.BUTTON3 && stringGObjects.size() > 0) {		
+		if (e.getButton() == MouseEvent.BUTTON3 && stringGObjects.size() > 0) {
 			m_cad.sendRemove(stringGObjects.getLast());
 			mapOfObjects.remove(stringGObjects.getLast());
 			stringGObjects.removeLast();
@@ -203,7 +201,7 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 
 		template.draw(g);
 
-		for(GObject object : mapOfObjects.values()) {
+		for (GObject object : mapOfObjects.values()) {
 			object.draw(g);
 		}
 
@@ -216,23 +214,23 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 		super.paint(g); // The superclass (JFrame) paint function draws the GUI components.
 		update(g);
 	}
-	
-	
+
 	public void addGObjects(LinkedList<String> objects) {
-		for(String string : objects) {
-			//stringGObjects.addLast(string);
-			mapOfObjects.put(string, GObjectFactory.createGObjectByString(string));
+		for (String string : objects) {
+			if (!mapOfObjects.containsKey(string)) {
+				mapOfObjects.put(string, GObjectFactory.createGObjectByString(string));
+			}
 		}
 		repaint();
 	}
-	
+
 	public void removeGObjects(LinkedList<String> objects) {
-		for(String string : objects) {		
+		for (String string : objects) {
 			mapOfObjects.remove(string);
 		}
 		repaint();
 	}
-	
+
 	private void waitForDrawMessage() {
 		new Thread() {
 			@Override
@@ -240,13 +238,13 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 				while (true) {
 					SemaphoreChannel channel = new SemaphoreChannel(26001);
 					channel.waitForActionMessage();
-					System.out.println("1 - Received action message  " + System.currentTimeMillis());		
+					System.out.println("1 - Received action message  " + System.currentTimeMillis());
 					simulateDraw();
 				}
 			}
 		}.start();
 	}
-	
+
 	private void waitForRemoveMessage() {
 		new Thread() {
 			@Override
@@ -260,7 +258,7 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 			}
 		}.start();
 	}
-	
+
 	private void simulateDraw() {
 		String stringObject = GObjectFactory.getStringOfObject(testObject);
 		stringGObjects.addLast(stringObject);
@@ -268,11 +266,11 @@ public class GUI extends JFrame implements WindowListener, ActionListener, Mouse
 		m_cad.sendAdd(stringObject);
 		repaint();
 	}
-	
+
 	private void simulateRightClick() {
 		m_cad.sendRemove(stringGObjects.getLast());
 		mapOfObjects.remove(stringGObjects.getLast());
-		stringGObjects.removeLast();	
-		repaint();	
+		stringGObjects.removeLast();
+		repaint();
 	}
 }

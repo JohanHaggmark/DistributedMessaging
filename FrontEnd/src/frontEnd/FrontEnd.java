@@ -10,15 +10,13 @@ import org.jgroups.Address;
 import org.jgroups.JChannel;
 
 import Logging.ProjectLogger;
-import MessageHandling.LocalMessages;
 import TestingControllability.SemaphoreChannel;
-import se.his.drts.message.PresentationMessage;
 
 public class FrontEnd {
 	public static ProjectLogger logger;
 	public static Address primaryRM = null;
 
-	public static ConcurrentHashMap<String, ClientConnection> m_connectedClients = new ConcurrentHashMap();
+	public static ConcurrentHashMap<String, ClientConnection> m_connectedClients = new ConcurrentHashMap<String, ClientConnection>();
 	private LinkedBlockingQueue<byte[]> m_messagesFromClients;
 	private ServerSocket m_socket;
 	private JChannel m_channel;
@@ -53,9 +51,9 @@ public class FrontEnd {
 
 	private void startJGroupsConnection() {
 		try {
-			LocalMessages messages = new LocalMessages();
-			m_channel = new JChannel("C:/java/udp.xml");
-			new JGroupsReceiver(m_channel, messages).start();
+			m_channel = new JChannel(); // default config?
+			new JGroupsReceiver(m_channel).start();
+
 			new Thread(new JGroupsSender(m_channel, m_messagesFromClients)).start();
 		} catch (Exception e) {
 			e.printStackTrace();

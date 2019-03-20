@@ -26,7 +26,7 @@ public class ClientSender implements Runnable {
 			oos = new ObjectOutputStream(os);
 
 			while (true) {
-				FrontEnd.logger.debugLog("ClientSender() - run() sending message to client");
+				FrontEnd.logger.debugLog("ClientSender() - run() sending message to client: " + m_socket);
 				AbstractMessageTopClass msg = m_messagesToClient.take();
 				FrontEnd.logger.debugLog("ClientSender() - check type before sending:  " + msg.getUUID());
 				oos.writeObject(msg);

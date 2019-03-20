@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.Semaphore;
 
+import DCAD.Cad;
 import DCAD.MainDCAD;
 import TestingControllability.SemaphoreChannel;
 import se.his.drts.message.AbstractMessageTopClass;
@@ -15,7 +16,7 @@ import se.his.drts.message.AbstractMessageTopClass;
 public class RMConnection implements Runnable {
 	private InetAddress m_serverAddress;
 	private int m_serverPort;
-	private Socket m_socket = null;
+	public Socket m_socket = null;
 	private Semaphore m_connected = new Semaphore(1);
 	private int m_timeOut = 8;
 	public static String connectionName = null;
@@ -32,6 +33,7 @@ public class RMConnection implements Runnable {
 
 	public void sendMessage(AbstractMessageTopClass msg) {
 		try {
+			Cad.logger.debugLog("To " + m_socket);
 			OutputStream os = m_socket.getOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(os);
 			oos.writeObject(msg.serialize());

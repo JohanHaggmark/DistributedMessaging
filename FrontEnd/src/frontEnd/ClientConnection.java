@@ -11,19 +11,19 @@ public class ClientConnection {
 
 	private Socket m_socket;
 	private LinkedBlockingQueue<byte[]> m_messagesFromClients;
-	private LinkedBlockingQueue<AbstractMessageTopClass> m_messagesToClient = new LinkedBlockingQueue();
+	private LinkedBlockingQueue<AbstractMessageTopClass> m_messagesToClient = new LinkedBlockingQueue<AbstractMessageTopClass>();
 
 	public ClientConnection(Socket socket, LinkedBlockingQueue<byte[]> messagesFromClients) {
 		this.m_socket = socket;
 		this.m_messagesFromClients = messagesFromClients;
-		new Thread(new ClientReceiver(m_socket, messagesFromClients)).start();
+		new Thread(new ClientReceiver(m_socket, m_messagesFromClients)).start();
 		new Thread(new ClientSender(m_socket, m_messagesToClient)).start();
 		sendPresentationMessage();
 	}
 
 	private void sendPresentationMessage() {
 		PresentationMessage msg = PresentationMessage.createClientConnectionPresentation(m_socket.toString());
-		m_messagesToClient.add(msg);	
+		m_messagesToClient.add(msg);
 	}
 	
 	public void addMessageToClient(AbstractMessageTopClass msgTopClass) {

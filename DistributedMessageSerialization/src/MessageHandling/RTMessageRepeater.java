@@ -2,23 +2,22 @@ package MessageHandling;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class RTTMessageRepeater implements Runnable {
+public class RTMessageRepeater implements Runnable {
 
 	LinkedBlockingQueue<LocalMessage> m_RTTMessageQueue;
 	LinkedBlockingQueue<LocalMessage> m_messageQueue;
-	// https://wondernetwork.com/pings, average ping from sweden to common places in
-	// the world
-	// måste göras om för nytt vettigt värde
-	private int averageRTT = 1170;
 
-	public RTTMessageRepeater(LinkedBlockingQueue m_RTTMessageQueue, LinkedBlockingQueue m_messageQueue, int rTT) {
-		this.m_RTTMessageQueue = m_RTTMessageQueue;
+	private int roundTime = 1024; //in this case it reprsent the time when replica managers have elecation, and dont 
+									//take requests from clients.
+
+	public RTMessageRepeater(LinkedBlockingQueue m_RTMessageQueue, LinkedBlockingQueue m_messageQueue, int rT) {
+		this.m_RTTMessageQueue = m_RTMessageQueue;
 		this.m_messageQueue = m_messageQueue;
-		averageRTT = rTT;
+		roundTime = rT;
 	}
 
-	public RTTMessageRepeater(LinkedBlockingQueue m_RTTMessageQueue, LinkedBlockingQueue m_messageQueue) {
-		this.m_RTTMessageQueue = m_RTTMessageQueue;
+	public RTMessageRepeater(LinkedBlockingQueue m_RTMessageQueue, LinkedBlockingQueue m_messageQueue) {
+		this.m_RTTMessageQueue = m_RTMessageQueue;
 		this.m_messageQueue = m_messageQueue;
 	}
 
@@ -29,7 +28,7 @@ public class RTTMessageRepeater implements Runnable {
 			LocalMessage msg = null;
 			try {
 				msg = m_RTTMessageQueue.take();
-				Thread.sleep(averageRTT);
+				Thread.sleep(roundTime);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
