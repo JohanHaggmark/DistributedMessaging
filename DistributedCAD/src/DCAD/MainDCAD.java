@@ -22,7 +22,14 @@ public class MainDCAD {
 	    	new Thread(rmConnection).start();
 			new Cad(gui, messages);	
 	        new Thread(new RTMessageRepeater(messages.getRTTMessageQueue(), messages.getMessageQueue())).start();	
-		}		
+		} else {
+			rmConnection = new RMConnection(args[0], 25000);
+	    	messages = new LocalMessages();
+	    	new Thread(rmConnection).start();
+			new Cad(gui, messages);	
+	        new Thread(new RTMessageRepeater(messages.getRTTMessageQueue(), messages.getMessageQueue())).start();	
+		}
+		
     }
 	
 	public static void resetConnection() {
